@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elbsms_ui", "elbsms_ui\elbsms_ui.csproj", "{ED399644-5B1B-481C-B88C-EEF053149AC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elbsms_core", "elbsms_core\elbsms_core.csproj", "{59EF0F57-7A82-4CD8-80A6-0D0536CE1ED3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B9AC2AB8-66C2-43CD-B34E-FF9873EBC388}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED399644-5B1B-481C-B88C-EEF053149AC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED399644-5B1B-481C-B88C-EEF053149AC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED399644-5B1B-481C-B88C-EEF053149AC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED399644-5B1B-481C-B88C-EEF053149AC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59EF0F57-7A82-4CD8-80A6-0D0536CE1ED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59EF0F57-7A82-4CD8-80A6-0D0536CE1ED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59EF0F57-7A82-4CD8-80A6-0D0536CE1ED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59EF0F57-7A82-4CD8-80A6-0D0536CE1ED3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {678F8501-39AE-40B9-8B34-00690FD43ACE}
+	EndGlobalSection
+EndGlobal
