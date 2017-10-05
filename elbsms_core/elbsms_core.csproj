@@ -42,7 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bus.cs" />
+    <Compile Include="Cartridge.cs" />
+    <Compile Include="CPU\Registers.cs" />
+    <Compile Include="CPU\StatusFlags.cs" />
+    <Compile Include="MasterSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CPU\Z80.cs" />
+    <Compile Include="SystemClock.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
