@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace elbsms_core
 {
@@ -54,6 +55,12 @@ namespace elbsms_core
         internal void Out(byte address, byte value)
         {
             // TODO(david): implement out
+            Debug.WriteLine($"OUT: 0x{address:X4}, {(char)value}(0x{value:X2})");
+
+            if (address == 0xFD)
+            {
+                Console.Write((char)value);
+            }
         }
     }
 }

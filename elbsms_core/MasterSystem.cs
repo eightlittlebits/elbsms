@@ -1,5 +1,4 @@
-﻿using System;
-using elbsms_core.CPU;
+﻿using elbsms_core.CPU;
 
 namespace elbsms_core
 {

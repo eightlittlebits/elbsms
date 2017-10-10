@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using elbsms_core;
 
 namespace elbsms_console
@@ -19,9 +20,21 @@ namespace elbsms_console
 
             MasterSystem masterSystem = new MasterSystem(cartridge);
 
-            while (true)
+            try
             {
-                masterSystem.SingleStep();
+                while (true)
+                {
+                    masterSystem.SingleStep();
+                }
+            }
+            catch (NotImplementedException ex)
+            {
+                if (!Debugger.IsAttached)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                else
+                    throw;
             }
         }
     }

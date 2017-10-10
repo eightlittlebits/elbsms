@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
-
 
 namespace elbsms_core.CPU
 {
@@ -142,6 +142,8 @@ namespace elbsms_core.CPU
         {
             ProcessInterrupts();
 
+            //Debug.WriteLine($"PC: 0x{_pc:X4}");
+
             byte opcode = ReadOpcode(_pc++);
             ExecuteOpcode(opcode);
         }
@@ -159,7 +161,6 @@ namespace elbsms_core.CPU
                 case 0x44: _gpr.B = _gpr.H; break; // LD B,H
                 case 0x45: _gpr.B = _gpr.L; break; // LD B,L
                 case 0x47: _gpr.B = _afr.A; break; // LD B,A
-
 
                 case 0x48: _gpr.C = _gpr.B; break; // LD C,B
                 case 0x49: break;                  // LD C,C
@@ -209,7 +210,12 @@ namespace elbsms_core.CPU
                 case 0x7D: _afr.A = _gpr.L; break; // LD A,L
                 case 0x7F: break;                  // LD A,A
 
+                case 0x06: _gpr.B = ReadByte(_pc++); break; // LD B,n
                 case 0x0E: _gpr.C = ReadByte(_pc++); break; // LD C,n
+                case 0x16: _gpr.B = ReadByte(_pc++); break; // LD D,n
+                case 0x1E: _gpr.C = ReadByte(_pc++); break; // LD E,n
+                case 0x26: _gpr.B = ReadByte(_pc++); break; // LD H,n
+                case 0x2E: _gpr.C = ReadByte(_pc++); break; // LD L,n
                 case 0x3E: _afr.A = ReadByte(_pc++); break; // LD A,n
 
                 case 0x46: _gpr.B = ReadByte(_gpr.HL); break; // LD B,(HL)
@@ -227,7 +233,16 @@ namespace elbsms_core.CPU
                 case 0x74: WriteByte(_gpr.HL, _gpr.H); break; // LD (HL),H
                 case 0x75: WriteByte(_gpr.HL, _gpr.L); break; // LD (HL),L
                 case 0x77: WriteByte(_gpr.HL, _afr.A); break; // LD (HL),A
-                    
+
+                case 0x36: WriteByte(_gpr.HL, ReadByte(_pc++)); break; // LD (HL),n
+
+                case 0x0A: _afr.A = ReadByte(_gpr.BC); break; // LD A,(BC)
+                case 0x1A: _afr.A = ReadByte(_gpr.DE); break; // LD A,(DE)
+
+                case 0x3A: _afr.A = ReadByte(ReadWord(_pc)); _pc += 2; break; // LD A,(nn)
+
+                case 0x32: WriteByte(ReadWord(_pc), _afr.A); _pc += 2; break; // LD (nn),A
+
                 #endregion
 
                 #region 16-bit load group
@@ -251,13 +266,105 @@ namespace elbsms_core.CPU
 
                 #region exchange, block transfer, and search group
 
+                case 0xEB: ushort temp = _gpr.DE; _gpr.DE = _gpr.HL; _gpr.HL = temp; break; // EX DE,HL
+
+                #endregion
+
+                #region 8-bit arithmetic group
+
+                case 0xA0: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.B); break;               // AND B
+                case 0xA1: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.C); break;               // AND C
+                case 0xA2: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.D); break;               // AND D
+                case 0xA3: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.E); break;               // AND E
+                case 0xA4: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.H); break;               // AND H
+                case 0xA5: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.L); break;               // AND L
+                case 0xA6: (_afr.A, _afr.F) = And8Bit(_afr.A, ReadByte(_gpr.HL)); break;    // AND (HL)
+                case 0xA7: (_afr.A, _afr.F) = And8Bit(_afr.A, _afr.A); break;               // AND A
+                case 0xE6: (_afr.A, _afr.F) = And8Bit(_afr.A, ReadByte(_pc++)); break;      // AND n
+
+                case 0xB0: (_afr.A, _afr.F) = Or8Bit(_afr.A, _gpr.B); break;            // OR B
+                case 0xB1: (_afr.A, _afr.F) = Or8Bit(_afr.A, _gpr.C); break;            // OR C
+                case 0xB2: (_afr.A, _afr.F) = Or8Bit(_afr.A, _gpr.D); break;            // OR D
+                case 0xB3: (_afr.A, _afr.F) = Or8Bit(_afr.A, _gpr.E); break;            // OR E
+                case 0xB4: (_afr.A, _afr.F) = Or8Bit(_afr.A, _gpr.H); break;            // OR H
+                case 0xB5: (_afr.A, _afr.F) = Or8Bit(_afr.A, _gpr.L); break;            // OR L
+                case 0xB6: (_afr.A, _afr.F) = Or8Bit(_afr.A, ReadByte(_gpr.HL)); break; // OR (HL)
+                case 0xB7: (_afr.A, _afr.F) = Or8Bit(_afr.A, _afr.A); break;            // OR A
+                case 0xF6: (_afr.A, _afr.F) = Or8Bit(_afr.A, ReadByte(_pc++)); break;   // OR n
+
+                case 0xA8: (_afr.A, _afr.F) = Xor8Bit(_afr.A, _gpr.B); break;               // XOR B
+                case 0xA9: (_afr.A, _afr.F) = Xor8Bit(_afr.A, _gpr.C); break;               // XOR C
+                case 0xAA: (_afr.A, _afr.F) = Xor8Bit(_afr.A, _gpr.D); break;               // XOR D
+                case 0xAB: (_afr.A, _afr.F) = Xor8Bit(_afr.A, _gpr.E); break;               // XOR E
+                case 0xAC: (_afr.A, _afr.F) = Xor8Bit(_afr.A, _gpr.H); break;               // XOR H
+                case 0xAD: (_afr.A, _afr.F) = Xor8Bit(_afr.A, _gpr.L); break;               // XOR L
+                case 0xAE: (_afr.A, _afr.F) = Xor8Bit(_afr.A, ReadByte(_gpr.HL)); break;    // XOR (HL)
+                case 0xAF: (_afr.A, _afr.F) = Xor8Bit(_afr.A, _afr.A); break;               // XOR A
+                case 0xEE: (_afr.A, _afr.F) = Xor8Bit(_afr.A, ReadByte(_pc++)); break;      // XOR n
+
+                case 0xB8: _afr.F = Compare8Bit(_afr.A, _gpr.B); break;             // CP B
+                case 0xB9: _afr.F = Compare8Bit(_afr.A, _gpr.C); break;             // CP C
+                case 0xBA: _afr.F = Compare8Bit(_afr.A, _gpr.D); break;             // CP D
+                case 0xBB: _afr.F = Compare8Bit(_afr.A, _gpr.E); break;             // CP E
+                case 0xBC: _afr.F = Compare8Bit(_afr.A, _gpr.H); break;             // CP H
+                case 0xBD: _afr.F = Compare8Bit(_afr.A, _gpr.L); break;             // CP L
+                case 0xBE: _afr.F = Compare8Bit(_afr.A, ReadByte(_gpr.HL)); break;  // CP (HL)
+                case 0xBF: _afr.F = Compare8Bit(_afr.A, _afr.A); break;             // CP A
+                case 0xFE: _afr.F = Compare8Bit(_afr.A, ReadByte(_pc++)); break;    // CP n
+
+                case 0x3C: _gpr.B = Inc8Bit(_gpr.B); break;                         // INC B
+                case 0x04: _gpr.C = Inc8Bit(_gpr.C); break;                         // INC C
+                case 0x0C: _gpr.D = Inc8Bit(_gpr.D); break;                         // INC D
+                case 0x14: _gpr.E = Inc8Bit(_gpr.E); break;                         // INC E
+                case 0x1C: _gpr.H = Inc8Bit(_gpr.H); break;                         // INC H
+                case 0x24: _gpr.L = Inc8Bit(_gpr.L); break;                         // INC L
+                case 0x2C: WriteByte(_gpr.HL, Inc8Bit(ReadByte(_gpr.HL))); break;   // INC (HL)
+                case 0x34: _afr.A = Inc8Bit(_afr.A); break;                         // INC A
+
+                case 0x05: _gpr.B = Dec8Bit(_gpr.B); break;                         // DEC B
+                case 0x0D: _gpr.C = Dec8Bit(_gpr.C); break;                         // DEC C
+                case 0x15: _gpr.D = Dec8Bit(_gpr.D); break;                         // DEC D
+                case 0x1D: _gpr.E = Dec8Bit(_gpr.E); break;                         // DEC E
+                case 0x25: _gpr.H = Dec8Bit(_gpr.H); break;                         // DEC H
+                case 0x2D: _gpr.L = Dec8Bit(_gpr.L); break;                         // DEC L
+                case 0x35: WriteByte(_gpr.HL, Dec8Bit(ReadByte(_gpr.HL))); break;   // DEC (HL)
+                case 0x3D: _afr.A = Dec8Bit(_afr.A); break;                         // DEC A
+
                 #endregion
 
                 #region general-purpose arithmetic and cpu control group
 
                 case 0xED: ExecuteEDPrefixOpcode(ReadOpcode(_pc++)); break;
+                case 0xFD: ExecuteFDPrefixOpcode(ReadOpcode(_pc++)); break;
 
                 case 0xF3: DisableInterrupts(); break; // DI
+
+                #endregion
+
+                #region 16-bit arithmetic group
+
+                case 0x09: _gpr.HL = Add16Bit(_gpr.HL, _gpr.BC); break; // ADD HL,BC
+                case 0x19: _gpr.HL = Add16Bit(_gpr.HL, _gpr.DE); break; // ADD HL,DE
+                case 0x29: _gpr.HL = Add16Bit(_gpr.HL, _gpr.HL); break; // ADD HL,HL
+                case 0x39: _gpr.HL = Add16Bit(_gpr.HL, _sp); break; // ADD HL,SP
+
+                case 0x03: _clock.AddCycles(2); _gpr.BC++; break; // INC BC
+                case 0x13: _clock.AddCycles(2); _gpr.DE++; break; // INC DE
+                case 0x23: _clock.AddCycles(2); _gpr.HL++; break; // INC HL
+                case 0x33: _clock.AddCycles(2); _sp++; break; // INC SP
+
+                case 0x0B: _clock.AddCycles(2); _gpr.BC--; break; // DEC BC
+                case 0x1B: _clock.AddCycles(2); _gpr.DE--; break; // DEC DE
+                case 0x2B: _clock.AddCycles(2); _gpr.HL--; break; // DEC HL
+                case 0x3B: _clock.AddCycles(2); _sp--; break; // DEC SP
+
+                #endregion
+
+                #region rotate and shift group
+
+                case 0x07: Rlca(); break; // RLCA
+
+                case 0x0F: Rrca(); break; // RRCA
 
                 #endregion
 
@@ -265,11 +372,20 @@ namespace elbsms_core.CPU
 
                 case 0xC3: JumpImmediate(); break; // JP nn
 
+                case 0xC2: JumpImmediate(!_afr.F.FlagSet(Z)); break; // JP NZ,nn
+                case 0xCA: JumpImmediate(_afr.F.FlagSet(Z)); break; // JP Z,nn
+
+                case 0x18: JumpRelative(); break; // JR e
+
+                case 0x28: JumpRelative(_afr.F.FlagSet(Z)); break; // JR Z,e
+
                 #endregion
 
                 #region call and return group
 
                 case 0xCD: CallImmediate(); break; // CALL nn
+
+                case 0xC4: CallImmediate(!_afr.F.FlagSet(Z)); break; // CALL NZ,nn
 
                 case 0xC9: Return(); break; // RET
 
@@ -288,8 +404,19 @@ namespace elbsms_core.CPU
 
         private void ExecuteEDPrefixOpcode(byte opcode)
         {
+            ushort address;
+
             switch (opcode)
             {
+                #region 16-bit load group
+
+                case 0x43: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_gpr.BC >> 0)); WriteByte(++address, (byte)(_gpr.BC >> 8)); break; // LD (nn),BC
+                case 0x53: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_gpr.DE >> 0)); WriteByte(++address, (byte)(_gpr.DE >> 8)); break; // LD (nn),DE
+                case 0x63: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_gpr.HL >> 0)); WriteByte(++address, (byte)(_gpr.HL >> 8)); break; // LD (nn),HL
+                case 0x73: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_sp >> 0)); WriteByte(++address, (byte)(_sp >> 8)); break; // LD (nn),SP
+
+                #endregion
+
                 #region exchange, block transfer, and search group
 
                 case 0xB0: LoadIncrementAndRepeat(); break; // LDIR
@@ -304,6 +431,16 @@ namespace elbsms_core.CPU
 
                 default:
                     throw new NotImplementedException($"Unimplemented opcode: 0xED {opcode:X2} at address 0x{_pc - 2:X4}");
+            }
+        }
+
+        private void ExecuteFDPrefixOpcode(byte opcode)
+        {
+            switch (opcode)
+            {
+
+                default:
+                    throw new NotImplementedException($"Unimplemented opcode: 0xFD {opcode:X2} at address 0x{_pc - 2:X4}");
             }
         }
 
@@ -339,6 +476,137 @@ namespace elbsms_core.CPU
 
         #endregion
 
+        #region 8-bit arithmetic group handlers
+
+        private static (byte, StatusFlags) And8Bit(byte a, byte b)
+        {
+            int result = a & b;
+
+            StatusFlags flags = H;
+
+            if ((result & 0x80) == 0x80)
+                flags |= S;
+
+            if (result == 0)
+                flags |= Z;
+
+            if (EvenParity(result))
+                flags |= PV;
+
+            return ((byte)result, flags);
+        }
+
+        // https://stackoverflow.com/questions/8034566/overflow-and-carry-flags-on-z80/8037485#8037485
+        private static (byte, StatusFlags) Add8Bit(byte a, byte b, bool carry = false)
+        {
+            int result = a + b + (carry ? 1 : 0);
+
+            int carryIn = result ^ a ^ b;
+
+            result &= 0xFF;
+
+            StatusFlags flags = default;
+
+            // sign 
+            if ((result & 0x80) == 0x80)
+                flags |= S;
+
+            // zero
+            if (result == 0)
+                flags |= Z;
+
+            // half carry
+            if ((carryIn & 0x10) == 0x10)
+                flags |= H;
+
+            // overflow
+            if ((((carryIn >> 7) & 0x01) != (carryIn >> 8)))
+                flags |= PV;
+
+            // carry
+            if ((carryIn & 0x100) == 0x100)
+                flags |= C;
+
+            return ((byte)result, flags);
+        }
+
+        // https://stackoverflow.com/questions/8034566/overflow-and-carry-flags-on-z80/8037485#8037485
+        private static (byte, StatusFlags) Sub8Bit(byte a, byte b, bool carry = false)
+        {
+            // a - b - c = a + ~b + 1 - c = a + ~b + !c
+            var (result, flags) = Add8Bit(a, (byte)(~b), !carry);
+
+            flags ^= C | H;
+            flags |= N;
+
+            return (result, flags);
+        }
+
+        private static (byte, StatusFlags) Or8Bit(byte a, byte b)
+        {
+            var result = a | b;
+
+            StatusFlags flags = default;
+
+            if ((result & 0x80) == 0x80)
+                flags |= S;
+
+            if (result == 0)
+                flags |= Z;
+
+            if (EvenParity(result))
+                flags |= PV;
+
+            return ((byte)result, flags);
+        }
+
+        private static (byte, StatusFlags) Xor8Bit(byte a, byte b)
+        {
+            var result = a ^ b;
+
+            StatusFlags flags = default;
+
+            if ((result & 0x80) == 0x80)
+                flags |= S;
+
+            if (result == 0)
+                flags |= Z;
+
+            if (EvenParity(result))
+                flags |= PV;
+
+            return ((byte)result, flags);
+        }
+
+        private static StatusFlags Compare8Bit(byte a, byte b)
+        {
+            var (_, flags) = Sub8Bit(a, b);
+
+            return flags;
+        }
+
+        private byte Inc8Bit(byte a)
+        {
+            var (result, flags) = Add8Bit(a, 1);
+
+            _afr.F &= C;
+            _afr.F |= (flags & ~C);
+
+            return result;
+        }
+
+        private byte Dec8Bit(byte a)
+        {
+            var (result, flags) = Sub8Bit(a, 1);
+
+            _afr.F &= C;
+            _afr.F |= (flags & ~C);
+
+            return result;
+        }
+
+        #endregion
+
         #region general-purpose arithmetic and cpu control group handlers
 
         private void DisableInterrupts()
@@ -353,11 +621,101 @@ namespace elbsms_core.CPU
 
         #endregion
 
+        #region 16-bit arithmetic group
+
+        private ushort Add16Bit(ushort a, ushort b, bool carry = false)
+        {
+            // reset affected flags
+            _afr.F &= ~(H | N | C);
+
+            byte hi, lo;
+            StatusFlags flags = default;
+
+            _clock.AddCycles(4);
+            (lo, flags) = Add8Bit((byte)(a >> 0), (byte)(b >> 0), carry);
+
+            _clock.AddCycles(3);
+            (hi, flags) = Add8Bit((byte)(a >> 8), (byte)(b >> 8), flags.FlagSet(C));
+
+            // apply masked result flags to flags register
+            _afr.F |= flags & (H | N | C);
+
+            return (ushort)(hi << 8 | lo);
+        }
+
+        #endregion
+
+        #region rotate and shift group handlers
+
+        private void Rlca()
+        {
+            // reset affected flags
+            _afr.F &= ~(H | N | C);
+
+            int c = (_afr.A >> 7) & 1;
+
+            _afr.A = (byte)((_afr.A << 1) | c);
+
+            if (c == 1)
+            {
+                _afr.F |= C;
+            }
+        }
+
+        private void Rrca()
+        {
+            // reset affected flags
+            _afr.F &= ~(H | N | C);
+
+            int c = _afr.A & 1;
+
+            _afr.A = (byte)((_afr.A >> 1) | (c << 7));
+
+            if (c == 1)
+            {
+                _afr.F |= C;
+            }
+        }
+
+        #endregion
+
         #region jump group handlers
 
         private void JumpImmediate()
         {
             _pc = ReadWord(_pc);
+        }
+
+        private void JumpImmediate(bool condition)
+        {
+            ushort address = ReadWord(_pc);
+
+            if (condition)
+            {
+                _pc = address;
+            }
+            else
+            {
+                _pc += 2;
+            }
+        }
+
+        private void JumpRelative()
+        {
+            _clock.AddCycles(5);
+            sbyte offset = (sbyte)ReadByte(_pc++);
+            _pc += (ushort)offset;
+        }
+
+        private void JumpRelative(bool condition)
+        {
+            sbyte offset = (sbyte)ReadByte(_pc++);
+
+            if (condition)
+            {
+                _clock.AddCycles(5);
+                _pc += (ushort)offset;
+            }
         }
 
         #endregion
@@ -375,11 +733,33 @@ namespace elbsms_core.CPU
             _pc = address;
         }
 
+        private void CallImmediate(bool condition)
+        {
+            ushort address = ReadWord(_pc);
+            _pc += 2;
+
+            if (condition)
+            {
+                _clock.AddCycles(1);
+                PushWord(_pc);
+                _pc = address;
+            }
+        }
+
         private void Return()
         {
             _pc = PopWord();
         }
 
         #endregion
+
+        private static bool EvenParity(int v)
+        {
+            v ^= v >> 4;
+            v ^= v >> 2;
+            v ^= v >> 1;
+
+            return v == 0;
+        }
     }
 }
