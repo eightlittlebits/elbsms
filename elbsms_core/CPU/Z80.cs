@@ -212,10 +212,10 @@ namespace elbsms_core.CPU
 
                 case 0x06: _gpr.B = ReadByte(_pc++); break; // LD B,n
                 case 0x0E: _gpr.C = ReadByte(_pc++); break; // LD C,n
-                case 0x16: _gpr.B = ReadByte(_pc++); break; // LD D,n
-                case 0x1E: _gpr.C = ReadByte(_pc++); break; // LD E,n
-                case 0x26: _gpr.B = ReadByte(_pc++); break; // LD H,n
-                case 0x2E: _gpr.C = ReadByte(_pc++); break; // LD L,n
+                case 0x16: _gpr.D = ReadByte(_pc++); break; // LD D,n
+                case 0x1E: _gpr.E = ReadByte(_pc++); break; // LD E,n
+                case 0x26: _gpr.H = ReadByte(_pc++); break; // LD H,n
+                case 0x2E: _gpr.L = ReadByte(_pc++); break; // LD L,n
                 case 0x3E: _afr.A = ReadByte(_pc++); break; // LD A,n
 
                 case 0x46: _gpr.B = ReadByte(_gpr.HL); break; // LD B,(HL)
