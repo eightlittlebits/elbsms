@@ -312,14 +312,14 @@ namespace elbsms_core.CPU
                 case 0xBF: _afr.F = Compare8Bit(_afr.A, _afr.A); break;             // CP A
                 case 0xFE: _afr.F = Compare8Bit(_afr.A, ReadByte(_pc++)); break;    // CP n
 
-                case 0x3C: _gpr.B = Inc8Bit(_gpr.B); break;                         // INC B
-                case 0x04: _gpr.C = Inc8Bit(_gpr.C); break;                         // INC C
-                case 0x0C: _gpr.D = Inc8Bit(_gpr.D); break;                         // INC D
-                case 0x14: _gpr.E = Inc8Bit(_gpr.E); break;                         // INC E
-                case 0x1C: _gpr.H = Inc8Bit(_gpr.H); break;                         // INC H
-                case 0x24: _gpr.L = Inc8Bit(_gpr.L); break;                         // INC L
-                case 0x2C: WriteByte(_gpr.HL, Inc8Bit(ReadByte(_gpr.HL))); break;   // INC (HL)
-                case 0x34: _afr.A = Inc8Bit(_afr.A); break;                         // INC A
+                case 0x04: _gpr.B = Inc8Bit(_gpr.B); break;                         // INC B
+                case 0x0C: _gpr.C = Inc8Bit(_gpr.C); break;                         // INC C
+                case 0x14: _gpr.D = Inc8Bit(_gpr.D); break;                         // INC D
+                case 0x1C: _gpr.E = Inc8Bit(_gpr.E); break;                         // INC E
+                case 0x24: _gpr.H = Inc8Bit(_gpr.H); break;                         // INC H
+                case 0x2C: _gpr.L = Inc8Bit(_gpr.L); break;                         // INC L
+                case 0x34: WriteByte(_gpr.HL, Inc8Bit(ReadByte(_gpr.HL))); break;   // INC (HL)
+                case 0x3C: _afr.A = Inc8Bit(_afr.A); break;                         // INC A
 
                 case 0x05: _gpr.B = Dec8Bit(_gpr.B); break;                         // DEC B
                 case 0x0D: _gpr.C = Dec8Bit(_gpr.C); break;                         // DEC C
