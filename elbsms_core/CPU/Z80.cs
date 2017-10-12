@@ -34,13 +34,11 @@ namespace elbsms_core.CPU
 
 #pragma warning restore 0169
 
-
         public Z80(SystemClock clock, Bus bus)
         {
             _clock = clock;
             _bus = bus;
 
-            //_activeAFRegisters = 1 - _activeAFRegisters;
             _activeAFRegisters = 0;
             _afRegisters = new AFRegisters[2];
             _afRegisters[0] = new AFRegisters();
@@ -147,8 +145,6 @@ namespace elbsms_core.CPU
         public void ExecuteInstruction()
         {
             ProcessInterrupts();
-
-            //Debug.WriteLine($"PC: 0x{_pc:X4}");
 
             byte opcode = ReadOpcode(_pc++);
             ExecuteOpcode(opcode);

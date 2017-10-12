@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using elbsms_core;
 
 namespace elbsms_console
@@ -29,12 +28,7 @@ namespace elbsms_console
             }
             catch (NotImplementedException ex)
             {
-                if (!Debugger.IsAttached)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                else
-                    throw;
+                Console.WriteLine(ex.Message);
             }
         }
     }
