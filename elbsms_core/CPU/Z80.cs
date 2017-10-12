@@ -378,12 +378,12 @@ namespace elbsms_core.CPU
 
                 case 0xC3: JumpImmediate(); break; // JP nn
 
-                case 0xC2: JumpImmediate(!_afr.F.FlagSet(Z)); break; // JP NZ,nn
-                case 0xCA: JumpImmediate(_afr.F.FlagSet(Z)); break; // JP Z,nn
+                case 0xC2: JumpImmediate(!_afr.F[Z]); break; // JP NZ,nn
+                case 0xCA: JumpImmediate(_afr.F[Z]); break; // JP Z,nn
 
                 case 0x18: JumpRelative(); break; // JR e
 
-                case 0x28: JumpRelative(_afr.F.FlagSet(Z)); break; // JR Z,e
+                case 0x28: JumpRelative(_afr.F[Z]); break; // JR Z,e
 
                 #endregion
 
@@ -391,7 +391,7 @@ namespace elbsms_core.CPU
 
                 case 0xCD: CallImmediate(); break; // CALL nn
 
-                case 0xC4: CallImmediate(!_afr.F.FlagSet(Z)); break; // CALL NZ,nn
+                case 0xC4: CallImmediate(!_afr.F[Z]); break; // CALL NZ,nn
 
                 case 0xC9: Return(); break; // RET
 
@@ -459,12 +459,8 @@ namespace elbsms_core.CPU
 
             _clock.AddCycles(2);
 
-            _afr.F &= ~(H | N);
-
-            if (--_gpr.BC != 0)
-                _afr.F |= PV;
-            else
-                _afr.F &= ~PV;
+            _afr.F[H | N] = false;
+            _afr.F[V] = --_gpr.BC != 0;
         }
 
         private void LoadIncrementAndRepeat()
@@ -489,14 +485,9 @@ namespace elbsms_core.CPU
 
             StatusFlags flags = H;
 
-            if ((result & 0x80) == 0x80)
-                flags |= S;
-
-            if (result == 0)
-                flags |= Z;
-
-            if (EvenParity(result))
-                flags |= PV;
+            flags[S] = (result & 0x80) == 0x80;
+            flags[Z] = result == 0;
+            flags[P] = EvenParity(result);
 
             return ((byte)result, flags);
         }
@@ -513,24 +504,19 @@ namespace elbsms_core.CPU
             StatusFlags flags = default;
 
             // sign 
-            if ((result & 0x80) == 0x80)
-                flags |= S;
+            flags[S] = (result & 0x80) == 0x80;
 
             // zero
-            if (result == 0)
-                flags |= Z;
+            flags[Z] = result == 0;
 
             // half carry
-            if ((carryIn & 0x10) == 0x10)
-                flags |= H;
+            flags[H] = (carryIn & 0x10) == 0x10;
 
             // overflow
-            if ((((carryIn >> 7) & 0x01) != (carryIn >> 8)))
-                flags |= PV;
+            flags[V] = ((carryIn >> 7) & 0x01) != (carryIn >> 8);
 
             // carry
-            if ((carryIn & 0x100) == 0x100)
-                flags |= C;
+            flags[C] = (carryIn & 0x100) == 0x100;
 
             return ((byte)result, flags);
         }
@@ -553,14 +539,9 @@ namespace elbsms_core.CPU
 
             StatusFlags flags = default;
 
-            if ((result & 0x80) == 0x80)
-                flags |= S;
-
-            if (result == 0)
-                flags |= Z;
-
-            if (EvenParity(result))
-                flags |= PV;
+            flags[S] = (result & 0x80) == 0x80;
+            flags[Z] = result == 0;
+            flags[P] = EvenParity(result);
 
             return ((byte)result, flags);
         }
@@ -571,14 +552,9 @@ namespace elbsms_core.CPU
 
             StatusFlags flags = default;
 
-            if ((result & 0x80) == 0x80)
-                flags |= S;
-
-            if (result == 0)
-                flags |= Z;
-
-            if (EvenParity(result))
-                flags |= PV;
+            flags[S] = (result & 0x80) == 0x80;
+            flags[Z] = result == 0;
+            flags[P] = EvenParity(result);
 
             return ((byte)result, flags);
         }
@@ -631,7 +607,7 @@ namespace elbsms_core.CPU
         private ushort Add16Bit(ushort a, ushort b, bool carry = false)
         {
             // reset affected flags
-            _afr.F &= ~(H | N | C);
+            _afr.F[H | N | C] = false;
 
             byte hi, lo;
             StatusFlags flags = default;
@@ -640,7 +616,7 @@ namespace elbsms_core.CPU
             (lo, flags) = Add8Bit((byte)(a >> 0), (byte)(b >> 0), carry);
 
             _clock.AddCycles(3);
-            (hi, flags) = Add8Bit((byte)(a >> 8), (byte)(b >> 8), flags.FlagSet(C));
+            (hi, flags) = Add8Bit((byte)(a >> 8), (byte)(b >> 8), flags[C]);
 
             // apply masked result flags to flags register
             _afr.F |= flags & (H | N | C);
@@ -655,7 +631,7 @@ namespace elbsms_core.CPU
         private void Rlca()
         {
             // reset affected flags
-            _afr.F &= ~(H | N | C);
+            _afr.F[H | N | C] = false;
 
             int c = (_afr.A >> 7) & 1;
 
@@ -670,7 +646,7 @@ namespace elbsms_core.CPU
         private void Rrca()
         {
             // reset affected flags
-            _afr.F &= ~(H | N | C);
+            _afr.F[H | N | C] = false;
 
             int c = _afr.A & 1;
 

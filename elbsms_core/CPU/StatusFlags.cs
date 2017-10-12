@@ -1,27 +1,60 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Text;
 
 namespace elbsms_core.CPU
 {
-    [Flags]
-    enum StatusFlags : byte
+    struct StatusFlags
     {
-        S  = 0b1000_0000,
-        Z  = 0b0100_0000,
-        B5 = 0b0010_0000,
-        H  = 0b0001_0000,
-        B3 = 0b0000_1000,
-        PV = 0b0000_0100,
-        N  = 0b0000_0010,
-        C  = 0b0000_0001
-    }
+        public const int S = 0b1000_0000;
+        public const int Z = 0b0100_0000;
+        //public const int B5 = 0b0010_0000;
+        public const int H = 0b0001_0000;
+        //public const int B3 = 0b0000_1000;
+        public const int P = 0b0000_0100;
+        public const int V = 0b0000_0100;
+        public const int N = 0b0000_0010;
+        public const int C = 0b0000_0001;
+        
+        private byte _flags;
 
-    static class StatusFlagExtensions
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool FlagSet(this StatusFlags f, StatusFlags flag)
+        public StatusFlags(int i)
         {
-            return (f & flag) == flag;
+            _flags = (byte)i;
+        }
+
+        public bool this[int bit]
+        {
+            get => (_flags & bit) == bit;
+            set
+            {
+                if (value)
+                {
+                    _flags |= (byte)bit;
+                }
+                else
+                {
+                    _flags &= (byte)~bit;
+                }
+            }
+        }
+
+        public static implicit operator byte(StatusFlags b) => b._flags;
+
+        public static implicit operator StatusFlags(int i) => new StatusFlags(i);
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder(8);
+
+            sb.Append(this[S] ? 'S' : 's');
+            sb.Append(this[Z] ? 'Z' : 'z');
+            //sb.Append(this[S] ? 'S' : 's');
+            sb.Append(this[H] ? 'H' : 'h');
+            //sb.Append(this[S] ? 'S' : 's');
+            sb.Append(this[P] ? 'P' : 'p');
+            sb.Append(this[N] ? 'N' : 'n');
+            sb.Append(this[C] ? 'C' : 'c');
+
+            return sb.ToString();
         }
     }
 }
