@@ -243,6 +243,8 @@ namespace elbsms_core.CPU
 
                 case 0x3A: _afr.A = ReadByte(ReadWord(_pc)); _pc += 2; break; // LD A,(nn)
 
+                case 0x02: WriteByte(_gpr.BC, _afr.A); break; // LD (BC),A
+                case 0x12: WriteByte(_gpr.DE, _afr.A); break; // LD (DE),A
                 case 0x32: WriteByte(ReadWord(_pc), _afr.A); _pc += 2; break; // LD (nn),A
 
                 #endregion
@@ -253,6 +255,10 @@ namespace elbsms_core.CPU
                 case 0x11: _gpr.DE = ReadWord(_pc); _pc += 2; break; // LD DE,nn
                 case 0x21: _gpr.HL = ReadWord(_pc); _pc += 2; break; // LD HL,nn
                 case 0x31: _sp = ReadWord(_pc); _pc += 2; break;     // LD SP,nn
+
+                case 0x2A: _gpr.HL = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD HL,(nn)
+
+                case 0x22: WriteWord(ReadWord(_pc), _gpr.HL); _pc += 2; break; // LD (nn),HL
 
                 case 0xC5: _clock.AddCycles(1); PushWord(_gpr.BC); break; // PUSH BC
                 case 0xD5: _clock.AddCycles(1); PushWord(_gpr.DE); break; // PUSH DE
@@ -336,8 +342,12 @@ namespace elbsms_core.CPU
 
                 #region general-purpose arithmetic and cpu control group
 
-                case 0xED: ExecuteEDPrefixOpcode(ReadOpcode(_pc++)); break;
-                case 0xFD: ExecuteFDPrefixOpcode(ReadOpcode(_pc++)); break;
+                case 0xCB: ExecuteBitOpcode(ReadOpcode(_pc++)); break;
+                case 0xDD: ExecutePrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
+                case 0xED: ExecuteExtendedOpcode(ReadOpcode(_pc++)); break;
+                case 0xFD: ExecutePrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
+
+                case 0x00: break; // NOP
 
                 case 0xF3: DisableInterrupts(); break; // DI
 
@@ -388,8 +398,24 @@ namespace elbsms_core.CPU
                 case 0xCD: CallImmediate(); break; // CALL nn
 
                 case 0xC4: CallImmediate(!_afr.F[Z]); break; // CALL NZ,nn
+                case 0xCC: CallImmediate(_afr.F[Z]); break; // CALL Z,nn   
+                case 0xD4: CallImmediate(!_afr.F[C]); break; // CALL NC,nn
+                case 0xDC: CallImmediate(_afr.F[C]); break; // CALL C,nn   
+                case 0xE4: CallImmediate(!_afr.F[P]); break; // CALL PO,nn
+                case 0xEC: CallImmediate(_afr.F[P]); break; // CALL PE,nn   
+                case 0xF4: CallImmediate(!_afr.F[S]); break; // CALL P,nn
+                case 0xFC: CallImmediate(_afr.F[S]); break; // CALL M,nn   
 
                 case 0xC9: Return(); break; // RET
+
+                case 0xC0: Return(!_afr.F[Z]); break; // RET NZ
+                case 0xC8: Return(_afr.F[Z]); break; // RET Z   
+                case 0xD0: Return(!_afr.F[C]); break; // RET NC
+                case 0xD8: Return(_afr.F[C]); break; // RET C   
+                case 0xE0: Return(!_afr.F[P]); break; // RET PO
+                case 0xE8: Return(_afr.F[P]); break; // RET PE   
+                case 0xF0: Return(!_afr.F[S]); break; // RET P
+                case 0xF8: Return(_afr.F[S]); break; // RET M   
 
                 #endregion
 
@@ -404,12 +430,25 @@ namespace elbsms_core.CPU
             }
         }
 
-        private void ExecuteEDPrefixOpcode(byte opcode)
+        private void ExecuteBitOpcode(byte opcode)
         {
+            switch (opcode)
+            {
+                default:
+                    throw new NotImplementedException($"Unimplemented opcode: 0xCB {opcode:X2} at address 0x{_pc - 2:X4}");
+            }
+        }
 
+        private void ExecuteExtendedOpcode(byte opcode)
+        {
             switch (opcode)
             {
                 #region 16-bit load group
+
+                case 0x4B: _gpr.BC = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD BC,(nn)
+                case 0x5B: _gpr.DE = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD DE,(nn)
+                case 0x6B: _gpr.HL = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD HL,(nn)
+                case 0x7B: _sp = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD SP,(nn)
 
                 case 0x43: WriteWord(ReadWord(_pc), _gpr.BC); _pc += 2; break; // LD (nn),BC
                 case 0x53: WriteWord(ReadWord(_pc), _gpr.DE); _pc += 2; break; // LD (nn),DE
@@ -435,13 +474,33 @@ namespace elbsms_core.CPU
             }
         }
 
-        private void ExecuteFDPrefixOpcode(byte opcode)
+        private void ExecutePrefixedOpcode(byte prefix, byte opcode)
         {
+            ref ushort GetRegisterForPrefix()
+            {
+                switch (prefix)
+                {
+                    case 0xDD: return ref _ix;
+                    case 0xFD: return ref _iy;
+
+                    default: throw new ArgumentOutOfRangeException($"Prefix byte 0x{prefix:X2} passed to ExecutePrefixedOpcode");
+                }
+            }
+
+            ref ushort reg = ref GetRegisterForPrefix();
+
             switch (opcode)
             {
+                case 0x21: reg = ReadWord(_pc); _pc += 2; break; // LD IX/IY,nn
+
+                case 0x2A: reg = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD IX/IY,(nn)
+
+                case 0xE5: PushWord(reg); break; // PUSH IX/IY
+
+                case 0xE1: reg = PopWord(); break; // POP IX/IY
 
                 default:
-                    throw new NotImplementedException($"Unimplemented opcode: 0xFD {opcode:X2} at address 0x{_pc - 2:X4}");
+                    throw new NotImplementedException($"Unimplemented opcode: 0x{prefix:X2} {opcode:X2} at address 0x{_pc - 2:X4}");
             }
         }
 
@@ -726,6 +785,14 @@ namespace elbsms_core.CPU
         private void Return()
         {
             _pc = PopWord();
+        }
+
+        private void Return(bool condition)
+        {
+            if (condition)
+            {
+                _pc = PopWord();
+            }
         }
 
         #endregion
