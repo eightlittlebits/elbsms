@@ -99,6 +99,12 @@ namespace elbsms_core.CPU
             _clock.AddCycles(3);
         }
 
+        private void WriteWord(ushort address, ushort value)
+        {
+            WriteByte(address, (byte)value);
+            WriteByte((ushort)(address + 1), (byte)(value >> 8));
+        }
+
         #endregion
 
         #region stack handling
@@ -404,16 +410,15 @@ namespace elbsms_core.CPU
 
         private void ExecuteEDPrefixOpcode(byte opcode)
         {
-            ushort address;
 
             switch (opcode)
             {
                 #region 16-bit load group
 
-                case 0x43: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_gpr.BC >> 0)); WriteByte(++address, (byte)(_gpr.BC >> 8)); break; // LD (nn),BC
-                case 0x53: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_gpr.DE >> 0)); WriteByte(++address, (byte)(_gpr.DE >> 8)); break; // LD (nn),DE
-                case 0x63: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_gpr.HL >> 0)); WriteByte(++address, (byte)(_gpr.HL >> 8)); break; // LD (nn),HL
-                case 0x73: address = ReadWord(_pc); _pc += 2; WriteByte(address, (byte)(_sp >> 0)); WriteByte(++address, (byte)(_sp >> 8)); break; // LD (nn),SP
+                case 0x43: WriteWord(ReadWord(_pc), _gpr.BC); _pc += 2; break; // LD (nn),BC
+                case 0x53: WriteWord(ReadWord(_pc), _gpr.DE); _pc += 2; break; // LD (nn),DE
+                case 0x63: WriteWord(ReadWord(_pc), _gpr.HL); _pc += 2; break; // LD (nn),HL
+                case 0x73: WriteWord(ReadWord(_pc), _sp); _pc += 2; break; // LD (nn),SP
 
                 #endregion
 
