@@ -26,7 +26,7 @@ namespace elbsms_core
 
         internal void WriteByte(ushort address)
         {
-            throw new NotImplementedException();
+            return;//throw new NotImplementedException();
         }
     }
 }

@@ -374,9 +374,9 @@ namespace elbsms_core.CPU
 
                 #region rotate and shift group
 
-                case 0x07: Rlca(); break; // RLCA
+                case 0x07: RotateLeftAccumulator(); break; // RLCA
 
-                case 0x0F: Rrca(); break; // RRCA
+                case 0x0F: RotateRightAccumulator(); break; // RRCA
 
                 #endregion
 
@@ -386,6 +386,12 @@ namespace elbsms_core.CPU
 
                 case 0xC2: JumpImmediate(!_afr.F[Z]); break; // JP NZ,nn
                 case 0xCA: JumpImmediate(_afr.F[Z]); break; // JP Z,nn
+                case 0xD2: JumpImmediate(!_afr.F[C]); break; // JP NC,nn
+                case 0xDA: JumpImmediate(_afr.F[C]); break; // JP C,nn
+                case 0xE2: JumpImmediate(!_afr.F[P]); break; // JP PO,nn
+                case 0xEA: JumpImmediate(_afr.F[P]); break; // JP PE,nn
+                case 0xF2: JumpImmediate(!_afr.F[S]); break; // JP P,nn
+                case 0xFA: JumpImmediate(_afr.F[S]); break; // JP M,nn
 
                 case 0x18: JumpRelative(); break; // JR e
 
@@ -459,7 +465,10 @@ namespace elbsms_core.CPU
 
                 #region exchange, block transfer, and search group
 
+                case 0xA0: LoadAndIncrement(); break; // LDI
                 case 0xB0: LoadIncrementAndRepeat(); break; // LDIR
+                case 0xA8: LoadAndDecrement(); break; // LDD
+                case 0xB8: LoadDecrementAndRepeat(); break; // LDDR
 
                 #endregion
 
@@ -487,17 +496,333 @@ namespace elbsms_core.CPU
                 }
             }
 
+            ushort displace(ushort address, byte displacement)
+            {
+                _clock.AddCycles(5);
+                return (ushort)(address + (sbyte)displacement);
+            }
+
             ref ushort reg = ref GetRegisterForPrefix();
 
             switch (opcode)
             {
+                #region 8-bit load group
+
+                case 0x46: _gpr.B = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD B,(IX/IY + d)
+                case 0x4E: _gpr.C = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD C,(IX/IY + d)
+                case 0x56: _gpr.D = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD D,(IX/IY + d)
+                case 0x5E: _gpr.E = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD E,(IX/IY + d)
+                case 0x66: _gpr.H = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD H,(IX/IY + d)
+                case 0x6E: _gpr.L = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD L,(IX/IY + d)
+                case 0x7E: _afr.A = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD A,(IX/IY + d)
+
+                case 0x70: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.B); break; // LD (IX/IY + d),B
+                case 0x71: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.C); break; // LD (IX/IY + d),C
+                case 0x72: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.D); break; // LD (IX/IY + d),D
+                case 0x73: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.E); break; // LD (IX/IY + d),E
+                case 0x74: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.H); break; // LD (IX/IY + d),H
+                case 0x75: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.L); break; // LD (IX/IY + d),L
+                case 0x77: WriteByte(displace(reg, ReadByte(_pc++)), _afr.A); break; // LD (IX/IY + d),A
+
+                case 0x36: WriteByte(displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break; // LD (IX/IY + d),n
+
+                #endregion
+
+                #region 16-bit load group
+
+                case 0x26: reg = (ushort)((ReadByte(_pc++) << 8) | (reg & 0x00FF)); break; // LD IX/IY H,n
+                case 0x2E: reg = (ushort)((reg & 0xFF00) | ReadByte(_pc++)); break; // LD IX/IY L,n
+
                 case 0x21: reg = ReadWord(_pc); _pc += 2; break; // LD IX/IY,nn
 
-                case 0x2A: reg = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD IX/IY,(nn)
+                case 0x2A: reg = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD IX/IY,(nn)    
+
+                case 0x22: WriteWord(ReadWord(_pc), reg); _pc += 2; break; // LD (nn),IX/IY
 
                 case 0xE5: PushWord(reg); break; // PUSH IX/IY
 
                 case 0xE1: reg = PopWord(); break; // POP IX/IY
+
+                #endregion
+
+                case 0xCB:
+                    {
+                        ushort address = displace(reg, ReadByte(_pc++));
+
+                        opcode = _bus.ReadByte(_pc++); // opcode read overlaps with the 5 displacement cycles, so _bus.ReadByte rather than ReadByte
+
+                        switch (opcode)
+                        {
+                            #region rotate and shift group
+
+                            case 0x00: goto default; //break; //
+                            case 0x01: goto default; //break; //
+                            case 0x02: goto default; //break; //
+                            case 0x03: goto default; //break; //
+                            case 0x04: goto default; //break; //
+                            case 0x05: goto default; //break; //
+                            case 0x06: WriteByte(address, RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                            case 0x07: goto default; //break; //
+                            case 0x08: goto default; //break; //
+                            case 0x09: goto default; //break; //
+                            case 0x0A: goto default; //break; //
+                            case 0x0B: goto default; //break; //
+                            case 0x0C: goto default; //break; //
+                            case 0x0D: goto default; //break; //
+                            case 0x0E: WriteByte(address, RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                            case 0x0F: goto default; //break; //
+                            case 0x10: goto default; //break; //
+                            case 0x11: goto default; //break; //
+                            case 0x12: goto default; //break; //
+                            case 0x13: goto default; //break; //
+                            case 0x14: goto default; //break; //
+                            case 0x15: goto default; //break; //
+                            case 0x16: WriteByte(address, RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                            case 0x17: goto default; //break; //
+                            case 0x18: goto default; //break; //
+                            case 0x19: goto default; //break; //
+                            case 0x1A: goto default; //break; //
+                            case 0x1B: goto default; //break; //
+                            case 0x1C: goto default; //break; //
+                            case 0x1D: goto default; //break; //
+                            case 0x1E: WriteByte(address, RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                            case 0x1F: goto default; //break; //
+                            case 0x20: goto default; //break; //
+                            case 0x21: goto default; //break; //
+                            case 0x22: goto default; //break; //
+                            case 0x23: goto default; //break; //
+                            case 0x24: goto default; //break; //
+                            case 0x25: goto default; //break; //
+                            case 0x26: WriteByte(address, ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                            case 0x27: goto default; //break; //
+                            case 0x28: goto default; //break; //
+                            case 0x29: goto default; //break; //
+                            case 0x2A: goto default; //break; //
+                            case 0x2B: goto default; //break; //
+                            case 0x2C: goto default; //break; //
+                            case 0x2D: goto default; //break; //
+                            case 0x2E: WriteByte(address, ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                            case 0x2F: goto default; //break; //
+                            case 0x30: goto default; //break; //
+                            case 0x31: goto default; //break; //
+                            case 0x32: goto default; //break; //
+                            case 0x33: goto default; //break; //
+                            case 0x34: goto default; //break; //
+                            case 0x35: goto default; //break; //
+                            case 0x36: WriteByte(address, ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                            case 0x37: goto default; //break; //
+                            case 0x38: goto default; //break; //
+                            case 0x39: goto default; //break; //
+                            case 0x3A: goto default; //break; //
+                            case 0x3B: goto default; //break; //
+                            case 0x3C: goto default; //break; //
+                            case 0x3D: goto default; //break; //
+                            case 0x3E: WriteByte(address, ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                            case 0x3F: goto default; //break; //
+
+                            #endregion
+
+                            #region bit set, reset, and test group
+
+                            case 0x40: goto default; //break; //
+                            case 0x41: goto default; //break; //
+                            case 0x42: goto default; //break; //
+                            case 0x43: goto default; //break; //
+                            case 0x44: goto default; //break; //
+                            case 0x45: goto default; //break; //
+                            case 0x46: goto default; //break; //
+                            case 0x47: goto default; //break; //
+                            case 0x48: goto default; //break; //
+                            case 0x49: goto default; //break; //
+                            case 0x4A: goto default; //break; //
+                            case 0x4B: goto default; //break; //
+                            case 0x4C: goto default; //break; //
+                            case 0x4D: goto default; //break; //
+                            case 0x4E: goto default; //break; //
+                            case 0x4F: goto default; //break; //
+                            case 0x50: goto default; //break; //
+                            case 0x51: goto default; //break; //
+                            case 0x52: goto default; //break; //
+                            case 0x53: goto default; //break; //
+                            case 0x54: goto default; //break; //
+                            case 0x55: goto default; //break; //
+                            case 0x56: goto default; //break; //
+                            case 0x57: goto default; //break; //
+                            case 0x58: goto default; //break; //
+                            case 0x59: goto default; //break; //
+                            case 0x5A: goto default; //break; //
+                            case 0x5B: goto default; //break; //
+                            case 0x5C: goto default; //break; //
+                            case 0x5D: goto default; //break; //
+                            case 0x5E: goto default; //break; //
+                            case 0x5F: goto default; //break; //
+                            case 0x60: goto default; //break; //
+                            case 0x61: goto default; //break; //
+                            case 0x62: goto default; //break; //
+                            case 0x63: goto default; //break; //
+                            case 0x64: goto default; //break; //
+                            case 0x65: goto default; //break; //
+                            case 0x66: goto default; //break; //
+                            case 0x67: goto default; //break; //
+                            case 0x68: goto default; //break; //
+                            case 0x69: goto default; //break; //
+                            case 0x6A: goto default; //break; //
+                            case 0x6B: goto default; //break; //
+                            case 0x6C: goto default; //break; //
+                            case 0x6D: goto default; //break; //
+                            case 0x6E: goto default; //break; //
+                            case 0x6F: goto default; //break; //
+                            case 0x70: goto default; //break; //
+                            case 0x71: goto default; //break; //
+                            case 0x72: goto default; //break; //
+                            case 0x73: goto default; //break; //
+                            case 0x74: goto default; //break; //
+                            case 0x75: goto default; //break; //
+                            case 0x76: goto default; //break; //
+                            case 0x77: goto default; //break; //
+                            case 0x78: goto default; //break; //
+                            case 0x79: goto default; //break; //
+                            case 0x7A: goto default; //break; //
+                            case 0x7B: goto default; //break; //
+                            case 0x7C: goto default; //break; //
+                            case 0x7D: goto default; //break; //
+                            case 0x7E: goto default; //break; //
+                            case 0x7F: goto default; //break; //
+                            case 0x80: goto default; //break; //
+                            case 0x81: goto default; //break; //
+                            case 0x82: goto default; //break; //
+                            case 0x83: goto default; //break; //
+                            case 0x84: goto default; //break; //
+                            case 0x85: goto default; //break; //
+                            case 0x86: goto default; //break; //
+                            case 0x87: goto default; //break; //
+                            case 0x88: goto default; //break; //
+                            case 0x89: goto default; //break; //
+                            case 0x8A: goto default; //break; //
+                            case 0x8B: goto default; //break; //
+                            case 0x8C: goto default; //break; //
+                            case 0x8D: goto default; //break; //
+                            case 0x8E: goto default; //break; //
+                            case 0x8F: goto default; //break; //
+                            case 0x90: goto default; //break; //
+                            case 0x91: goto default; //break; //
+                            case 0x92: goto default; //break; //
+                            case 0x93: goto default; //break; //
+                            case 0x94: goto default; //break; //
+                            case 0x95: goto default; //break; //
+                            case 0x96: goto default; //break; //
+                            case 0x97: goto default; //break; //
+                            case 0x98: goto default; //break; //
+                            case 0x99: goto default; //break; //
+                            case 0x9A: goto default; //break; //
+                            case 0x9B: goto default; //break; //
+                            case 0x9C: goto default; //break; //
+                            case 0x9D: goto default; //break; //
+                            case 0x9E: goto default; //break; //
+                            case 0x9F: goto default; //break; //
+                            case 0xA0: goto default; //break; //
+                            case 0xA1: goto default; //break; //
+                            case 0xA2: goto default; //break; //
+                            case 0xA3: goto default; //break; //
+                            case 0xA4: goto default; //break; //
+                            case 0xA5: goto default; //break; //
+                            case 0xA6: goto default; //break; //
+                            case 0xA7: goto default; //break; //
+                            case 0xA8: goto default; //break; //
+                            case 0xA9: goto default; //break; //
+                            case 0xAA: goto default; //break; //
+                            case 0xAB: goto default; //break; //
+                            case 0xAC: goto default; //break; //
+                            case 0xAD: goto default; //break; //
+                            case 0xAE: goto default; //break; //
+                            case 0xAF: goto default; //break; //
+                            case 0xB0: goto default; //break; //
+                            case 0xB1: goto default; //break; //
+                            case 0xB2: goto default; //break; //
+                            case 0xB3: goto default; //break; //
+                            case 0xB4: goto default; //break; //
+                            case 0xB5: goto default; //break; //
+                            case 0xB6: goto default; //break; //
+                            case 0xB7: goto default; //break; //
+                            case 0xB8: goto default; //break; //
+                            case 0xB9: goto default; //break; //
+                            case 0xBA: goto default; //break; //
+                            case 0xBB: goto default; //break; //
+                            case 0xBC: goto default; //break; //
+                            case 0xBD: goto default; //break; //
+                            case 0xBE: goto default; //break; //
+                            case 0xBF: goto default; //break; //
+                            case 0xC0: goto default; //break; //
+                            case 0xC1: goto default; //break; //
+                            case 0xC2: goto default; //break; //
+                            case 0xC3: goto default; //break; //
+                            case 0xC4: goto default; //break; //
+                            case 0xC5: goto default; //break; //
+                            case 0xC6: goto default; //break; //
+                            case 0xC7: goto default; //break; //
+                            case 0xC8: goto default; //break; //
+                            case 0xC9: goto default; //break; //
+                            case 0xCA: goto default; //break; //
+                            case 0xCB: goto default; //break; //
+                            case 0xCC: goto default; //break; //
+                            case 0xCD: goto default; //break; //
+                            case 0xCE: goto default; //break; //
+                            case 0xCF: goto default; //break; //
+                            case 0xD0: goto default; //break; //
+                            case 0xD1: goto default; //break; //
+                            case 0xD2: goto default; //break; //
+                            case 0xD3: goto default; //break; //
+                            case 0xD4: goto default; //break; //
+                            case 0xD5: goto default; //break; //
+                            case 0xD6: goto default; //break; //
+                            case 0xD7: goto default; //break; //
+                            case 0xD8: goto default; //break; //
+                            case 0xD9: goto default; //break; //
+                            case 0xDA: goto default; //break; //
+                            case 0xDB: goto default; //break; //
+                            case 0xDC: goto default; //break; //
+                            case 0xDD: goto default; //break; //
+                            case 0xDE: goto default; //break; //
+                            case 0xDF: goto default; //break; //
+                            case 0xE0: goto default; //break; //
+                            case 0xE1: goto default; //break; //
+                            case 0xE2: goto default; //break; //
+                            case 0xE3: goto default; //break; //
+                            case 0xE4: goto default; //break; //
+                            case 0xE5: goto default; //break; //
+                            case 0xE6: goto default; //break; //
+                            case 0xE7: goto default; //break; //
+                            case 0xE8: goto default; //break; //
+                            case 0xE9: goto default; //break; //
+                            case 0xEA: goto default; //break; //
+                            case 0xEB: goto default; //break; //
+                            case 0xEC: goto default; //break; //
+                            case 0xED: goto default; //break; //
+                            case 0xEE: goto default; //break; //
+                            case 0xEF: goto default; //break; //
+                            case 0xF0: goto default; //break; //
+                            case 0xF1: goto default; //break; //
+                            case 0xF2: goto default; //break; //
+                            case 0xF3: goto default; //break; //
+                            case 0xF4: goto default; //break; //
+                            case 0xF5: goto default; //break; //
+                            case 0xF6: goto default; //break; //
+                            case 0xF7: goto default; //break; //
+                            case 0xF8: goto default; //break; //
+                            case 0xF9: goto default; //break; //
+                            case 0xFA: goto default; //break; //
+                            case 0xFB: goto default; //break; //
+                            case 0xFC: goto default; //break; //
+                            case 0xFD: goto default; //break; //
+                            case 0xFE: goto default; //break; //
+                            case 0xFF: goto default; //break; //
+
+                            #endregion
+
+                            default:
+                                throw new NotImplementedException($"Unimplemented opcode: 0x{prefix:X2} CB {opcode:X2} at address 0x{_pc - 4:X4}");
+                        }
+                    }; break;
 
                 default:
                     throw new NotImplementedException($"Unimplemented opcode: 0x{prefix:X2} {opcode:X2} at address 0x{_pc - 2:X4}");
@@ -514,6 +839,11 @@ namespace elbsms_core.CPU
 
             _clock.AddCycles(2);
 
+            var temp = data + _afr.A;
+
+            _afr.F[B3] = temp.Bit(3);
+            _afr.F[B5] = temp.Bit(1);
+
             _afr.F[H | N] = false;
             _afr.F[V] = --_gpr.BC != 0;
         }
@@ -521,6 +851,35 @@ namespace elbsms_core.CPU
         private void LoadIncrementAndRepeat()
         {
             LoadAndIncrement();
+
+            if (_gpr.BC == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void LoadAndDecrement()
+        {
+            byte data = ReadByte(_gpr.HL--);
+
+            WriteByte(_gpr.DE--, data);
+
+            _clock.AddCycles(2);
+
+            var temp = data + _afr.A;
+
+            _afr.F[B3] = temp.Bit(3);
+            _afr.F[B5] = temp.Bit(1);
+
+            _afr.F[H | N] = false;
+            _afr.F[V] = --_gpr.BC != 0;
+        }
+
+        private void LoadDecrementAndRepeat()
+        {
+            LoadAndDecrement();
 
             if (_gpr.BC == 0)
                 return;
@@ -542,7 +901,7 @@ namespace elbsms_core.CPU
 
             flags[S] = (result & 0x80) == 0x80;
             flags[Z] = result == 0;
-            flags[P] = EvenParity(result);
+            flags[P] = result.EvenParity();
 
             return ((byte)result, flags);
         }
@@ -596,7 +955,7 @@ namespace elbsms_core.CPU
 
             flags[S] = (result & 0x80) == 0x80;
             flags[Z] = result == 0;
-            flags[P] = EvenParity(result);
+            flags[P] = result.EvenParity();
 
             return ((byte)result, flags);
         }
@@ -609,7 +968,7 @@ namespace elbsms_core.CPU
 
             flags[S] = (result & 0x80) == 0x80;
             flags[Z] = result == 0;
-            flags[P] = EvenParity(result);
+            flags[P] = result.EvenParity();
 
             return ((byte)result, flags);
         }
@@ -683,34 +1042,179 @@ namespace elbsms_core.CPU
 
         #region rotate and shift group handlers
 
-        private void Rlca()
+        private void RotateLeftAccumulator()
         {
             // reset affected flags
             _afr.F[H | N | C] = false;
 
-            int c = (_afr.A >> 7) & 1;
+            bool b7 = _afr.A.Bit(7);
 
-            _afr.A = (byte)((_afr.A << 1) | c);
+            _afr.A = (byte)((_afr.A << 1) | (b7 ? 1 : 0));
 
-            if (c == 1)
-            {
-                _afr.F |= C;
-            }
+            _afr.F[B5] = _afr.A.Bit(5);
+            _afr.F[B3] = _afr.A.Bit(3);
+            _afr.F[C] = b7;
         }
 
-        private void Rrca()
+        private byte RotateLeft(byte b)
+        {
+            StatusFlags flags = default;
+
+            bool b7 = b.Bit(7);
+
+            byte result = (byte)((b << 1) | (b7 ? 1 : 0));
+
+            flags[S] = result.Bit(7);
+            flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b7;
+
+            _afr.F = flags;
+
+            return result;
+        }
+
+        private byte RotateLeftThroughCarry(byte b)
+        {
+            StatusFlags flags = default;
+
+            byte result = (byte)((b << 1) | (_afr.F[C] ? 1 : 0));
+
+            flags[S] = result.Bit(7);
+            flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b.Bit(7);
+
+            _afr.F = flags;
+
+            return result;
+        }
+
+        private void RotateRightAccumulator()
         {
             // reset affected flags
             _afr.F[H | N | C] = false;
 
-            int c = _afr.A & 1;
+            bool b0 = _afr.A.Bit(0);
 
-            _afr.A = (byte)((_afr.A >> 1) | (c << 7));
+            _afr.A = (byte)((_afr.A >> 1) | (b0 ? 0x80 : 0));
 
-            if (c == 1)
-            {
-                _afr.F |= C;
-            }
+            _afr.F[B5] = _afr.A.Bit(5);
+            _afr.F[B3] = _afr.A.Bit(3);
+            _afr.F[C] = b0;
+        }
+
+        private byte RotateRight(byte b)
+        {
+            StatusFlags flags = default;
+
+            bool b0 = b.Bit(0);
+
+            byte result = (byte)((b >> 1) | (b0 ? 0x80 : 0));
+
+            flags[S] = result.Bit(7);
+            flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b0;
+
+            _afr.F = flags;
+
+            return result;
+        }
+
+        private byte RotateRightThroughCarry(byte b)
+        {
+            StatusFlags flags = default;
+
+            byte result = (byte)((b >> 1) | (_afr.F[C] ? 0x80 : 0));
+
+            flags[S] = result.Bit(7);
+            flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b.Bit(0);
+
+            _afr.F = flags;
+
+            return result;
+        }
+
+        private byte ShiftLeftArithmetic(byte b)
+        {
+            StatusFlags flags = default;
+
+            byte result = (byte)(b << 1);
+
+            flags[S] = result.Bit(7);
+            flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b.Bit(7);
+
+            _afr.F = flags;
+
+            return result;
+        }
+
+        private byte ShiftLeftInsertingOne(byte b)
+        {
+            StatusFlags flags = default;
+
+            byte result = (byte)((b << 1) | 1);
+
+            flags[S] = result.Bit(7);
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b.Bit(7);
+
+            _afr.F = flags;
+
+            return result;
+        }
+
+        private byte ShiftRightArithmetic(byte b)
+        {
+            StatusFlags flags = default;
+
+            byte result = (byte)((sbyte)b >> 1);
+
+            flags[S] = result.Bit(7);
+            flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b.Bit(0);
+
+            _afr.F = flags;
+
+            return result;
+        }
+
+        private byte ShiftRightLogical(byte b)
+        {
+            StatusFlags flags = default;
+
+            byte result = (byte)(b >> 1);
+
+            flags[S] = result.Bit(7);
+            flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
+            flags[P] = result.EvenParity();
+            flags[C] = b.Bit(0);
+
+            _afr.F = flags;
+
+            return result;
         }
 
         #endregion
@@ -796,14 +1300,40 @@ namespace elbsms_core.CPU
         }
 
         #endregion
+    }
 
-        private static bool EvenParity(int v)
+    static class IntExtensions
+    {
+        internal static bool EvenParity(this byte v)
+        {
+            v ^= (byte)(v >> 4);
+            v ^= (byte)(v >> 2);
+            v ^= (byte)(v >> 1);
+
+            return v == 0;
+        }
+
+        internal static bool EvenParity(this int v)
         {
             v ^= v >> 4;
             v ^= v >> 2;
             v ^= v >> 1;
 
             return v == 0;
+        }
+
+        internal static bool Bit(this byte v, int bit)
+        {
+            int mask = 1 << bit;
+
+            return (v & mask) == mask;
+        }
+
+        internal static bool Bit(this int v, int bit)
+        {
+            int mask = 1 << bit;
+
+            return (v & mask) == mask;
         }
     }
 }

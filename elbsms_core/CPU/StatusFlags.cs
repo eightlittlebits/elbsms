@@ -6,9 +6,9 @@ namespace elbsms_core.CPU
     {
         public const int S = 0b1000_0000;
         public const int Z = 0b0100_0000;
-        //public const int B5 = 0b0010_0000;
+        public const int B5 = 0b0010_0000;
         public const int H = 0b0001_0000;
-        //public const int B3 = 0b0000_1000;
+        public const int B3 = 0b0000_1000;
         public const int P = 0b0000_0100;
         public const int V = 0b0000_0100;
         public const int N = 0b0000_0010;
