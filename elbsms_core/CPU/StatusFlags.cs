@@ -45,14 +45,14 @@ namespace elbsms_core.CPU
         {
             StringBuilder sb = new StringBuilder(8);
 
-            sb.Append(this[S] ? 'S' : 's');
-            sb.Append(this[Z] ? 'Z' : 'z');
-            //sb.Append(this[S] ? 'S' : 's');
-            sb.Append(this[H] ? 'H' : 'h');
-            //sb.Append(this[S] ? 'S' : 's');
-            sb.Append(this[P] ? 'P' : 'p');
-            sb.Append(this[N] ? 'N' : 'n');
-            sb.Append(this[C] ? 'C' : 'c');
+            sb.Append(this[S] ? 'S' : '-');
+            sb.Append(this[Z] ? 'Z' : '-');
+            sb.Append(this[S] ? '5' : '-');
+            sb.Append(this[H] ? 'H' : '-');
+            sb.Append(this[S] ? '3' : '-');
+            sb.Append(this[P] ? 'P' : '-');
+            sb.Append(this[N] ? 'N' : '-');
+            sb.Append(this[C] ? 'C' : '-');
 
             return sb.ToString();
         }
