@@ -357,10 +357,10 @@ namespace elbsms_core.CPU
 
                 #region 16-bit arithmetic group
 
-                case 0x09: _gpr.HL = Add16Bit(_gpr.HL, _gpr.BC); break; // ADD HL,BC
-                case 0x19: _gpr.HL = Add16Bit(_gpr.HL, _gpr.DE); break; // ADD HL,DE
-                case 0x29: _gpr.HL = Add16Bit(_gpr.HL, _gpr.HL); break; // ADD HL,HL
-                case 0x39: _gpr.HL = Add16Bit(_gpr.HL, _sp); break; // ADD HL,SP
+                case 0x09: AddHL(_gpr.BC); break; // ADD HL,BC
+                case 0x19: AddHL(_gpr.DE); break; // ADD HL,DE
+                case 0x29: AddHL(_gpr.HL); break; // ADD HL,HL
+                case 0x39: AddHL(_sp); break; // ADD HL,SP
 
                 case 0x03: _clock.AddCycles(2); _gpr.BC++; break; // INC BC
                 case 0x13: _clock.AddCycles(2); _gpr.DE++; break; // INC DE
@@ -1024,11 +1024,8 @@ namespace elbsms_core.CPU
 
         #region 16-bit arithmetic group
 
-        private ushort Add16Bit(ushort a, ushort b, bool carry = false)
+        private (ushort, StatusFlags) Add16Bit(ushort a, ushort b, bool carry = false)
         {
-            // reset affected flags
-            _afr.F[H | N | C] = false;
-
             byte hi, lo;
             StatusFlags flags = default;
 
@@ -1038,10 +1035,23 @@ namespace elbsms_core.CPU
             _clock.AddCycles(3);
             (hi, flags) = Add8Bit((byte)(a >> 8), (byte)(b >> 8), flags[C]);
 
-            // apply masked result flags to flags register
-            _afr.F |= flags & (H | N | C);
+            ushort result = (ushort)(hi << 8 | lo);
 
-            return (ushort)(hi << 8 | lo);
+            flags[Z] = result == 0;
+
+            return ((ushort)(hi << 8 | lo), flags);
+        }
+
+        private void AddHL(ushort value)
+        {
+            // reset affected flags
+            _afr.F[B5 | H | B3 | N | C] = false;
+
+            var (result, flags) = Add16Bit(_gpr.HL, value);
+
+            _afr.F |= flags & (B5 | H | B3 | N | C);
+
+            _gpr.HL = result;
         }
 
         #endregion
