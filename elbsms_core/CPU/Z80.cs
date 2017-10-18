@@ -280,6 +280,8 @@ namespace elbsms_core.CPU
 
                 #region 8-bit arithmetic group
 
+                case 0xC6: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_pc++)); break;  // ADD A,n
+
                 case 0xA0: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.B); break;               // AND B
                 case 0xA1: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.C); break;               // AND C
                 case 0xA2: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.D); break;               // AND D
@@ -928,19 +930,12 @@ namespace elbsms_core.CPU
 
             StatusFlags flags = default;
 
-            // sign 
             flags[S] = (result & 0x80) == 0x80;
-
-            // zero
             flags[Z] = result == 0;
-
-            // half carry
+            flags[B5] = result.Bit(5);
             flags[H] = (carryIn & 0x10) == 0x10;
-
-            // overflow
+            flags[B3] = result.Bit(3);
             flags[V] = ((carryIn >> 7) & 0x01) != (carryIn >> 8);
-
-            // carry
             flags[C] = (carryIn & 0x100) == 0x100;
 
             return ((byte)result, flags);
