@@ -914,6 +914,8 @@ namespace elbsms_core.CPU
 
             flags[S] = (result & 0x80) == 0x80;
             flags[Z] = result == 0;
+            flags[B5] = result.Bit(5);
+            flags[B3] = result.Bit(3);
             flags[P] = result.EvenParity();
 
             return ((byte)result, flags);
