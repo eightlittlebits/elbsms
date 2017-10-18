@@ -47,9 +47,9 @@ namespace elbsms_core.CPU
 
             sb.Append(this[S] ? 'S' : '-');
             sb.Append(this[Z] ? 'Z' : '-');
-            sb.Append(this[S] ? '5' : '-');
+            sb.Append(this[B5] ? '5' : '-');
             sb.Append(this[H] ? 'H' : '-');
-            sb.Append(this[S] ? '3' : '-');
+            sb.Append(this[B3] ? '3' : '-');
             sb.Append(this[P] ? 'P' : '-');
             sb.Append(this[N] ? 'N' : '-');
             sb.Append(this[C] ? 'C' : '-');
