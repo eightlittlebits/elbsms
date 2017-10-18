@@ -8,6 +8,8 @@ namespace elbsms_core.CPU
 
     class Z80
     {
+        private static byte[] FlagsSZP;
+
         private SystemClock _clock;
         private Bus _bus;
 
@@ -33,6 +35,38 @@ namespace elbsms_core.CPU
 #pragma warning restore 0414
 
 #pragma warning restore 0169
+
+        static Z80()
+        {
+            InitStatusTables();
+        }
+
+        private static void InitStatusTables()
+        {
+            FlagsSZP = new byte[0x100];
+
+            for (int i = 0; i < 0x100; i++)
+            {
+                int sf, zf, b5, b3, pf;
+
+                sf = i.Bit(7) ? S : 0;
+                zf = i == 0 ? Z : 0;
+                b5 = i & B5;
+                b3 = i & B3;
+                pf = evenParity(i) ? P : 0;
+
+                FlagsSZP[i] = (byte)(sf | zf | b5 | b3 | pf);
+            }
+
+            bool evenParity(int v)
+            {
+                v ^= v >> 4;
+                v ^= v >> 2;
+                v ^= v >> 1;
+
+                return !((v & 1) == 1);
+            }
+        }
 
         public Z80(SystemClock clock, Bus bus)
         {
@@ -910,13 +944,7 @@ namespace elbsms_core.CPU
         {
             int result = a & b;
 
-            StatusFlags flags = H;
-
-            flags[S] = (result & 0x80) == 0x80;
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result] | H;
 
             return ((byte)result, flags);
         }
@@ -930,13 +958,9 @@ namespace elbsms_core.CPU
 
             result &= 0xFF;
 
-            StatusFlags flags = default;
+            StatusFlags flags = FlagsSZP[result];
 
-            flags[S] = (result & 0x80) == 0x80;
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
             flags[H] = (carryIn & 0x10) == 0x10;
-            flags[B3] = result.Bit(3);
             flags[V] = ((carryIn >> 7) & 0x01) != (carryIn >> 8);
             flags[C] = (carryIn & 0x100) == 0x100;
 
@@ -959,11 +983,7 @@ namespace elbsms_core.CPU
         {
             var result = a | b;
 
-            StatusFlags flags = default;
-
-            flags[S] = (result & 0x80) == 0x80;
-            flags[Z] = result == 0;
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
 
             return ((byte)result, flags);
         }
@@ -972,11 +992,7 @@ namespace elbsms_core.CPU
         {
             var result = a ^ b;
 
-            StatusFlags flags = default;
-
-            flags[S] = (result & 0x80) == 0x80;
-            flags[Z] = result == 0;
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
 
             return ((byte)result, flags);
         }
@@ -1076,17 +1092,11 @@ namespace elbsms_core.CPU
 
         private byte RotateLeft(byte b)
         {
-            StatusFlags flags = default;
-
             bool b7 = b.Bit(7);
 
             byte result = (byte)((b << 1) | (b7 ? 1 : 0));
 
-            flags[S] = result.Bit(7);
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b7;
 
             _afr.F = flags;
@@ -1096,15 +1106,9 @@ namespace elbsms_core.CPU
 
         private byte RotateLeftThroughCarry(byte b)
         {
-            StatusFlags flags = default;
-
             byte result = (byte)((b << 1) | (_afr.F[C] ? 1 : 0));
 
-            flags[S] = result.Bit(7);
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b.Bit(7);
 
             _afr.F = flags;
@@ -1128,17 +1132,11 @@ namespace elbsms_core.CPU
 
         private byte RotateRight(byte b)
         {
-            StatusFlags flags = default;
-
             bool b0 = b.Bit(0);
 
             byte result = (byte)((b >> 1) | (b0 ? 0x80 : 0));
 
-            flags[S] = result.Bit(7);
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b0;
 
             _afr.F = flags;
@@ -1148,15 +1146,9 @@ namespace elbsms_core.CPU
 
         private byte RotateRightThroughCarry(byte b)
         {
-            StatusFlags flags = default;
-
             byte result = (byte)((b >> 1) | (_afr.F[C] ? 0x80 : 0));
 
-            flags[S] = result.Bit(7);
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b.Bit(0);
 
             _afr.F = flags;
@@ -1166,15 +1158,9 @@ namespace elbsms_core.CPU
 
         private byte ShiftLeftArithmetic(byte b)
         {
-            StatusFlags flags = default;
-
             byte result = (byte)(b << 1);
 
-            flags[S] = result.Bit(7);
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b.Bit(7);
 
             _afr.F = flags;
@@ -1184,14 +1170,9 @@ namespace elbsms_core.CPU
 
         private byte ShiftLeftInsertingOne(byte b)
         {
-            StatusFlags flags = default;
-
             byte result = (byte)((b << 1) | 1);
 
-            flags[S] = result.Bit(7);
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b.Bit(7);
 
             _afr.F = flags;
@@ -1201,15 +1182,9 @@ namespace elbsms_core.CPU
 
         private byte ShiftRightArithmetic(byte b)
         {
-            StatusFlags flags = default;
-
             byte result = (byte)((sbyte)b >> 1);
 
-            flags[S] = result.Bit(7);
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b.Bit(0);
 
             _afr.F = flags;
@@ -1219,15 +1194,9 @@ namespace elbsms_core.CPU
 
         private byte ShiftRightLogical(byte b)
         {
-            StatusFlags flags = default;
-
             byte result = (byte)(b >> 1);
 
-            flags[S] = result.Bit(7);
-            flags[Z] = result == 0;
-            flags[B5] = result.Bit(5);
-            flags[B3] = result.Bit(3);
-            flags[P] = result.EvenParity();
+            StatusFlags flags = FlagsSZP[result];
             flags[C] = b.Bit(0);
 
             _afr.F = flags;
@@ -1322,24 +1291,6 @@ namespace elbsms_core.CPU
 
     static class IntExtensions
     {
-        internal static bool EvenParity(this byte v)
-        {
-            v ^= (byte)(v >> 4);
-            v ^= (byte)(v >> 2);
-            v ^= (byte)(v >> 1);
-
-            return v == 0;
-        }
-
-        internal static bool EvenParity(this int v)
-        {
-            v ^= v >> 4;
-            v ^= v >> 2;
-            v ^= v >> 1;
-
-            return v == 0;
-        }
-
         internal static bool Bit(this byte v, int bit)
         {
             int mask = 1 << bit;
