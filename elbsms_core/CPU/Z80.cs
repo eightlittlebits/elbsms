@@ -545,6 +545,15 @@ namespace elbsms_core.CPU
 
                 #endregion
 
+                #region 16-bit arithmetic group
+
+                case 0x23: reg++; _clock.AddCycles(2); break; // INC IX/IY
+                case 0x2B: reg--; _clock.AddCycles(2); break; // DEC IX/IY
+
+                #endregion
+
+                #region bit opcodes
+
                 case 0xCB:
                     {
                         ushort address = displace(reg, ReadByte(_pc++));
@@ -823,6 +832,8 @@ namespace elbsms_core.CPU
                                 throw new NotImplementedException($"Unimplemented opcode: 0x{prefix:X2} CB {opcode:X2} at address 0x{_pc - 4:X4}");
                         }
                     }; break;
+
+                #endregion
 
                 default:
                     throw new NotImplementedException($"Unimplemented opcode: 0x{prefix:X2} {opcode:X2} at address 0x{_pc - 2:X4}");
