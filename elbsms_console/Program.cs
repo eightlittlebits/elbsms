@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using elbsms_core;
 
 namespace elbsms_console
@@ -19,10 +20,18 @@ namespace elbsms_console
 
             MasterSystem masterSystem = new MasterSystem(cartridge);
 
+            Console.WriteLine($"Starting: {DateTime.Now}");
+            Console.WriteLine();
+
+            ulong instructionCount = 0;
+
+            var sw = Stopwatch.StartNew();
+
             try
             {
                 while (true)
                 {
+                    instructionCount++;
                     masterSystem.SingleStep();
                 }
             }
@@ -30,6 +39,12 @@ namespace elbsms_console
             {
                 Console.WriteLine(ex.Message);
             }
+
+            sw.Stop();
+
+            Console.WriteLine();
+            Console.WriteLine($"Finished: {DateTime.Now}");
+            Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms Instructions: {instructionCount}, Instructions/ms: {instructionCount/(double)sw.ElapsedMilliseconds}");
         }
     }
 }
