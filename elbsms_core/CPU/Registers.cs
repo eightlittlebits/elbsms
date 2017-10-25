@@ -25,4 +25,20 @@ namespace elbsms_core.CPU
         [FieldOffset(5)] public byte H;
         [FieldOffset(4)] public byte L;
     }
+
+    [StructLayout(LayoutKind.Explicit)]
+    struct PairedRegister
+    {
+        [FieldOffset(0)] public ushort word;
+        [FieldOffset(1)] public byte hi;
+        [FieldOffset(0)] public byte lo;
+
+        public PairedRegister(ushort i) : this()
+        {
+            word = i;
+        }
+
+        public static implicit operator ushort(PairedRegister r) => r.word;
+        public static implicit operator PairedRegister(ushort i) => new PairedRegister(i);
+    }
 }

@@ -23,7 +23,9 @@ namespace elbsms_core.CPU
 
 #pragma warning disable 0169
 
-        private ushort _pc, _sp, _ix, _iy;
+        private ushort _pc, _sp;
+            
+        private PairedRegister _ix, _iy;
 
         private byte _i, _r;
 
@@ -528,7 +530,7 @@ namespace elbsms_core.CPU
 
         private void ExecutePrefixedOpcode(byte prefix, byte opcode)
         {
-            ref ushort GetRegisterForPrefix()
+            ref PairedRegister GetRegisterForPrefix()
             {
                 switch (prefix)
                 {
@@ -545,7 +547,7 @@ namespace elbsms_core.CPU
                 return (ushort)(address + (sbyte)displacement);
             }
 
-            ref ushort reg = ref GetRegisterForPrefix();
+            ref PairedRegister reg = ref GetRegisterForPrefix();
 
             switch (opcode)
             {
