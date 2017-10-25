@@ -98,11 +98,18 @@ namespace elbsms_core.CPU
             _gpr = _gpRegisters[_activeGPRegisters];
         }
 
+        private void IncrementMemoryRefreshRegister()
+        {
+            // only the low 7 bits are incremented, high bit preserved
+            _r = (byte)(((_r + 1) & 0x7F) | (_r & 0x80));
+        }
+
         #region memory access
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte ReadOpcode(ushort address)
         {
+            IncrementMemoryRefreshRegister();
             byte opcode = _bus.ReadByte(address);
             _clock.AddCycles(4);
             return opcode;
