@@ -35,6 +35,10 @@ namespace elbsms_console
                     masterSystem.SingleStep();
                 }
             }
+            catch (InfiniteLoopException)
+            {
+
+            }
             catch (NotImplementedException ex)
             {
                 Console.WriteLine(ex.Message);

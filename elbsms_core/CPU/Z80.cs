@@ -935,7 +935,14 @@ namespace elbsms_core.CPU
 
         private void JumpImmediate()
         {
-            _pc = ReadWord(_pc);
+            ushort address = ReadWord(_pc);
+
+            if (address == _pc - 1)
+            {
+                throw new InfiniteLoopException();
+            }
+
+            _pc = address;
         }
 
         private void JumpImmediate(bool condition)
