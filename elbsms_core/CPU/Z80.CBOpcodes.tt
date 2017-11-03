@@ -1,0 +1,230 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+
+
+
+#>
+using System;
+
+namespace elbsms_core.CPU
+{
+    using static StatusFlags;
+
+    partial class Z80
+    {
+        private void ExecuteCBPrefixedOpcode(byte opcode)
+        {
+            switch (opcode)
+            {
+                #region rotate and shift group
+<#
+for (uint i = 0; i < 0x40; i++)
+{
+    if (i % 0x08 == 0)
+    {
+        WriteLine(string.Empty);
+    }
+#>
+                case 0x<#= $"{i:X2}" #>: <#= RotateShiftOp(i) #>
+<#
+}
+#>
+
+                #endregion
+
+                #region bit set, reset, and test group
+<#
+for (uint i = 0x40; i < 0x100; i++)
+{
+    if (i % 0x08 == 0)
+    {
+        WriteLine(string.Empty);
+    }
+#>
+                case 0x<#= $"{i:X2}" #>: <#= BitOp(i) #>
+<#
+}
+#>
+
+                #endregion
+
+                default:
+                    throw new NotImplementedException($"Unimplemented opcode: 0xCB {opcode:X2} at address 0x{_pc - 2:X4}");
+            }
+        }
+
+        private void ExecuteDisplacedCBPrefixedOpcode(ushort address, byte opcode)
+        {
+            switch (opcode)
+            {
+                #region rotate and shift group
+<#
+for (uint i = 0; i < 0x40; i++)
+{
+    if (i % 0x08 == 0)
+    {
+        WriteLine(string.Empty);
+    }
+#>
+                case 0x<#= $"{i:X2}" #>: <#= RotateShiftOpDisplaced(i) #>
+<#
+}
+#>
+
+                #endregion
+
+                #region bit set, reset, and test group
+<#
+for (uint i = 0x40; i < 0x100; i++)
+{
+    if (i % 0x08 == 0)
+    {
+        WriteLine(string.Empty);
+    }
+#>
+                case 0x<#= $"{i:X2}" #>: <#= BitOpDisplaced(i) #>
+<#
+}
+#>
+
+                #endregion
+
+                default:
+                    throw new NotImplementedException($"Unimplemented opcode: 0xCB {opcode:X2} at address 0x{_pc - 2:X4}");
+            }
+        }
+
+        #region bit set, reset, and test group handlers
+
+        private StatusFlags TestBit(byte b, int bit)
+        {
+            var (_, flags) = And8Bit(b, (byte)(1 << bit));
+
+            return flags | (_afr.F & C);
+        }
+
+        private StatusFlags TestBitMemory(ushort address, int bit)
+        {
+            var (_, flags) = And8Bit(ReadByte(address), (byte)(1 << bit));
+
+            flags[B5 | B3] = false;
+            
+            flags |= (_memPtr.hi & (B5 | B3));
+
+            return flags | (_afr.F & C);
+        }
+
+        private static byte SetBit(byte b, int bit)
+        {
+            return (byte)(b | (1 << bit));
+        }
+
+        private static byte ResetBit(byte b, int bit)
+        {
+            return (byte)(b & ~(1 << bit));
+        }
+
+        #endregion
+    }
+}
+<#+
+
+private string[] _regName = new [] { "B", "C", "D", "E", "H", "L", "(HL)", "A" };
+private string[] _register = new [] { "_gpr.B", "_gpr.C", "_gpr.D", "_gpr.E", "_gpr.H", "_gpr.L", "ReadByte(_gpr.HL)", "_afr.A" };
+
+private string RotateShiftOp(uint opcode)
+{
+    var x = (opcode >> 6) & 0x03;
+    var y = (opcode >> 3) & 0x07;
+    var z = (opcode >> 0) & 0x07;
+
+    string[] rotateShiftMnemonic = new [] { "RLC", "RRC", "RL", "RR", "SLA", "SRA", "SLL", "SRL" };
+    string[] rotateShiftOperation = new [] { "RotateLeft", "RotateRight", "RotateLeftThroughCarry", "RotateRightThroughCarry",
+                                             "ShiftLeftArithmetic", "ShiftRightArithmetic", "ShiftLeftInsertingOne", "ShiftRightLogical" };
+    
+    if (z != 6)
+    {
+        return $"{_register[z]} = {rotateShiftOperation[y]}({_register[z]}); break; // {rotateShiftMnemonic[y]} {_regName[z]}";
+    }
+    else
+    {
+        return $"WriteByte(_gpr.HL, {rotateShiftOperation[y]}(ReadByte(_gpr.HL))); break; // {rotateShiftMnemonic[y]} {_regName[z]}";
+    }
+}
+
+private string RotateShiftOpDisplaced(uint opcode)
+{
+    var x = (opcode >> 6) & 0x03;
+    var y = (opcode >> 3) & 0x07;
+    var z = (opcode >> 0) & 0x07;
+
+    string[] rotateShiftMnemonic = new [] { "RLC", "RRC", "RL", "RR", "SLA", "SRA", "SLL", "SRL" };
+    string[] rotateShiftOperation = new [] { "RotateLeft", "RotateRight", "RotateLeftThroughCarry", "RotateRightThroughCarry",
+                                             "ShiftLeftArithmetic", "ShiftRightArithmetic", "ShiftLeftInsertingOne", "ShiftRightLogical" };
+    
+    if (z != 6)
+    {
+        return $"WriteByte(address, ({_register[z]} = {rotateShiftOperation[y]}(ReadByte(address)))); _clock.AddCycles(1); break; // {rotateShiftMnemonic[y]} (IX/IY + d)";
+    }
+    else
+    {
+        return $"WriteByte(address, {rotateShiftOperation[y]}(ReadByte(address))); _clock.AddCycles(1); break; // {rotateShiftMnemonic[y]} (IX/IY + d)";
+    }
+}
+
+private string BitOp(uint opcode)
+{
+    uint x = (opcode >> 6) & 0x03;
+    var y = (opcode >> 3) & 0x07;
+    var z = (opcode >> 0) & 0x07;
+
+    string[] bitMnemonic = new [] { "", "BIT", "RES", "SET" };
+    string[] bitOperation = new [] { "TestBit", "ResetBit", "SetBit" };
+
+    if (x == 1 && z != 6)
+    {
+        return $"_afr.F = TestBit({_register[z]}, {y}) | (_afr.F & C); break; // {bitMnemonic[x]} {y},{_regName[z]}";
+    }
+	else if (x == 1 && z == 6)
+    {
+        return $"_afr.F = TestBitMemory(_gpr.HL, {y}); break; // {bitMnemonic[x]} {y},{_regName[z]}";
+    }
+    else if (z != 6)
+    {
+        return $"{_register[z]} = {bitOperation[x-1]}({_register[z]}, {y}); break; // {bitMnemonic[x]} {y},{_regName[z]}";
+    }
+    else
+    {
+        return $"WriteByte(_gpr.HL, {bitOperation[x-1]}(ReadByte(_gpr.HL), {y})); break; // {bitMnemonic[x]} {y},{_regName[z]}";
+    }
+}
+
+private string BitOpDisplaced(uint opcode)
+{
+    uint x = (opcode >> 6) & 0x03;
+    var y = (opcode >> 3) & 0x07;
+    var z = (opcode >> 0) & 0x07;
+
+    string[] bitMnemonic = new [] { "", "BIT", "RES", "SET" };
+    string[] bitOperation = new [] { "TestBit", "ResetBit", "SetBit" };
+
+    if (x == 1)
+    {
+        return $"_afr.F = TestBitMemory(address, {y}); break; // {bitMnemonic[x]} {y},(IX/IY + d)";
+    }
+    else if (z != 6)
+    {
+        return $"WriteByte(address, ({_register[z]} = {bitOperation[x-1]}(ReadByte(address), {y}))); _clock.AddCycles(1); break; // {bitMnemonic[x]} {y},(IX/IY + d),{_regName[z]}";
+    }
+    else
+    {
+        return $"WriteByte(address, {bitOperation[x-1]}(ReadByte(address), {y})); _clock.AddCycles(1); break; // {bitMnemonic[x]} {y},(IX/IY + d)";
+    }
+}
+
+#>

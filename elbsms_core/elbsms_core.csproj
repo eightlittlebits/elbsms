@@ -51,6 +51,11 @@
     <Compile Include="Cartridge.cs" />
     <Compile Include="CPU\Registers.cs" />
     <Compile Include="CPU\StatusFlags.cs" />
+    <Compile Include="CPU\Z80.CBOpcodes.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Z80.CBOpcodes.tt</DependentUpon>
+    </Compile>
     <Compile Include="MasterSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CPU\Z80.cs" />
@@ -58,6 +63,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CPU\Z80.CBOpcodes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Z80.CBOpcodes.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
