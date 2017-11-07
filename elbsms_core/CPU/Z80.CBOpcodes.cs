@@ -622,16 +622,20 @@ namespace elbsms_core.CPU
         {
             var (_, flags) = And8Bit(b, (byte)(1 << bit));
 
-            return flags | (_afr.F & C);
+			// this contradicts the documentation I could find, but appears to pass zexall
+            flags |= b & (B5 | B3);
+
+            return flags;
         }
 
         private StatusFlags TestBitMemory(ushort address, int bit)
         {
-            var (_, flags) = And8Bit(ReadByte(address), (byte)(1 << bit));
+            var value = ReadByte(address);
+            var (_, flags) = And8Bit(value, (byte)(1 << bit));
 
-            //flags[B5 | B3] = false;
+            flags[B5 | B3] = false;
             
-            //flags |= (_memPtr.hi & (B5 | B3));
+            flags |= _memPtr.hi & (B5 | B3);
 
             return flags | (_afr.F & C);
         }
