@@ -53,7 +53,7 @@ namespace elbsms_core.CPU
             {
                 int sf, zf, b5, b3, pf;
 
-                sf = i.Bit(7) ? S : 0;
+                sf = i & S;
                 zf = i == 0 ? Z : 0;
                 b5 = i & B5;
                 b3 = i & B3;
@@ -68,7 +68,7 @@ namespace elbsms_core.CPU
                 v ^= v >> 2;
                 v ^= v >> 1;
 
-                return !((v & 1) == 1);
+                return (v & 1) != 1;
             }
         }
 
