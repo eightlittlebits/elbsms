@@ -46,9 +46,34 @@ namespace elbsms_console
 
             sw.Stop();
 
+            var cyclesExecuted = masterSystem.Clock.Timestamp;
+            var effectiveClock = cyclesExecuted / (sw.ElapsedMilliseconds / 1000.0);
+
+            Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine($"Finished: {DateTime.Now}");
-            Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms Instructions: {instructionCount}, Instructions/ms: {instructionCount/(double)sw.ElapsedMilliseconds}");
+            Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms Instructions: {instructionCount}, Instructions/ms: {instructionCount/(double)sw.ElapsedMilliseconds}, Effective Clock: {FormatFrequency(effectiveClock)}");
+        }
+
+        private enum FrequencyUnit
+        {
+            Hz,
+            KHz,
+            MHz,
+            GHz
+        }
+
+        static string FormatFrequency(double frequency)
+        {
+            int freqUnit = 0;
+
+            while (frequency >= 1000.0)
+            {
+                frequency /= 1000.0;
+                freqUnit++;
+            }
+
+            return $"{frequency:.##} {(FrequencyUnit)freqUnit}";
         }
     }
 }
