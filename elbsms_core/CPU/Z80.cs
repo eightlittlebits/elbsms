@@ -506,6 +506,11 @@ namespace elbsms_core.CPU
                 case 0xA8: LoadAndDecrement(); break; // LDD
                 case 0xB8: LoadDecrementAndRepeat(); break; // LDDR
 
+                case 0xA1: CompareAndIncrement(); break; // CPI
+                case 0xB1: CompareIncrementAndRepeat(); break; // CPIR
+                case 0xA9: CompareAndDecrement(); break; // CPD
+                case 0xB9: CompareDecrementAndRepeat(); break; // CPDR
+
                 #endregion
 
                 #region general-purpose arithmetic and cpu control group
@@ -663,6 +668,68 @@ namespace elbsms_core.CPU
 
             if (_gpr.BC == 0)
                 return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void CompareAndIncrement()
+        {
+            var (result, flags) = Sub8Bit(_afr.A, ReadByte(_gpr.HL++));
+
+            _clock.AddCycles(5);
+
+            var temp = result - (flags[H] ? 1 : 0);
+
+            flags[B3] = temp.Bit(3);
+            flags[B5] = temp.Bit(1);
+
+            flags[C] = _afr.F[C];
+            flags[V] = --_gpr.BC != 0;
+
+            _afr.F = flags;
+        }
+
+        private void CompareIncrementAndRepeat()
+        {
+            CompareAndIncrement();
+
+            if (_gpr.BC == 0 || _afr.F[Z])
+            {
+                return;
+            }
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void CompareAndDecrement()
+        {
+            var (result, flags) = Sub8Bit(_afr.A, ReadByte(_gpr.HL--));
+
+            _clock.AddCycles(5);
+
+            var temp = result - (flags[H] ? 1 : 0);
+
+            flags[B3] = temp.Bit(3);
+            flags[B5] = temp.Bit(1);
+
+            flags[C] = _afr.F[C];
+            flags[V] = --_gpr.BC != 0;
+
+            _afr.F = flags;
+        }
+
+        private void CompareDecrementAndRepeat()
+        {
+            CompareAndDecrement();
+
+            if (_gpr.BC == 0 || _afr.F[Z])
+            {
+                return;
+            }
 
             _clock.AddCycles(5);
 
