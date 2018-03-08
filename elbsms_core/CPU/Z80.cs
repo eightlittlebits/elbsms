@@ -580,17 +580,17 @@ namespace elbsms_core.CPU
                 case 0xE1: reg = PopWord(); break; // POP IX/IY
 
                 #endregion
+                    
+                #region general-purpose arithmetic and cpu control group
+
+                case 0xCB: ExecuteDisplacedCBPrefixedOpcode(Displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break;
+
+                #endregion
 
                 #region 16-bit arithmetic group
 
                 case 0x23: reg++; _clock.AddCycles(2); break; // INC IX/IY
                 case 0x2B: reg--; _clock.AddCycles(2); break; // DEC IX/IY
-
-                #endregion
-
-                #region general-purpose arithmetic and cpu control group
-
-                case 0xCB: ExecuteDisplacedCBPrefixedOpcode(Displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break;
 
                 #endregion
 
