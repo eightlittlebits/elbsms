@@ -388,7 +388,7 @@ namespace elbsms_core.CPU
                 #region general-purpose arithmetic and cpu control group
 
                 case 0xDD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
-                case 0xED: ExecuteExtendedOpcode(ReadOpcode(_pc++)); break;
+                case 0xED: ExecuteEDPrefixedOpcode(ReadOpcode(_pc++)); break;
                 case 0xFD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
                 case 0xCB: ExecuteCBPrefixedOpcode(ReadOpcode(_pc++)); break;
 
@@ -481,7 +481,7 @@ namespace elbsms_core.CPU
             }
         }
 
-        private void ExecuteExtendedOpcode(byte opcode)
+        private void ExecuteEDPrefixedOpcode(byte opcode)
         {
             switch (opcode)
             {
