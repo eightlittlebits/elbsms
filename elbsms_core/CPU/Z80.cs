@@ -24,7 +24,7 @@ namespace elbsms_core.CPU
 #pragma warning disable 0169
 
         private ushort _pc, _sp;
-            
+
         private PairedRegister _ix, _iy;
 
         private byte _i, _r;
@@ -580,7 +580,17 @@ namespace elbsms_core.CPU
                 case 0xE1: reg = PopWord(); break; // POP IX/IY
 
                 #endregion
-                    
+
+                #region 8-bit arithmetic group
+
+                case 0x24: reg.hi = Inc8Bit(reg.hi); break;                                                                             // INC IXH/IYH
+                case 0x2C: reg.lo = Inc8Bit(reg.lo); break;                                                                             // INC IXL/IYL
+
+                case 0x25: reg.hi = Dec8Bit(reg.hi); break;                                                                             // DEC IXH/IYH
+                case 0x2D: reg.lo = Dec8Bit(reg.lo); break;                                                                             // DEC IXL/IYL
+
+                #endregion
+
                 #region general-purpose arithmetic and cpu control group
 
                 case 0xCB: ExecuteDisplacedCBPrefixedOpcode(Displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break;
