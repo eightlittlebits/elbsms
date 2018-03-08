@@ -387,9 +387,9 @@ namespace elbsms_core.CPU
 
                 #region general-purpose arithmetic and cpu control group
 
-                case 0xDD: ExecutePrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
+                case 0xDD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
                 case 0xED: ExecuteExtendedOpcode(ReadOpcode(_pc++)); break;
-                case 0xFD: ExecutePrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
+                case 0xFD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
                 case 0xCB: ExecuteCBPrefixedOpcode(ReadOpcode(_pc++)); break;
 
                 case 0x00: break; // NOP
@@ -519,7 +519,7 @@ namespace elbsms_core.CPU
             }
         }
 
-        private void ExecutePrefixedOpcode(byte prefix, byte opcode)
+        private void ExecuteDDFDPrefixedOpcode(byte prefix, byte opcode)
         {
             ref PairedRegister GetRegisterForPrefix()
             {
@@ -532,7 +532,7 @@ namespace elbsms_core.CPU
                 }
             }
 
-            ushort displace(ushort address, byte displacement)
+            ushort Displace(ushort address, byte displacement)
             {
                 _clock.AddCycles(5);
                 return (ushort)(address + (sbyte)displacement);
@@ -544,23 +544,23 @@ namespace elbsms_core.CPU
             {
                 #region 8-bit load group
 
-                case 0x46: _gpr.B = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD B,(IX/IY + d)
-                case 0x4E: _gpr.C = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD C,(IX/IY + d)
-                case 0x56: _gpr.D = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD D,(IX/IY + d)
-                case 0x5E: _gpr.E = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD E,(IX/IY + d)
-                case 0x66: _gpr.H = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD H,(IX/IY + d)
-                case 0x6E: _gpr.L = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD L,(IX/IY + d)
-                case 0x7E: _afr.A = ReadByte(displace(reg, ReadByte(_pc++))); break; // LD A,(IX/IY + d)
+                case 0x46: _gpr.B = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD B,(IX/IY + d)
+                case 0x4E: _gpr.C = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD C,(IX/IY + d)
+                case 0x56: _gpr.D = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD D,(IX/IY + d)
+                case 0x5E: _gpr.E = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD E,(IX/IY + d)
+                case 0x66: _gpr.H = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD H,(IX/IY + d)
+                case 0x6E: _gpr.L = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD L,(IX/IY + d)
+                case 0x7E: _afr.A = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD A,(IX/IY + d)
 
-                case 0x70: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.B); break; // LD (IX/IY + d),B
-                case 0x71: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.C); break; // LD (IX/IY + d),C
-                case 0x72: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.D); break; // LD (IX/IY + d),D
-                case 0x73: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.E); break; // LD (IX/IY + d),E
-                case 0x74: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.H); break; // LD (IX/IY + d),H
-                case 0x75: WriteByte(displace(reg, ReadByte(_pc++)), _gpr.L); break; // LD (IX/IY + d),L
-                case 0x77: WriteByte(displace(reg, ReadByte(_pc++)), _afr.A); break; // LD (IX/IY + d),A
+                case 0x70: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.B); break; // LD (IX/IY + d),B
+                case 0x71: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.C); break; // LD (IX/IY + d),C
+                case 0x72: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.D); break; // LD (IX/IY + d),D
+                case 0x73: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.E); break; // LD (IX/IY + d),E
+                case 0x74: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.H); break; // LD (IX/IY + d),H
+                case 0x75: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.L); break; // LD (IX/IY + d),L
+                case 0x77: WriteByte(Displace(reg, ReadByte(_pc++)), _afr.A); break; // LD (IX/IY + d),A
 
-                case 0x36: WriteByte(displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break; // LD (IX/IY + d),n
+                case 0x36: WriteByte(Displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break; // LD (IX/IY + d),n
 
                 #endregion
 
@@ -590,7 +590,7 @@ namespace elbsms_core.CPU
 
                 #region general-purpose arithmetic and cpu control group
 
-                case 0xCB: ExecuteDisplacedCBPrefixedOpcode(displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break;
+                case 0xCB: ExecuteDisplacedCBPrefixedOpcode(Displace(reg, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break;
 
                 #endregion
 
