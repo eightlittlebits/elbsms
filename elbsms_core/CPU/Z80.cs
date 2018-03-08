@@ -27,8 +27,6 @@ namespace elbsms_core.CPU
             
         private PairedRegister _ix, _iy;
 
-        private PairedRegister _memPtr; // undocumented
-
         private byte _i, _r;
 
 #pragma warning disable 0414
