@@ -326,6 +326,12 @@ namespace elbsms_core.CPU
 
                 case 0xC6: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_pc++)); break;  // ADD A,n
 
+                case 0xCE: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_pc++), _afr.F[C]); break;   // ADC A,n
+
+                case 0xD6: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(_pc++)); break;      // SUB A,n
+
+                case 0xDE: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(_pc++), _afr.F[C]); break;   // SBC A,n
+
                 case 0xA0: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.B); break;               // AND B
                 case 0xA1: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.C); break;               // AND C
                 case 0xA2: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.D); break;               // AND D
@@ -910,7 +916,7 @@ namespace elbsms_core.CPU
 
             return ((ushort)(hi << 8 | lo), flags);
         }
-        
+
         private ushort Add16Bit(ushort a, ushort b)
         {
             // reset affected flags
