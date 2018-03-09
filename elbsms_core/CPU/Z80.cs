@@ -517,6 +517,8 @@ namespace elbsms_core.CPU
 
                 #region general-purpose arithmetic and cpu control group
 
+                case 0x44: (_afr.A, _afr.F) = Sub8Bit(0, _afr.A); break; // NEG
+
                 case 0x56: SetInterruptMode(0); break; // IM 0
 
                 #endregion
@@ -1071,7 +1073,7 @@ namespace elbsms_core.CPU
 
             return result;
         }
-        
+
         private void RotateLeftDigit()
         {
             byte a = _afr.A;
