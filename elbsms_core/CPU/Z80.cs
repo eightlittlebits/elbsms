@@ -394,6 +394,8 @@ namespace elbsms_core.CPU
 
                 #region general-purpose arithmetic and cpu control group
 
+                case 0x27: DecimalAdjustAccumulator(); break; // DAA
+
                 case 0xDD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
                 case 0xED: ExecuteEDPrefixedOpcode(ReadOpcode(_pc++)); break;
                 case 0xFD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
@@ -909,6 +911,28 @@ namespace elbsms_core.CPU
         private void SetInterruptMode(int interruptMode)
         {
             _interruptMode = interruptMode;
+        }
+
+        private void DecimalAdjustAccumulator()
+        {
+            byte correctionFactor = 0;
+
+            if (_afr.A > 0x99 || _afr.F[C])
+            {
+                correctionFactor |= 0x60;
+                _afr.F[C] = true;
+            }
+
+            if ((_afr.A & 0x0F) > 0x09 || _afr.F[H])
+                correctionFactor |= 0x06;
+
+            bool subtraction = _afr.F[N];
+
+            _afr.F[H] = (!subtraction && (_afr.A & 0x0F) > 0x09) || (subtraction && _afr.F[H] && (_afr.A & 0x0F) < 0x06);
+
+            _afr.A += (byte)(subtraction ? -correctionFactor : correctionFactor);
+
+            _afr.F = FlagsSZP[_afr.A] | (_afr.F & (H | N | C));
         }
 
         #endregion
