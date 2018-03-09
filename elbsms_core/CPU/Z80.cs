@@ -101,6 +101,7 @@ namespace elbsms_core.CPU
             _gpr = _gpRegisters[_activeGPRegisters];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void IncrementMemoryRefreshRegister()
         {
             // only the low 7 bits are incremented, high bit preserved
@@ -398,10 +399,10 @@ namespace elbsms_core.CPU
 
                 case 0x27: DecimalAdjustAccumulator(); break; // DAA
 
+                case 0xCB: ExecuteCBPrefixedOpcode(ReadOpcode(_pc++)); break;
                 case 0xDD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
                 case 0xED: ExecuteEDPrefixedOpcode(ReadOpcode(_pc++)); break;
                 case 0xFD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
-                case 0xCB: ExecuteCBPrefixedOpcode(ReadOpcode(_pc++)); break;
 
                 case 0x00: break; // NOP
 
@@ -532,7 +533,6 @@ namespace elbsms_core.CPU
                 case 0x56: SetInterruptMode(0); break; // IM 0
 
                 #endregion
-
 
                 #region 16-bit arithmetic group
 
@@ -1263,7 +1263,7 @@ namespace elbsms_core.CPU
         #endregion
     }
 
-    static class IntExtensions
+    static class BitExtensions
     {
         internal static bool Bit(this byte v, int bit)
         {

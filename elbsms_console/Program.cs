@@ -52,7 +52,7 @@ namespace elbsms_console
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine($"Finished: {DateTime.Now}");
-            Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms Instructions: {instructionCount}, Instructions/ms: {instructionCount/(double)sw.ElapsedMilliseconds}, Effective Clock: {FormatFrequency(effectiveClock)}");
+            Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms Instructions: {instructionCount:N0}, Instructions/ms: {instructionCount/(double)sw.ElapsedMilliseconds}, Effective Clock: {FormatFrequency(effectiveClock)}");
         }
 
         private enum FrequencyUnit
