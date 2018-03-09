@@ -521,6 +521,13 @@ namespace elbsms_core.CPU
 
                 #endregion
 
+                #region rotate and shift group
+
+                case 0x67: RotateRightDigit(); break; // RRD
+                case 0x6F: RotateLeftDigit(); break; // RLD
+
+                #endregion
+
                 default:
                     throw new NotImplementedException($"Unimplemented opcode: 0xED {opcode:X2} at address 0x{_pc - 2:X4}");
             }
@@ -1063,6 +1070,32 @@ namespace elbsms_core.CPU
             _afr.F = flags;
 
             return result;
+        }
+        
+        private void RotateLeftDigit()
+        {
+            byte a = _afr.A;
+            byte data = ReadByte(_gpr.HL);
+
+            _afr.A = (byte)((a & 0xF0) | (data >> 4));
+            _clock.AddCycles(4);
+
+            WriteByte(_gpr.HL, (byte)((data << 4) | (a & 0x0F)));
+
+            _afr.F = FlagsSZP[_afr.A] | (_afr.F & C);
+        }
+
+        private void RotateRightDigit()
+        {
+            byte a = _afr.A;
+            byte data = ReadByte(_gpr.HL);
+
+            _afr.A = (byte)((a & 0xF0) | (data & 0x0F));
+            _clock.AddCycles(4);
+
+            WriteByte(_gpr.HL, (byte)((data >> 4) | (a << 4)));
+
+            _afr.F = FlagsSZP[_afr.A] | (_afr.F & C);
         }
 
         #endregion
