@@ -590,9 +590,11 @@ namespace elbsms_core.CPU
 
                 case 0x24: reg.hi = Inc8Bit(reg.hi); break;                                                                             // INC IXH/IYH
                 case 0x2C: reg.lo = Inc8Bit(reg.lo); break;                                                                             // INC IXL/IYL
+                case 0x34: { ushort address = Displace(reg, ReadByte(_pc++)); WriteByte(address, Inc8Bit(ReadByte(address))); } break;  // INC (IX/IY + d)
 
                 case 0x25: reg.hi = Dec8Bit(reg.hi); break;                                                                             // DEC IXH/IYH
                 case 0x2D: reg.lo = Dec8Bit(reg.lo); break;                                                                             // DEC IXL/IYL
+                case 0x35: { ushort address = Displace(reg, ReadByte(_pc++)); WriteByte(address, Dec8Bit(ReadByte(address))); } break;  // DEC (IX/IY + d)
 
                 #endregion
 
