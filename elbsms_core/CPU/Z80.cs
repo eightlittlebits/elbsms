@@ -113,16 +113,18 @@ namespace elbsms_core.CPU
         private byte ReadOpcode(ushort address)
         {
             IncrementMemoryRefreshRegister();
+            _clock.AddCycles(2);
             byte opcode = _bus.ReadByte(address);
-            _clock.AddCycles(4);
+            _clock.AddCycles(2);
             return opcode;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte ReadByte(ushort address)
         {
+            _clock.AddCycles(2);
             byte value = _bus.ReadByte(address);
-            _clock.AddCycles(3);
+            _clock.AddCycles(1);
             return value;
         }
 
