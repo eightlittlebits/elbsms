@@ -559,6 +559,37 @@ namespace elbsms_core.CPU
                 case 0x6E: _gpr.L = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD L,(IX/IY + d)
                 case 0x7E: _afr.A = ReadByte(Displace(reg, ReadByte(_pc++))); break; // LD A,(IX/IY + d)
 
+                case 0x44: _gpr.B = reg.hi; break; // LD B,IXH/IYH
+                case 0x45: _gpr.B = reg.lo; break; // LD B,IXL/IYL
+
+                case 0x4C: _gpr.C = reg.hi; break; // LD C,IXH/IYH
+                case 0x4D: _gpr.C = reg.lo; break; // LD C,IXL/IYL
+
+                case 0x54: _gpr.D = reg.hi; break; // LD D,IXH/IYH
+                case 0x55: _gpr.D = reg.lo; break; // LD D,IXL/IYL
+
+                case 0x5C: _gpr.E = reg.hi; break; // LD E,IXH/IYH
+                case 0x5D: _gpr.E = reg.lo; break; // LD E,IXL/IYL
+
+                case 0x7C: _afr.A = reg.hi; break; // LD A,IXH/IYH
+                case 0x7D: _afr.A = reg.lo; break; // LD A,IXL/IYL
+
+                case 0x60: reg.hi = _gpr.B; break; // LD IXH/IYH,B
+                case 0x61: reg.hi = _gpr.C; break; // LD IXH/IYH,C
+                case 0x62: reg.hi = _gpr.D; break; // LD IXH/IYH,D
+                case 0x63: reg.hi = _gpr.E; break; // LD IXH/IYH,E
+                case 0x64: break;                  // LD IXH/IYH,IXH/IYH
+                case 0x65: reg.hi = reg.lo; break; // LD IXH/IYH,IXL/IYL
+                case 0x67: reg.hi = _afr.A; break; // LD IXH/IYH,A
+
+                case 0x68: reg.lo = _gpr.B; break; // LD IXL/IYL,B
+                case 0x69: reg.lo = _gpr.C; break; // LD IXL/IYL,C
+                case 0x6A: reg.lo = _gpr.D; break; // LD IXL/IYL,D
+                case 0x6B: reg.lo = _gpr.E; break; // LD IXL/IYL,E
+                case 0x6C: reg.lo = reg.hi; break; // LD IXL/IYL,IXH/IYH
+                case 0x6D: break;                  // LD IXL/IYL,IXL/IYL
+                case 0x6F: reg.lo = _afr.A; break; // LD IXL/IYL,A
+
                 case 0x70: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.B); break; // LD (IX/IY + d),B
                 case 0x71: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.C); break; // LD (IX/IY + d),C
                 case 0x72: WriteByte(Displace(reg, ReadByte(_pc++)), _gpr.D); break; // LD (IX/IY + d),D
@@ -614,7 +645,9 @@ namespace elbsms_core.CPU
                 #endregion
 
                 default:
-                    throw new NotImplementedException($"Unimplemented opcode: 0x{prefix:X2} {opcode:X2} at address 0x{_pc - 2:X4}");
+                    // any other instructions not handled above behave as if they were not prefixed so pass through
+                    ExecuteOpcode(opcode);
+                    break;
             }
         }
 
