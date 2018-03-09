@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace elbsms_core.CPU
@@ -21,13 +20,16 @@ namespace elbsms_core.CPU
         private GPRegisters[] _gpRegisters;
         private GPRegisters _gpr;
 
-#pragma warning disable 0169
 
         private ushort _pc, _sp;
 
         private PairedRegister _ix, _iy;
 
+#pragma warning disable 0169
+
         private byte _i, _r;
+
+#pragma warning restore 0169
 
 #pragma warning disable 0414
 
@@ -36,7 +38,6 @@ namespace elbsms_core.CPU
 
 #pragma warning restore 0414
 
-#pragma warning restore 0169
 
         static Z80()
         {
