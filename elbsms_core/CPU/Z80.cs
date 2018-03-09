@@ -529,6 +529,22 @@ namespace elbsms_core.CPU
 
                 #endregion
 
+
+                #region 16-bit arithmetic group
+
+                case 0x4A: (_gpr.HL, _afr.F) = AddWithCarry16Bit(_gpr.HL, _gpr.BC, _afr.F[C]); break;   // ADC HL,BC
+                case 0x5A: (_gpr.HL, _afr.F) = AddWithCarry16Bit(_gpr.HL, _gpr.DE, _afr.F[C]); break;   // ADC HL,DE
+                case 0x6A: (_gpr.HL, _afr.F) = AddWithCarry16Bit(_gpr.HL, _gpr.HL, _afr.F[C]); break;   // ADC HL,HL
+                case 0x7A: (_gpr.HL, _afr.F) = AddWithCarry16Bit(_gpr.HL, _sp, _afr.F[C]); break;       // ADC HL,SP
+
+
+                case 0x42: (_gpr.HL, _afr.F) = SubWithCarry16Bit(_gpr.HL, _gpr.BC, _afr.F[C]); break;   // SBC HL,BC
+                case 0x52: (_gpr.HL, _afr.F) = SubWithCarry16Bit(_gpr.HL, _gpr.DE, _afr.F[C]); break;   // SBC HL,DE
+                case 0x62: (_gpr.HL, _afr.F) = SubWithCarry16Bit(_gpr.HL, _gpr.HL, _afr.F[C]); break;   // SBC HL,HL
+                case 0x72: (_gpr.HL, _afr.F) = SubWithCarry16Bit(_gpr.HL, _sp, _afr.F[C]); break;       // SBC HL,SP
+
+                #endregion
+
                 #region rotate and shift group
 
                 case 0x67: RotateRightDigit(); break; // RRD
@@ -927,6 +943,24 @@ namespace elbsms_core.CPU
             _afr.F |= flags & (B5 | H | B3 | N | C);
 
             return result;
+        }
+
+        private (ushort, StatusFlags) SubWithCarry16Bit(ushort a, ushort b, bool carry = false)
+        {
+            byte hi, lo;
+            StatusFlags flags;
+
+            _clock.AddCycles(4);
+            (lo, flags) = Sub8Bit((byte)(a >> 0), (byte)(b >> 0), carry);
+
+            _clock.AddCycles(3);
+            (hi, flags) = Sub8Bit((byte)(a >> 8), (byte)(b >> 8), flags[C]);
+
+            ushort result = (ushort)(hi << 8 | lo);
+
+            flags[Z] = result == 0;
+
+            return ((ushort)(hi << 8 | lo), flags);
         }
 
         #endregion
