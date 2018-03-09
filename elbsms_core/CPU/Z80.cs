@@ -421,8 +421,9 @@ namespace elbsms_core.CPU
                 #region rotate and shift group
 
                 case 0x07: RotateLeftAccumulator(); break; // RLCA
-
+                case 0x17: RotateLeftThroughCarryAccumulator(); break; // RLA
                 case 0x0F: RotateRightAccumulator(); break; // RRCA
+                case 0x1F: RotateRightThroughCarryAccumulator(); break; // RRA
 
                 #endregion
 
@@ -893,6 +894,18 @@ namespace elbsms_core.CPU
             _afr.F[C] = b7;
         }
 
+        private void RotateLeftThroughCarryAccumulator()
+        {
+            bool b7 = _afr.A.Bit(7);
+
+            _afr.A = (byte)((_afr.A << 1) | (_afr.F[C] ? 1 : 0));
+
+            _afr.F[H | N] = false;
+            _afr.F[B5] = _afr.A.Bit(5);
+            _afr.F[B3] = _afr.A.Bit(3);
+            _afr.F[C] = b7;
+        }
+
         private byte RotateLeft(byte b)
         {
             bool b7 = b.Bit(7);
@@ -928,6 +941,18 @@ namespace elbsms_core.CPU
 
             _afr.A = (byte)((_afr.A >> 1) | (b0 ? 0x80 : 0));
 
+            _afr.F[B5] = _afr.A.Bit(5);
+            _afr.F[B3] = _afr.A.Bit(3);
+            _afr.F[C] = b0;
+        }
+
+        private void RotateRightThroughCarryAccumulator()
+        {
+            bool b0 = _afr.A.Bit(0);
+
+            _afr.A = (byte)((_afr.A >> 1) | (_afr.F[C] ? 0x80 : 0));
+
+            _afr.F[H | N] = false;
             _afr.F[B5] = _afr.A.Bit(5);
             _afr.F[B3] = _afr.A.Bit(3);
             _afr.F[C] = b0;
