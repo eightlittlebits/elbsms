@@ -401,10 +401,10 @@ namespace elbsms_core.CPU
 
                 #region 16-bit arithmetic group
 
-                case 0x09: AddHL(_gpr.BC); break; // ADD HL,BC
-                case 0x19: AddHL(_gpr.DE); break; // ADD HL,DE
-                case 0x29: AddHL(_gpr.HL); break; // ADD HL,HL
-                case 0x39: AddHL(_sp); break; // ADD HL,SP
+                case 0x09: _gpr.HL = Add16Bit(_gpr.HL, _gpr.BC); break; // ADD HL,BC
+                case 0x19: _gpr.HL = Add16Bit(_gpr.HL, _gpr.DE); break; // ADD HL,DE
+                case 0x29: _gpr.HL = Add16Bit(_gpr.HL, _gpr.HL); break; // ADD HL,HL
+                case 0x39: _gpr.HL = Add16Bit(_gpr.HL, _sp); break; // ADD HL,SP
 
                 case 0x03: _clock.AddCycles(2); _gpr.BC++; break; // INC BC
                 case 0x13: _clock.AddCycles(2); _gpr.DE++; break; // INC DE
@@ -648,6 +648,11 @@ namespace elbsms_core.CPU
 
                 #region 16-bit arithmetic group
 
+                case 0x09: reg.word = Add16Bit(reg.word, _gpr.BC); break;   // ADD IX/IY,BC
+                case 0x19: reg.word = Add16Bit(reg.word, _gpr.DE); break;   // ADD IX/IY,DE
+                case 0x29: reg.word = Add16Bit(reg.word, reg.word); break;  // ADD IX/IY,IX/IY
+                case 0x39: reg.word = Add16Bit(reg.word, _sp); break;       // ADD IX/IY,SP
+
                 case 0x23: reg++; _clock.AddCycles(2); break; // INC IX/IY
                 case 0x2B: reg--; _clock.AddCycles(2); break; // DEC IX/IY
 
@@ -888,7 +893,7 @@ namespace elbsms_core.CPU
 
         #region 16-bit arithmetic group
 
-        private (ushort, StatusFlags) Add16Bit(ushort a, ushort b, bool carry = false)
+        private (ushort, StatusFlags) AddWithCarry16Bit(ushort a, ushort b, bool carry = false)
         {
             byte hi, lo;
             StatusFlags flags = default;
@@ -905,17 +910,17 @@ namespace elbsms_core.CPU
 
             return ((ushort)(hi << 8 | lo), flags);
         }
-
-        private void AddHL(ushort value)
+        
+        private ushort Add16Bit(ushort a, ushort b)
         {
             // reset affected flags
             _afr.F[B5 | H | B3 | N | C] = false;
 
-            var (result, flags) = Add16Bit(_gpr.HL, value);
+            var (result, flags) = AddWithCarry16Bit(a, b);
 
             _afr.F |= flags & (B5 | H | B3 | N | C);
 
-            _gpr.HL = result;
+            return result;
         }
 
         #endregion
