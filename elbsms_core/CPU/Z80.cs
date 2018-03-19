@@ -660,20 +660,36 @@ namespace elbsms_core.CPU
 
                 #region 8-bit arithmetic group
 
+                case 0x84: (_afr.A, _afr.F) = Add8Bit(_afr.A, reg.hi); break;                                   // ADD IXH/IYH
+                case 0x85: (_afr.A, _afr.F) = Add8Bit(_afr.A, reg.lo); break;                                   // ADD IXL/IYL
                 case 0x86: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++)))); break; // ADD (IX/IY + d)
 
+                case 0x8C: (_afr.A, _afr.F) = Add8Bit(_afr.A, reg.hi, _afr.F[C]); break;                                    // ADC IXH/IYH
+                case 0x8D: (_afr.A, _afr.F) = Add8Bit(_afr.A, reg.lo, _afr.F[C]); break;                                    // ADC IXL/IYL
                 case 0x8E: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++))), _afr.F[C]); break;  // ADC (IX/IY + d)
 
+                case 0x94: (_afr.A, _afr.F) = Sub8Bit(_afr.A, reg.hi); break;                                   // SUB IXH/IYH
+                case 0x95: (_afr.A, _afr.F) = Sub8Bit(_afr.A, reg.lo); break;                                   // SUB IXL/IYL
                 case 0x96: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++)))); break; // SUB (IX/IY + d)
 
+                case 0x9C: (_afr.A, _afr.F) = Sub8Bit(_afr.A, reg.hi, _afr.F[C]); break;                                    // SBC IXH/IYH
+                case 0x9D: (_afr.A, _afr.F) = Sub8Bit(_afr.A, reg.lo, _afr.F[C]); break;                                    // SBC IXL/IYL
                 case 0x9E: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++))), _afr.F[C]); break;  // SBC (IX/IY + d)
 
+                case 0xA4: (_afr.A, _afr.F) = And8Bit(_afr.A, reg.hi); break;                                   // AND IXH/IYH
+                case 0xA5: (_afr.A, _afr.F) = And8Bit(_afr.A, reg.lo); break;                                   // AND IXL/IYL
                 case 0xA6: (_afr.A, _afr.F) = And8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++)))); break; // AND (IX/IY + d)
 
+                case 0xB4: (_afr.A, _afr.F) = Or8Bit(_afr.A, reg.hi); break;                                    // OR IXH/IYH
+                case 0xB5: (_afr.A, _afr.F) = Or8Bit(_afr.A, reg.lo); break;                                    // OR IXL/IYL
                 case 0xB6: (_afr.A, _afr.F) = Or8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++)))); break;  // OR (IX/IY + d)
 
+                case 0xAC: (_afr.A, _afr.F) = Xor8Bit(_afr.A, reg.hi); break;                                   // XOR IXH/IYH
+                case 0xAD: (_afr.A, _afr.F) = Xor8Bit(_afr.A, reg.lo); break;                                   // XOR IXL/IYL
                 case 0xAE: (_afr.A, _afr.F) = Xor8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++)))); break; // XOR (IX/IY + d)
 
+                case 0xBC: _afr.F = Compare8Bit(_afr.A, reg.hi); break;                                     // CP IXH/IYH
+                case 0xBD: _afr.F = Compare8Bit(_afr.A, reg.lo); break;                                     // CP IXL/IYL
                 case 0xBE: _afr.F = Compare8Bit(_afr.A, ReadByte(Displace(reg, ReadByte(_pc++)))); break;   // CP (IX/IY + d)
 
                 case 0x24: reg.hi = Inc8Bit(reg.hi); break;                                                                             // INC IXH/IYH
