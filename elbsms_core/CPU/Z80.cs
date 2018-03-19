@@ -398,6 +398,7 @@ namespace elbsms_core.CPU
                 #region general-purpose arithmetic and cpu control group
 
                 case 0x27: DecimalAdjustAccumulator(); break; // DAA
+                case 0x2F: _afr.A = (byte)(~_afr.A); _afr.F = ((_afr.F & (S | Z | P | C)) | H | N | (_afr.A & (B5 | B3))); break; // CPL
 
                 case 0xCB: ExecuteCBPrefixedOpcode(ReadOpcode(_pc++)); break;
                 case 0xDD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
