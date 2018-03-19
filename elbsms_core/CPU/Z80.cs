@@ -400,6 +400,9 @@ namespace elbsms_core.CPU
                 case 0x27: DecimalAdjustAccumulator(); break; // DAA
                 case 0x2F: _afr.A = (byte)(~_afr.A); _afr.F = ((_afr.F & (S | Z | P | C)) | H | N | (_afr.A & (B5 | B3))); break; // CPL
 
+                case 0x3F: _afr.F[H] = _afr.F[C]; _afr.F = (((_afr.F & (S | Z | H | P | C)) ^ C) | (_afr.A & (B5 | B3))); break; // CCF
+                case 0x37: _afr.F = ((_afr.F & (S | Z | P)) | C | (_afr.A & (B5 | B3))); break; // SCF
+
                 case 0xCB: ExecuteCBPrefixedOpcode(ReadOpcode(_pc++)); break;
                 case 0xDD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
                 case 0xED: ExecuteEDPrefixedOpcode(ReadOpcode(_pc++)); break;
