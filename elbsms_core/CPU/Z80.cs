@@ -335,7 +335,7 @@ namespace elbsms_core.CPU
                 case 0x85: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.L); break;               // ADD L
                 case 0x86: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_gpr.HL)); break;    // ADD (HL)
                 case 0x87: (_afr.A, _afr.F) = Add8Bit(_afr.A, _afr.A); break;               // ADD A
-                case 0xC6: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_pc++)); break;  // ADD A,n
+                case 0xC6: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_pc++)); break;      // ADD A,n
 
                 case 0x88: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.B, _afr.F[C]); break;            // ADC B
                 case 0x89: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.C, _afr.F[C]); break;            // ADC C
@@ -945,6 +945,9 @@ namespace elbsms_core.CPU
         private static StatusFlags Compare8Bit(byte a, byte b)
         {
             var (_, flags) = Sub8Bit(a, b);
+
+            flags[B5] = b.Bit(5);
+            flags[B3] = b.Bit(3);
 
             return flags;
         }
