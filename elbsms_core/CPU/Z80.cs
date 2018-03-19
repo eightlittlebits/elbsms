@@ -327,12 +327,44 @@ namespace elbsms_core.CPU
 
                 #region 8-bit arithmetic group
 
+                case 0x80: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.B); break;               // ADD B
+                case 0x81: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.C); break;               // ADD C
+                case 0x82: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.D); break;               // ADD D
+                case 0x83: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.E); break;               // ADD E
+                case 0x84: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.H); break;               // ADD H
+                case 0x85: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.L); break;               // ADD L
+                case 0x86: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_gpr.HL)); break;    // ADD (HL)
+                case 0x87: (_afr.A, _afr.F) = Add8Bit(_afr.A, _afr.A); break;               // ADD A
                 case 0xC6: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_pc++)); break;  // ADD A,n
 
+                case 0x88: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.B, _afr.F[C]); break;            // ADC B
+                case 0x89: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.C, _afr.F[C]); break;            // ADC C
+                case 0x8A: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.D, _afr.F[C]); break;            // ADC D
+                case 0x8B: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.E, _afr.F[C]); break;            // ADC E
+                case 0x8C: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.H, _afr.F[C]); break;            // ADC H
+                case 0x8D: (_afr.A, _afr.F) = Add8Bit(_afr.A, _gpr.L, _afr.F[C]); break;            // ADC L
+                case 0x8E: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_gpr.HL), _afr.F[C]); break; // ADC (HL)
+                case 0x8F: (_afr.A, _afr.F) = Add8Bit(_afr.A, _afr.A, _afr.F[C]); break;            // ADC A
                 case 0xCE: (_afr.A, _afr.F) = Add8Bit(_afr.A, ReadByte(_pc++), _afr.F[C]); break;   // ADC A,n
 
+                case 0x90: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.B); break;               // SUB B
+                case 0x91: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.C); break;               // SUB C
+                case 0x92: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.D); break;               // SUB D
+                case 0x93: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.E); break;               // SUB E
+                case 0x94: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.H); break;               // SUB H
+                case 0x95: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.L); break;               // SUB L
+                case 0x96: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(_gpr.HL)); break;    // SUB (HL)
+                case 0x97: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _afr.A); break;               // SUB A
                 case 0xD6: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(_pc++)); break;      // SUB A,n
 
+                case 0x98: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.B, _afr.F[C]); break;            // SBC B
+                case 0x99: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.C, _afr.F[C]); break;            // SBC C
+                case 0x9A: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.D, _afr.F[C]); break;            // SBC D
+                case 0x9B: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.E, _afr.F[C]); break;            // SBC E
+                case 0x9C: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.H, _afr.F[C]); break;            // SBC H
+                case 0x9D: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _gpr.L, _afr.F[C]); break;            // SBC L
+                case 0x9E: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(_gpr.HL), _afr.F[C]); break; // SBC (HL)
+                case 0x9F: (_afr.A, _afr.F) = Sub8Bit(_afr.A, _afr.A, _afr.F[C]); break;            // SBC A
                 case 0xDE: (_afr.A, _afr.F) = Sub8Bit(_afr.A, ReadByte(_pc++), _afr.F[C]); break;   // SBC A,n
 
                 case 0xA0: (_afr.A, _afr.F) = And8Bit(_afr.A, _gpr.B); break;               // AND B
