@@ -500,7 +500,15 @@ namespace elbsms_core.CPU
 
                 case 0x18: JumpRelative(); break; // JR e
 
+                case 0x30: JumpRelative(!_afr.F[C]); break; // JR NC,e
+                case 0x38: JumpRelative(_afr.F[C]); break; // JR C,e
+
+                case 0x20: JumpRelative(!_afr.F[Z]); break; // JR NZ,e
                 case 0x28: JumpRelative(_afr.F[Z]); break; // JR Z,e
+
+                case 0x10: DecrementAndJumpNotZero(); break; // DJNZ e
+
+                case 0xE9: _pc = _gpr.HL; break; // JP HL
 
                 #endregion
 
@@ -1313,6 +1321,19 @@ namespace elbsms_core.CPU
                 _clock.AddCycles(5);
                 _pc += (ushort)offset;
             }
+        }
+
+        private void DecrementAndJumpNotZero()
+        {
+            _clock.AddCycles(1);
+
+            ushort address = (ushort)(_pc + (sbyte)ReadByte(_pc++));
+
+            if (--_gpr.BC == 0)
+                return;
+
+            _clock.AddCycles(5);
+            _pc = address;
         }
 
         #endregion
