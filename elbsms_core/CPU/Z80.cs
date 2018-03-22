@@ -319,7 +319,20 @@ namespace elbsms_core.CPU
 
                 #region exchange, block transfer, and search group
 
-                case 0xEB: ushort temp = _gpr.DE; _gpr.DE = _gpr.HL; _gpr.HL = temp; break; // EX DE,HL
+                case 0xEB: { ushort temp = _gpr.DE; _gpr.DE = _gpr.HL; _gpr.HL = temp; } break; // EX DE,HL
+
+                case 0x08: SwitchAFRegisters(); break; // EX AF,AF'
+                case 0xD9: SwitchGPRegistsers(); break; // EXX
+
+                case 0xE3:
+                {
+                    ushort temp = ReadWord(_sp);
+                    _clock.AddCycles(1);
+                    WriteWord(_sp, _gpr.HL);
+                    _clock.AddCycles(2);
+                    _gpr.HL = temp;
+                }
+                break; // EX (SP),HL
 
                 #endregion
 
@@ -685,6 +698,20 @@ namespace elbsms_core.CPU
                 case 0xE5: PushWord(reg); break; // PUSH IX/IY
 
                 case 0xE1: reg = PopWord(); break; // POP IX/IY
+
+                #endregion
+
+                #region exchange, block transfer, and search group
+
+                case 0xE3:
+                {
+                    ushort temp = ReadWord(_sp);
+                    _clock.AddCycles(1);
+                    WriteWord(_sp, reg);
+                    _clock.AddCycles(2);
+                    reg = temp;
+                }
+                break; // EX (SP),IX/IY 
 
                 #endregion
 
