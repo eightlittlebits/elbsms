@@ -1040,7 +1040,7 @@ namespace elbsms_core.CPU
         private (ushort, StatusFlags) AddWithCarry16Bit(ushort a, ushort b, bool carry = false)
         {
             byte hi, lo;
-            StatusFlags flags = default;
+            StatusFlags flags;
 
             _clock.AddCycles(4);
             (lo, flags) = Add8Bit((byte)(a >> 0), (byte)(b >> 0), carry);
