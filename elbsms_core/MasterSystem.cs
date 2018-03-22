@@ -7,7 +7,7 @@ namespace elbsms_core
         internal SystemClock Clock;
         internal Bus Bus;
 
-        internal Z80 CPU; 
+        internal Z80 CPU;
 
         public MasterSystem(Cartridge cartridge)
         {

@@ -13,7 +13,7 @@ namespace elbsms_core.CPU
         public const int V = 0b0000_0100;
         public const int N = 0b0000_0010;
         public const int C = 0b0000_0001;
-        
+
         private byte _flags;
 
         public StatusFlags(int i)

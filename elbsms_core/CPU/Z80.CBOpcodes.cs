@@ -622,7 +622,7 @@ namespace elbsms_core.CPU
         {
             var (_, flags) = And8Bit(b, (byte)(1 << bit));
 
-			// this contradicts the documentation I could find, but appears to pass zexall
+            // this contradicts the documentation I could find, but appears to pass zexall
             flags |= b & (B5 | B3);
 
             return flags;
@@ -634,7 +634,7 @@ namespace elbsms_core.CPU
             var (_, flags) = And8Bit(value, (byte)(1 << bit));
 
             flags[B5 | B3] = false;
-            
+
             return flags | (_afr.F & C);
         }
 

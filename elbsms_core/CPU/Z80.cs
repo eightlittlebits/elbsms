@@ -20,7 +20,6 @@ namespace elbsms_core.CPU
         private GPRegisters[] _gpRegisters;
         private GPRegisters _gpr;
 
-
         private ushort _pc, _sp;
 
         private PairedRegister _ix, _iy;
@@ -37,7 +36,6 @@ namespace elbsms_core.CPU
         private int _interruptMode;
 
 #pragma warning restore 0414
-
 
         static Z80()
         {

@@ -105,7 +105,7 @@ for (uint i = 0x40; i < 0x100; i++)
         {
             var (_, flags) = And8Bit(b, (byte)(1 << bit));
 
-			// this contradicts the documentation I could find, but appears to pass zexall
+            // this contradicts the documentation I could find, but appears to pass zexall
             flags |= b & (B5 | B3);
 
             return flags;
@@ -117,7 +117,7 @@ for (uint i = 0x40; i < 0x100; i++)
             var (_, flags) = And8Bit(value, (byte)(1 << bit));
 
             flags[B5 | B3] = false;
-            
+
             flags |= _memPtr.hi & (B5 | B3);
 
             return flags | (_afr.F & C);
@@ -194,7 +194,7 @@ private string BitOp(uint opcode)
     {
         return $"_afr.F = TestBit({_register[z]}, {y}) | (_afr.F & C); break; // {bitMnemonic[x]} {y},{_regName[z]}";
     }
-	else if (x == 1 && z == 6)
+    else if (x == 1 && z == 6)
     {
         return $"_afr.F = TestBitMemory(_gpr.HL, {y}); break; // {bitMnemonic[x]} {y},{_regName[z]}";
     }
