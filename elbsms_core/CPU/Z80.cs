@@ -25,6 +25,8 @@ namespace elbsms_core.CPU
 
         private PairedRegister _ix, _iy;
 
+        private PairedRegister _memPtr;
+
         private byte _r;
         private byte _i;
 
@@ -316,14 +318,13 @@ namespace elbsms_core.CPU
 
                 case 0x36: WriteByte(_gpr.HL, ReadByte(_pc++)); break; // LD (HL),n
 
-                case 0x0A: _afr.A = ReadByte(_gpr.BC); break; // LD A,(BC)
-                case 0x1A: _afr.A = ReadByte(_gpr.DE); break; // LD A,(DE)
+                case 0x0A: _afr.A = ReadByte(_gpr.BC); _memPtr.word = (ushort)(_gpr.BC + 1); break; // LD A,(BC)
+                case 0x1A: _afr.A = ReadByte(_gpr.DE); _memPtr.word = (ushort)(_gpr.DE + 1); break; // LD A,(DE)
+                case 0x3A: { ushort address = ReadWord(_pc); _afr.A = ReadByte(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD A,(nn)
 
-                case 0x3A: _afr.A = ReadByte(ReadWord(_pc)); _pc += 2; break; // LD A,(nn)
-
-                case 0x02: WriteByte(_gpr.BC, _afr.A); break; // LD (BC),A
-                case 0x12: WriteByte(_gpr.DE, _afr.A); break; // LD (DE),A
-                case 0x32: WriteByte(ReadWord(_pc), _afr.A); _pc += 2; break; // LD (nn),A
+                case 0x02: WriteByte(_gpr.BC, _afr.A); _memPtr.word = (ushort)(((_gpr.BC + 1) & 0xFF) | _afr.A << 8); break; // LD (BC),A
+                case 0x12: WriteByte(_gpr.DE, _afr.A); _memPtr.word = (ushort)(((_gpr.DE + 1) & 0xFF) | _afr.A << 8); break; // LD (DE),A
+                case 0x32: { ushort address = ReadWord(_pc); WriteByte(address, _afr.A); _pc += 2; _memPtr.word = (ushort)(((address + 1) & 0xFF) | _afr.A << 8); } break; // LD (nn),A
 
                 #endregion
 
@@ -334,9 +335,9 @@ namespace elbsms_core.CPU
                 case 0x21: _gpr.HL = ReadWord(_pc); _pc += 2; break; // LD HL,nn
                 case 0x31: _sp = ReadWord(_pc); _pc += 2; break;     // LD SP,nn
 
-                case 0x2A: _gpr.HL = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD HL,(nn)
+                case 0x2A: { ushort address = ReadWord(_pc); _gpr.HL = ReadWord(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD HL,(nn)
 
-                case 0x22: WriteWord(ReadWord(_pc), _gpr.HL); _pc += 2; break; // LD (nn),HL
+                case 0x22: { ushort address = ReadWord(_pc); WriteWord(address, _gpr.HL); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD (nn),HL
 
                 case 0xC5: _clock.AddCycles(1); PushWord(_gpr.BC); break; // PUSH BC
                 case 0xD5: _clock.AddCycles(1); PushWord(_gpr.DE); break; // PUSH DE
@@ -364,6 +365,7 @@ namespace elbsms_core.CPU
                     WriteWord(_sp, _gpr.HL);
                     _clock.AddCycles(2);
                     _gpr.HL = temp;
+                    _memPtr.word = temp;
                 }
                 break; // EX (SP),HL
 
@@ -608,15 +610,15 @@ namespace elbsms_core.CPU
 
                 #region 16-bit load group
 
-                case 0x4B: _gpr.BC = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD BC,(nn)
-                case 0x5B: _gpr.DE = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD DE,(nn)
-                case 0x6B: _gpr.HL = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD HL,(nn)
-                case 0x7B: _sp = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD SP,(nn)
+                case 0x4B: { ushort address = ReadWord(_pc); _gpr.BC = ReadWord(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD BC,(nn)
+                case 0x5B: { ushort address = ReadWord(_pc); _gpr.DE = ReadWord(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD DE,(nn)
+                case 0x6B: { ushort address = ReadWord(_pc); _gpr.HL = ReadWord(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD HL,(nn)
+                case 0x7B: { ushort address = ReadWord(_pc); _sp = ReadWord(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD SP,(nn)
 
-                case 0x43: WriteWord(ReadWord(_pc), _gpr.BC); _pc += 2; break; // LD (nn),BC
-                case 0x53: WriteWord(ReadWord(_pc), _gpr.DE); _pc += 2; break; // LD (nn),DE
-                case 0x63: WriteWord(ReadWord(_pc), _gpr.HL); _pc += 2; break; // LD (nn),HL
-                case 0x73: WriteWord(ReadWord(_pc), _sp); _pc += 2; break; // LD (nn),SP
+                case 0x43: { ushort address = ReadWord(_pc); WriteWord(address, _gpr.BC); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD (nn),BC
+                case 0x53: { ushort address = ReadWord(_pc); WriteWord(address, _gpr.DE); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD (nn),DE
+                case 0x63: { ushort address = ReadWord(_pc); WriteWord(address, _gpr.HL); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD (nn),HL
+                case 0x73: { ushort address = ReadWord(_pc); WriteWord(address, _sp); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD (nn),SP
 
                 #endregion
 
@@ -740,7 +742,9 @@ namespace elbsms_core.CPU
             ushort Displace(ushort address, byte displacement)
             {
                 _clock.AddCycles(5);
-                return (ushort)(address + (sbyte)displacement);
+                _memPtr.word = (ushort)(address + (sbyte)displacement);
+
+                return _memPtr.word;
             }
 
             ref PairedRegister reg = ref GetRegisterForPrefix();
@@ -826,6 +830,7 @@ namespace elbsms_core.CPU
                     WriteWord(_sp, reg.word);
                     _clock.AddCycles(2);
                     reg.word = temp;
+                    _memPtr.word = temp;
                 }
                 break; // EX (SP),IX/IY 
 
@@ -929,6 +934,7 @@ namespace elbsms_core.CPU
             _clock.AddCycles(5);
 
             _pc -= 2;
+            _memPtr.word = (ushort)(_pc + 1);
         }
 
         private void LoadAndDecrement()
@@ -958,6 +964,7 @@ namespace elbsms_core.CPU
             _clock.AddCycles(5);
 
             _pc -= 2;
+            _memPtr.word = (ushort)(_pc + 1);
         }
 
         private void CompareAndIncrement()
@@ -975,6 +982,8 @@ namespace elbsms_core.CPU
             flags[V] = --_gpr.BC != 0;
 
             _afr.F = flags;
+
+            _memPtr.word++;
         }
 
         private void CompareIncrementAndRepeat()
@@ -983,12 +992,14 @@ namespace elbsms_core.CPU
 
             if (_gpr.BC == 0 || _afr.F[Z])
             {
+                _memPtr.word++;
                 return;
             }
 
             _clock.AddCycles(5);
 
             _pc -= 2;
+            _memPtr.word = (ushort)(_pc + 1);
         }
 
         private void CompareAndDecrement()
@@ -1006,6 +1017,8 @@ namespace elbsms_core.CPU
             flags[V] = --_gpr.BC != 0;
 
             _afr.F = flags;
+
+            _memPtr.word--;
         }
 
         private void CompareDecrementAndRepeat()
@@ -1014,12 +1027,14 @@ namespace elbsms_core.CPU
 
             if (_gpr.BC == 0 || _afr.F[Z])
             {
+                _memPtr.word++;
                 return;
             }
 
             _clock.AddCycles(5);
 
             _pc -= 2;
+            _memPtr.word = (ushort)(_pc + 1);
         }
 
         #endregion
@@ -1168,6 +1183,8 @@ namespace elbsms_core.CPU
 
             flags[Z] = result == 0;
 
+            _memPtr.word = (ushort)(a + 1);
+
             return ((ushort)(hi << 8 | lo), flags);
         }
 
@@ -1197,6 +1214,8 @@ namespace elbsms_core.CPU
             ushort result = (ushort)(hi << 8 | lo);
 
             flags[Z] = result == 0;
+
+            _memPtr.word = (ushort)(a + 1);
 
             return ((ushort)(hi << 8 | lo), flags);
         }
@@ -1368,6 +1387,7 @@ namespace elbsms_core.CPU
             WriteByte(_gpr.HL, (byte)((data << 4) | (a & 0x0F)));
 
             _afr.F = FlagsSZP[_afr.A] | (_afr.F & C);
+            _memPtr.word = (ushort)(_gpr.HL + 1);
         }
 
         private void RotateRightDigit()
@@ -1381,6 +1401,7 @@ namespace elbsms_core.CPU
             WriteByte(_gpr.HL, (byte)((data >> 4) | (a << 4)));
 
             _afr.F = FlagsSZP[_afr.A] | (_afr.F & C);
+            _memPtr.word = (ushort)(_gpr.HL + 1);
         }
 
         #endregion
@@ -1397,6 +1418,7 @@ namespace elbsms_core.CPU
             }
 
             _pc = address;
+            _memPtr.word = address;
         }
 
         private void JumpImmediate(bool condition)
@@ -1411,13 +1433,16 @@ namespace elbsms_core.CPU
             {
                 _pc += 2;
             }
+
+            _memPtr.word = address;
         }
 
         private void JumpRelative()
         {
-            _clock.AddCycles(5);
             sbyte offset = (sbyte)ReadByte(_pc++);
+            _clock.AddCycles(5);
             _pc += (ushort)offset;
+            _memPtr.word = _pc;
         }
 
         private void JumpRelative(bool condition)
@@ -1428,6 +1453,7 @@ namespace elbsms_core.CPU
             {
                 _clock.AddCycles(5);
                 _pc += (ushort)offset;
+                _memPtr.word = _pc;
             }
         }
 
@@ -1451,6 +1477,7 @@ namespace elbsms_core.CPU
 
             PushWord(_pc);
             _pc = address;
+            _memPtr.word = address;
         }
 
         private void CallImmediate(bool condition)
@@ -1464,11 +1491,14 @@ namespace elbsms_core.CPU
                 PushWord(_pc);
                 _pc = address;
             }
+
+            _memPtr.word = address;
         }
 
         private void Return()
         {
             _pc = PopWord();
+            _memPtr.word = _pc;
         }
 
         private void Return(bool condition)
@@ -1477,6 +1507,7 @@ namespace elbsms_core.CPU
             if (condition)
             {
                 _pc = PopWord();
+                _memPtr.word = _pc;
             }
         }
 
