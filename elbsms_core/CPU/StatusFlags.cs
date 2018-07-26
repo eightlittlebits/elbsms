@@ -4,15 +4,15 @@ namespace elbsms_core.CPU
 {
     struct StatusFlags
     {
-        public const int S = 0b1000_0000;
-        public const int Z = 0b0100_0000;
-        public const int B5 = 0b0010_0000;
-        public const int H = 0b0001_0000;
-        public const int B3 = 0b0000_1000;
-        public const int P = 0b0000_0100;
-        public const int V = 0b0000_0100;
-        public const int N = 0b0000_0010;
-        public const int C = 0b0000_0001;
+        public const byte S = 0b1000_0000;
+        public const byte Z = 0b0100_0000;
+        public const byte B5 = 0b0010_0000;
+        public const byte H = 0b0001_0000;
+        public const byte B3 = 0b0000_1000;
+        public const byte P = 0b0000_0100;
+        public const byte V = 0b0000_0100;
+        public const byte N = 0b0000_0010;
+        public const byte C = 0b0000_0001;
 
         private byte _flags;
 
