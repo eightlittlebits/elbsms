@@ -940,13 +940,13 @@ namespace elbsms_core.CPU
 
             result &= 0xFF;
 
-            StatusFlags flags = FlagsSZP[result];
+            int flags = FlagsSZP[result] & (~P);
 
-            flags[H] = (carryIn & 0x10) == 0x10;
-            flags[V] = ((carryIn >> 7) & 0x01) != (carryIn >> 8);
-            flags[C] = (carryIn & 0x100) == 0x100;
+            flags |= carryIn & 0x10;
+            flags |= (((carryIn >> 7) & 0x01) != (carryIn >> 8)) ? V : 0;
+            flags |= (carryIn & 0x100) >> 8;
 
-            return ((byte)result, flags);
+            return ((byte)result, new StatusFlags(flags));
         }
 
         // https://stackoverflow.com/questions/8034566/overflow-and-carry-flags-on-z80/8037485#8037485
