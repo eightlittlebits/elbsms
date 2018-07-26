@@ -37,6 +37,8 @@ namespace elbsms_core.CPU
 
 #pragma warning restore 0414
 
+        #region static initialisation
+
         static Z80()
         {
             InitStatusTables();
@@ -68,6 +70,8 @@ namespace elbsms_core.CPU
                 return (v & 1) != 1;
             }
         }
+
+        #endregion
 
         public Z80(SystemClock clock, Bus bus)
         {
