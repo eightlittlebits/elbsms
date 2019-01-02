@@ -91,6 +91,10 @@
       <Project>{59ef0f57-7a82-4cd8-80a6-0d0536ce1ed3}</Project>
       <Name>elbsms_core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\elb_utilities\elb_utilities.csproj">
+      <Project>{4CB0317A-DD73-4C34-A9CB-30056A86F4A3}</Project>
+      <Name>elb_utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
