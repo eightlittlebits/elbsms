@@ -9,7 +9,7 @@ namespace elbsms_ui
     public partial class MainForm : Form
     {
         private static double _stopwatchFrequency = Stopwatch.Frequency;
-        private static string _programNameVersion = $"{Application.ProductName} {Application.ProductVersion}";
+        private static string _programNameVersion = $"{Application.ProductName} v{Application.ProductVersion}";
 
         private Configuration _config;
 
@@ -80,6 +80,11 @@ namespace elbsms_ui
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutDialog.DisplayAboutDialog();
         }
     }
 }

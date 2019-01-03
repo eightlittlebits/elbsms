@@ -64,6 +64,7 @@
     <Compile Include="NativeMethods\Gdi32.cs" />
     <Compile Include="NativeMethods\User32.cs" />
     <Compile Include="NativeMethods\WinMM.cs" />
+    <Compile Include="WinForms\AboutBox.cs" />
     <Compile Include="WinForms\NotifyValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Media\WaveFile.cs" />
