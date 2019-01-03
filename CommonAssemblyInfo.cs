@@ -3,13 +3,13 @@
 [assembly: AssemblyProduct("elbsms")]
 
 [assembly: AssemblyCompany("eightlittlebits")]
-[assembly: AssemblyCopyright("Copyright © David Parrott 2019")]
+[assembly: AssemblyCopyright("Copyright © 2017-2019 David Parrott")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
-#elif RELEASE
+#else
 [assembly: AssemblyConfiguration("Release")]
 #endif
 

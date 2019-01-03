@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("elb_utilities")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("eightlittlebits")]
 [assembly: AssemblyProduct("elb_utilities")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright © 2019 David Parrott")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
