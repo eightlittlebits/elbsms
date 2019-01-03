@@ -14,7 +14,14 @@ namespace elbsms_ui
         private Configuration _config;
 
         private NotifyValue<bool> _emulationInitialised;
-        private NotifyValue<bool> _emulationPaused;
+
+        private bool _emulationPaused;
+
+        public bool Paused
+        {
+            get => _emulationPaused;
+            set { _emulationPaused = value; SetUIText(); }
+        }
 
         public MainForm()
         {
@@ -23,9 +30,6 @@ namespace elbsms_ui
             _config = XmlConfiguration.Load<Configuration>();
 
             _emulationInitialised = new NotifyValue<bool>(false);
-            _emulationPaused = new NotifyValue<bool>(false);
-
-            _emulationPaused.PropertyChanged += (s,e) => SetUIText();
 
             PrepareUserInterface();
             PrepareDataBindings();
@@ -64,7 +68,7 @@ namespace elbsms_ui
             AddBinding(resetToolStripMenuItem, nameof(resetToolStripMenuItem.Enabled), _emulationInitialised, nameof(_emulationInitialised.Value));
 
             // pause
-            AddBinding(pauseToolStripMenuItem, nameof(pauseToolStripMenuItem.Checked), _emulationPaused, nameof(_emulationPaused.Value));
+            AddBinding(pauseToolStripMenuItem, nameof(pauseToolStripMenuItem.Checked), this, nameof(Paused));
 
             // options
             AddBinding(limitFrameRateToolStripMenuItem, nameof(limitFrameRateToolStripMenuItem.Checked), _config, nameof(_config.LimitFrameRate));
@@ -76,7 +80,7 @@ namespace elbsms_ui
 
             base.OnFormClosing(e);
         }
-        
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
