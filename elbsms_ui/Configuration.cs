@@ -2,7 +2,7 @@
 
 namespace elbsms_ui
 {
-    public class Configuration : XmlConfiguration
+    public class Configuration : XmlConfiguration<Configuration>
     {
         protected override string FileName => "elbsms.config";
 

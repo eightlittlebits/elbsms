@@ -5,8 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("elb_utilities")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyDescription("eightlittlebits utility library")]
+#if DEBUG
+[assembly: AssemblyConfiguration("Debug")]
+#else
+[assembly: AssemblyConfiguration("Release")]
+#endif
 [assembly: AssemblyCompany("eightlittlebits")]
 [assembly: AssemblyProduct("elb_utilities")]
 [assembly: AssemblyCopyright("Copyright © 2019 David Parrott")]

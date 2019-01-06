@@ -15,5 +15,4 @@ namespace elb_utilities.Components
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public ControlBindingsCollection DataBindings => _dataBindings ?? (_dataBindings = new ControlBindingsCollection(this));
     }
-
 }

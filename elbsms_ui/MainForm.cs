@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using elb_utilities.Configuration;
 using elb_utilities.WinForms;
 
 namespace elbsms_ui
@@ -27,7 +26,7 @@ namespace elbsms_ui
         {
             InitializeComponent();
 
-            _config = XmlConfiguration.Load<Configuration>();
+            _config = Configuration.Load();
 
             _emulationInitialised = new NotifyValue<bool>(false);
 
