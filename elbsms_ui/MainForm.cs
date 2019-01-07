@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
+using elb_utilities.NativeMethods;
 using elb_utilities.WinForms;
 
 namespace elbsms_ui
@@ -17,11 +19,16 @@ namespace elbsms_ui
         private bool _emulationPaused;
         private bool _focusLostPauseState;
 
+        private double _targetFrameTicks = 0;
+        private long _lastFrameTimestamp;
+
         public bool Paused
         {
             get => _emulationPaused;
             set { _emulationPaused = value; SetUIText(); }
         }
+
+        static bool ApplicationStillIdle => !User32.PeekMessage(out _, IntPtr.Zero, 0, 0, 0);
 
         public MainForm()
         {
@@ -33,6 +40,8 @@ namespace elbsms_ui
 
             PrepareUserInterface();
             PrepareDataBindings();
+
+            Application.Idle += (s, ev) => { while (_emulationInitialised && !_emulationPaused && ApplicationStillIdle) { RunFrame(); } };
         }
 
         private void PrepareUserInterface()
@@ -73,6 +82,34 @@ namespace elbsms_ui
             // options
             AddBinding(limitFrameRateToolStripMenuItem, nameof(limitFrameRateToolStripMenuItem.Checked), _config, nameof(_config.LimitFrameRate));
             AddBinding(pauseWhenFocusLostToolStripMenuItem, nameof(pauseWhenFocusLostToolStripMenuItem.Checked), _config, nameof(_config.PauseWhenFocusLost));
+        }
+
+        private void RunFrame()
+        {
+            // run frame
+
+            // render
+
+            //sleep
+            long elapsedTicks = Stopwatch.GetTimestamp() - _lastFrameTimestamp;
+
+            if (_config.LimitFrameRate && elapsedTicks < _targetFrameTicks)
+            {
+                // get ms to sleep for, cast to int to truncate to nearest millisecond
+                // take 1 ms off the sleep time as we don't always hit the sleep exactly, trade
+                // burning extra cpu in the spin loop for accuracy
+                int sleepMilliseconds = (int)((_targetFrameTicks - elapsedTicks) * 1000 / _stopwatchFrequency) - 1;
+
+                if (sleepMilliseconds > 0)
+                {
+                    Thread.Sleep(sleepMilliseconds);
+                }
+
+                // spin for the remaining partial millisecond to hit target frame rate
+                while ((Stopwatch.GetTimestamp() - _lastFrameTimestamp) < _targetFrameTicks) ;
+            }
+
+            _lastFrameTimestamp = Stopwatch.GetTimestamp();
         }
 
         protected override void OnActivated(EventArgs e)
