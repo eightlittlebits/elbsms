@@ -51,7 +51,7 @@ namespace elbsms_ui
 
         private void SetUIText()
         {
-            Text = _programNameVersion + (_emulationPaused ? "[PAUSED]" : string.Empty);
+            Text = _programNameVersion + (_emulationPaused ? " [PAUSED]" : string.Empty);
 
             aboutToolStripMenuItem.Text = $"About {Application.ProductName}";
 
