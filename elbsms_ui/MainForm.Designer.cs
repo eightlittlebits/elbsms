@@ -34,15 +34,16 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.emulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseToolStripMenuItem = new elb_utilities.Components.BindableToolStripMenuItem();
+            this.resetToolStripMenuItem = new elb_utilities.Components.BindableToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.limitFrameRateToolStripMenuItem = new elb_utilities.Components.BindableToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.statusToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderControl = new elbsms_ui.RenderControl();
-            this.pauseToolStripMenuItem = new elb_utilities.Components.BindableToolStripMenuItem();
-            this.resetToolStripMenuItem = new elb_utilities.Components.BindableToolStripMenuItem();
-            this.limitFrameRateToolStripMenuItem = new elb_utilities.Components.BindableToolStripMenuItem();
+            this.pauseWhenFocusLostToolStripMenuItem = new elb_utilities.Components.BindableToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
@@ -99,13 +100,36 @@
             this.emulationToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
             this.emulationToolStripMenuItem.Text = "&Emulation";
             // 
+            // pauseToolStripMenuItem
+            // 
+            this.pauseToolStripMenuItem.CheckOnClick = true;
+            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
+            this.pauseToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.pauseToolStripMenuItem.Text = "&Pause";
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.resetToolStripMenuItem.Text = "&Reset";
+            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.limitFrameRateToolStripMenuItem});
+            this.limitFrameRateToolStripMenuItem,
+            this.pauseWhenFocusLostToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "&Options";
+            // 
+            // limitFrameRateToolStripMenuItem
+            // 
+            this.limitFrameRateToolStripMenuItem.CheckOnClick = true;
+            this.limitFrameRateToolStripMenuItem.Name = "limitFrameRateToolStripMenuItem";
+            this.limitFrameRateToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.limitFrameRateToolStripMenuItem.Text = "&Limit Frame Rate";
             // 
             // helpToolStripMenuItem
             // 
@@ -118,7 +142,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -149,27 +173,12 @@
             this.renderControl.TabIndex = 2;
             this.renderControl.Text = "renderControl1";
             // 
-            // pauseToolStripMenuItem
+            // pauseWhenFocusLostToolStripMenuItem
             // 
-            this.pauseToolStripMenuItem.CheckOnClick = true;
-            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-            this.pauseToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.pauseToolStripMenuItem.Text = "&Pause";
-            // 
-            // resetToolStripMenuItem
-            // 
-            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.resetToolStripMenuItem.Text = "&Reset";
-            // 
-            // limitFrameRateToolStripMenuItem
-            // 
-            this.limitFrameRateToolStripMenuItem.CheckOnClick = true;
-            this.limitFrameRateToolStripMenuItem.Name = "limitFrameRateToolStripMenuItem";
-            this.limitFrameRateToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.limitFrameRateToolStripMenuItem.Text = "&Limit Frame Rate";
+            this.pauseWhenFocusLostToolStripMenuItem.CheckOnClick = true;
+            this.pauseWhenFocusLostToolStripMenuItem.Name = "pauseWhenFocusLostToolStripMenuItem";
+            this.pauseWhenFocusLostToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.pauseWhenFocusLostToolStripMenuItem.Text = "&Pause When Focus Lost";
             // 
             // MainForm
             // 
@@ -208,6 +217,7 @@
         private System.Windows.Forms.ToolStripMenuItem emulationToolStripMenuItem;
         private elb_utilities.Components.BindableToolStripMenuItem pauseToolStripMenuItem;
         private elb_utilities.Components.BindableToolStripMenuItem resetToolStripMenuItem;
+        private elb_utilities.Components.BindableToolStripMenuItem pauseWhenFocusLostToolStripMenuItem;
     }
 }
 

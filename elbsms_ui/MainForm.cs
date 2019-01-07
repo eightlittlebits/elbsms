@@ -15,6 +15,7 @@ namespace elbsms_ui
         private NotifyValue<bool> _emulationInitialised;
 
         private bool _emulationPaused;
+        private bool _focusLostPauseState;
 
         public bool Paused
         {
@@ -41,7 +42,7 @@ namespace elbsms_ui
 
         private void SetUIText()
         {
-            Text = _programNameVersion;
+            Text = _programNameVersion + (_emulationPaused ? "[PAUSED]" : string.Empty);
 
             aboutToolStripMenuItem.Text = $"About {Application.ProductName}";
 
@@ -71,6 +72,28 @@ namespace elbsms_ui
 
             // options
             AddBinding(limitFrameRateToolStripMenuItem, nameof(limitFrameRateToolStripMenuItem.Checked), _config, nameof(_config.LimitFrameRate));
+            AddBinding(pauseWhenFocusLostToolStripMenuItem, nameof(pauseWhenFocusLostToolStripMenuItem.Checked), _config, nameof(_config.PauseWhenFocusLost));
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+
+            if (_config.PauseWhenFocusLost)
+            {
+                Paused = _focusLostPauseState;
+            }
+        }
+
+        protected override void OnDeactivate(EventArgs e)
+        {
+            base.OnDeactivate(e);
+
+            if (_config.PauseWhenFocusLost && _emulationInitialised)
+            {
+                _focusLostPauseState = Paused;
+                Paused = true;
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

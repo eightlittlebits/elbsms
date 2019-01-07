@@ -6,6 +6,7 @@ namespace elbsms_ui
     {
         protected override string FileName => "elbsms.config";
 
-        public bool LimitFrameRate { get; set; }
+        public bool LimitFrameRate { get; set; } = true;
+        public bool PauseWhenFocusLost { get; set; } = true;
     }
 }
