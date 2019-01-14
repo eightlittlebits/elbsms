@@ -67,7 +67,8 @@ namespace elbsms_ui
 
         private void PrepareDataBindings()
         {
-            void AddBinding(IBindableComponent component, string propertyName, object dataSource, string dataMember, bool formattingEnabled = false, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
+            void AddBinding(IBindableComponent component, string propertyName, object dataSource, string dataMember,
+                bool formattingEnabled = false, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
             {
                 component.DataBindings.Add(propertyName, dataSource, dataMember, formattingEnabled, updateMode);
             }
