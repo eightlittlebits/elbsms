@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using elb_utilities.NativeMethods;
 
 namespace elbsms_ui
 {
@@ -11,6 +12,9 @@ namespace elbsms_ui
         [STAThread]
         static void Main()
         {
+            // set timer resolution to 1ms to try and get the sleep accurate in the wait loop
+            WinMM.TimeBeginPeriod(1);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
