@@ -37,8 +37,5 @@ namespace elbsms_core.CPU
         {
             word = i;
         }
-
-        public static implicit operator ushort(PairedRegister r) => r.word;
-        public static implicit operator PairedRegister(ushort i) => new PairedRegister(i);
     }
 }
