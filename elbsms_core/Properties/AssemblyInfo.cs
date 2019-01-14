@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("elbsms_core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("elbsms core")]
 [assembly: AssemblyProduct("elbsms_core")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
