@@ -4,7 +4,7 @@ namespace elbsms_core
 {
     public class Cartridge
     {
-        private byte[] _romData;
+        private readonly byte[] _romData;
 
         public static Cartridge LoadFromFile(string filename)
         {
