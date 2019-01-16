@@ -39,7 +39,6 @@ namespace elbsms_ui
             _emulationInitialised = new NotifyValue<bool>(false);
 
             PrepareUserInterface();
-            PrepareDataBindings();
 
             Application.Idle += (s, ev) => { while (_emulationInitialised && !_emulationPaused && ApplicationStillIdle) { RunFrame(); } };
         }
@@ -47,6 +46,7 @@ namespace elbsms_ui
         private void PrepareUserInterface()
         {
             SetUIText();
+            PrepareDataBindings();
         }
 
         private void SetUIText()
@@ -83,6 +83,9 @@ namespace elbsms_ui
             // options
             AddBinding(limitFrameRateToolStripMenuItem, nameof(limitFrameRateToolStripMenuItem.Checked), _config, nameof(_config.LimitFrameRate));
             AddBinding(pauseWhenFocusLostToolStripMenuItem, nameof(pauseWhenFocusLostToolStripMenuItem.Checked), _config, nameof(_config.PauseWhenFocusLost));
+
+            // background settings
+            AddBinding(this, nameof(this.Size), _config, nameof(_config.WindowSize));
         }
 
         private void RunFrame()
