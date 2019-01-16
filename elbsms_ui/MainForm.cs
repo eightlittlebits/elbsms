@@ -144,6 +144,31 @@ namespace elbsms_ui
             base.OnFormClosing(e);
         }
 
+        protected override void OnDragEnter(DragEventArgs e)
+        {
+            base.OnDragEnter(e);
+
+            e.Effect = DragDropEffects.None;
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && e.AllowedEffect.HasFlag(DragDropEffects.Copy))
+            {
+                if (e.Data.GetData(DataFormats.FileDrop) is string[] strings && strings.Length == 1)
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+            }
+        }
+
+        protected override void OnDragDrop(DragEventArgs e)
+        {
+            base.OnDragDrop(e);
+
+            if (e.Data.GetData(DataFormats.FileDrop, false) is string[] files && files.Length == 1)
+            {
+                // validate file and load
+            }
+        }
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
