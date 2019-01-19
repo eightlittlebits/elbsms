@@ -1375,6 +1375,7 @@ namespace elbsms_core.CPU
 
         private void Return(bool condition)
         {
+            _clock.AddCycles(1);
             if (condition)
             {
                 _pc = PopWord();
