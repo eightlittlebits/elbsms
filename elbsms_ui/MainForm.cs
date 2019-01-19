@@ -169,6 +169,7 @@ namespace elbsms_ui
             }
         }
 
+#pragma warning disable IDE1006 // Naming Styles
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -178,5 +179,6 @@ namespace elbsms_ui
         {
             AboutDialog.DisplayAboutDialog();
         }
+#pragma warning restore IDE1006 // Naming Styles
     }
 }
