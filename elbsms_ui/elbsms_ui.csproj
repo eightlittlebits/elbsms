@@ -115,6 +115,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\elbemu_shared\elbemu_shared.csproj">
+      <Project>{ce0ba1c0-74d7-44bc-b388-3e2dd26ecbc8}</Project>
+      <Name>elbemu_shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\elbsms_core\elbsms_core.csproj">
       <Project>{59ef0f57-7a82-4cd8-80a6-0d0536ce1ed3}</Project>
       <Name>elbsms_core</Name>

@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elbsms_console", "elbsms_co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elb_utilities", "elb_utilities\elb_utilities.csproj", "{4CB0317A-DD73-4C34-A9CB-30056A86F4A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elbemu_shared", "elbemu_shared\elbemu_shared.csproj", "{CE0BA1C0-74D7-44BC-B388-3E2DD26ECBC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{4CB0317A-DD73-4C34-A9CB-30056A86F4A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CB0317A-DD73-4C34-A9CB-30056A86F4A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CB0317A-DD73-4C34-A9CB-30056A86F4A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE0BA1C0-74D7-44BC-B388-3E2DD26ECBC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE0BA1C0-74D7-44BC-B388-3E2DD26ECBC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE0BA1C0-74D7-44BC-B388-3E2DD26ECBC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE0BA1C0-74D7-44BC-B388-3E2DD26ECBC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
