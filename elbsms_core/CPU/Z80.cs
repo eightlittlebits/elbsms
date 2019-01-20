@@ -1331,13 +1331,7 @@ namespace elbsms_core.CPU
         {
             _clock.AddCycles(1);
 
-            ushort address = (ushort)(_pc + (sbyte)ReadByte(_pc++));
-
-            if (--_gpr.BC == 0)
-                return;
-
-            _clock.AddCycles(5);
-            _pc = address;
+            JumpRelative(--_gpr.BC != 0);
         }
 
         #endregion
