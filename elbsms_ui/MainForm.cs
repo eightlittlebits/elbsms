@@ -73,19 +73,17 @@ namespace elbsms_ui
                 component.DataBindings.Add(propertyName, dataSource, dataMember, formattingEnabled, updateMode);
             }
 
-            // emulation menu items enable
+            // runtime bindings
+            AddBinding(pauseToolStripMenuItem, nameof(pauseToolStripMenuItem.Checked), this, nameof(Paused));
+
             AddBinding(pauseToolStripMenuItem, nameof(pauseToolStripMenuItem.Enabled), _emulationInitialised, nameof(_emulationInitialised.Value));
             AddBinding(resetToolStripMenuItem, nameof(resetToolStripMenuItem.Enabled), _emulationInitialised, nameof(_emulationInitialised.Value));
 
-            // pause
-            AddBinding(pauseToolStripMenuItem, nameof(pauseToolStripMenuItem.Checked), this, nameof(Paused));
+            // configuration bindings
+            AddBinding(this, nameof(this.Size), _config, nameof(_config.WindowSize));
 
-            // options
             AddBinding(limitFrameRateToolStripMenuItem, nameof(limitFrameRateToolStripMenuItem.Checked), _config, nameof(_config.LimitFrameRate));
             AddBinding(pauseWhenFocusLostToolStripMenuItem, nameof(pauseWhenFocusLostToolStripMenuItem.Checked), _config, nameof(_config.PauseWhenFocusLost));
-
-            // background settings
-            AddBinding(this, nameof(this.Size), _config, nameof(_config.WindowSize));
         }
 
         private void RunFrame()
@@ -170,6 +168,7 @@ namespace elbsms_ui
         }
 
 #pragma warning disable IDE1006 // Naming Styles
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -179,6 +178,7 @@ namespace elbsms_ui
         {
             AboutDialog.DisplayAboutDialog();
         }
+
 #pragma warning restore IDE1006 // Naming Styles
     }
 }
