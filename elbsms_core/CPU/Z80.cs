@@ -653,6 +653,9 @@ namespace elbsms_core.CPU
                 case 0x6E: _gpr.L = ReadByte(Displace(reg.word, ReadByte(_pc++))); break; // LD L,(IX/IY + d)
                 case 0x7E: _afr.A = ReadByte(Displace(reg.word, ReadByte(_pc++))); break; // LD A,(IX/IY + d)
 
+                case 0x26: reg.hi = ReadByte(_pc++); break; // LD IX/IY H,n
+                case 0x2E: reg.lo = ReadByte(_pc++); break; // LD IX/IY L,n
+
                 case 0x44: _gpr.B = reg.hi; break; // LD B,IXH/IYH
                 case 0x45: _gpr.B = reg.lo; break; // LD B,IXL/IYL
 
@@ -697,9 +700,6 @@ namespace elbsms_core.CPU
                 #endregion
 
                 #region 16-bit load group
-
-                case 0x26: reg.word = (ushort)((ReadByte(_pc++) << 8) | (reg.word & 0x00FF)); break; // LD IX/IY H,n
-                case 0x2E: reg.word = (ushort)((reg.word & 0xFF00) | ReadByte(_pc++)); break; // LD IX/IY L,n
 
                 case 0x21: reg.word = ReadWord(_pc); _pc += 2; break; // LD IX/IY,nn
 
