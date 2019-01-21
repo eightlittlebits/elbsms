@@ -1,9 +1,24 @@
 # elbsms - [![Build status](https://ci.appveyor.com/api/projects/status/umtjbgudnaq4m5hf?svg=true)](https://ci.appveyor.com/project/eightlittlebits/elbsms)
+
+## what
+
 A Sega Master System emulator in C#
+
+## why
+
+I enjoy the challenge of writing emulators and the master system was one of the first consoles that I ever owned and played. 
+
+Will it be the best emulator in the world? Probably not, I don't have the hardware knowledge (yet, maybe) to do any real investigation myself but I'll do the best with what I do know. And hey, it doesn't need to be the best.
+
+## resources
+
+* codeslinger - http://www.codeslinger.co.uk/pages/projects/mastersystem.html
+* smspower documents - http://www.smspower.org/Development/Documents
+* masterfudgemk2 - https://github.com/xdanieldzd/MasterFudgeMk2
 
 ## License
 
-Copyright (c) 2018 David Parrott
+Copyright (c) 2017-2019 David Parrott
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
