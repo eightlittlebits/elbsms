@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 
 namespace elbsms_core
@@ -7,6 +8,7 @@ namespace elbsms_core
     {
         public ulong Timestamp;
 
+        [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddCycles(uint cycleCount)
         {
