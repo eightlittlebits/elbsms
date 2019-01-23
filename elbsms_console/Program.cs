@@ -55,25 +55,19 @@ namespace elbsms_console
             Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms Instructions: {instructionCount:N0}, Instructions/ms: {instructionCount / (double)sw.ElapsedMilliseconds}, Effective Clock: {FormatFrequency(effectiveClock)}");
         }
 
-        private enum FrequencyUnit
-        {
-            Hz,
-            KHz,
-            MHz,
-            GHz
-        }
-
         static string FormatFrequency(double frequency)
         {
-            int freqUnit = 0;
+            string[] frequencyUnit = { "Hz", "KHz", "MHz", "GHz" };
+
+            int currentFreqUnit = 0;
 
             while (frequency >= 1000.0)
             {
                 frequency /= 1000.0;
-                freqUnit++;
+                currentFreqUnit++;
             }
 
-            return $"{frequency:.##} {(FrequencyUnit)freqUnit}";
+            return $"{frequency:.##} {frequencyUnit[currentFreqUnit]}";
         }
     }
 }
