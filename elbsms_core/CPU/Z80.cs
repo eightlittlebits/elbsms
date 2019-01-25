@@ -24,18 +24,21 @@ namespace elbsms_core.CPU
 
         private PairedRegister _ix, _iy;
 
+        private byte _r;
+
 #pragma warning disable 0169
 
-        private byte _i, _r;
+        private byte _i;
 
 #pragma warning restore 0169
 
-#pragma warning disable 0414
-
-        private byte _iff1, _iff2;
+        private bool _iff1, _iff2;
         private int _interruptMode;
+        private bool _enableInterrupts;
 
-#pragma warning restore 0414
+        public bool NMIPending { get; set; }
+        public bool INTPending { get; set; }
+
 
         #region static initialisation
 
@@ -188,7 +191,44 @@ namespace elbsms_core.CPU
 
         private void ProcessInterrupts()
         {
+            if (_enableInterrupts)
+            {
+                _iff1 = _iff2 = true;
+                _enableInterrupts = false;
+                return;
+            }
 
+            if (NMIPending)
+            {
+                NMIPending = false;
+                _iff2 = _iff1;
+                _iff1 = false;
+
+                IncrementMemoryRefreshRegister();
+                _clock.AddCycles(4); // timing of an opcode fetch
+                Reset(0x66);
+                return;
+            }
+
+            if (INTPending && _iff1)
+            {
+                _iff1 = _iff2 = false;
+                IncrementMemoryRefreshRegister();
+
+                // timings from http://www.z80.info/interrup.htm
+                switch (_interruptMode)
+                {
+                    case 0:
+                        // mode 0 should read from the data bus but this is not used in the master system
+                        // open bus reads FF which is RST 38H so fall through to mode 1 calling RST 38H
+                    case 1:
+                        _clock.AddCycles(6); // a normal opcode fetch plus two wait cycles
+                        Reset(0x38);
+                        break;
+
+                    case 2: throw new NotImplementedException("Interrupt Mode 2 not implemented");
+                }
+            }
         }
 
         public void ExecuteInstruction()
@@ -458,6 +498,7 @@ namespace elbsms_core.CPU
                 case 0x00: break; // NOP
 
                 case 0xF3: DisableInterrupts(); break; // DI
+                case 0xFB: _enableInterrupts = true; break; // EI
 
                 #endregion
 
@@ -540,6 +581,15 @@ namespace elbsms_core.CPU
                 case 0xF0: Return(!_afr.F[S]); break; // RET P
                 case 0xF8: Return(_afr.F[S]); break; // RET M   
 
+                case 0xC7: Reset(0x00); break; // RST 00H`
+                case 0xCF: Reset(0x08); break; // RST 08H
+                case 0xD7: Reset(0x10); break; // RST 10H
+                case 0xDF: Reset(0x18); break; // RST 18H
+                case 0xE7: Reset(0x20); break; // RST 20H
+                case 0xEF: Reset(0x28); break; // RST 28H
+                case 0xF7: Reset(0x30); break; // RST 30H
+                case 0xFF: Reset(0x38); break; // RST 38H
+
                 #endregion
 
                 #region input and output group
@@ -589,7 +639,16 @@ namespace elbsms_core.CPU
 
                 case 0x44: (_afr.A, _afr.F) = Sub8Bit(0, _afr.A); break; // NEG
 
-                case 0x56: SetInterruptMode(0); break; // IM 0
+                case 0x46:
+                case 0x4E:
+                case 0x66:
+                case 0x6E: SetInterruptMode(0); break; // IM 0
+
+                case 0x56:
+                case 0x76: SetInterruptMode(1); break; // IM 1
+
+                case 0x5E:
+                case 0x7E: SetInterruptMode(2); break; // IM 2
 
                 #endregion
 
@@ -612,6 +671,20 @@ namespace elbsms_core.CPU
 
                 case 0x67: RotateRightDigit(); break; // RRD
                 case 0x6F: RotateLeftDigit(); break; // RLD
+
+                #endregion
+
+                #region call and return group
+
+                case 0x45:
+                case 0x55:
+                case 0x5D:
+                case 0x65:
+                case 0x6D:
+                case 0x75:
+                case 0x7D: _iff1 = _iff2; Return(); break; // RETN
+
+                case 0x4D: Return(); break; // RETI
 
                 #endregion
 
@@ -1015,7 +1088,7 @@ namespace elbsms_core.CPU
 
         private void DisableInterrupts()
         {
-            _iff1 = 0; _iff2 = 0;
+            _iff1 = _iff2 = false;
         }
 
         private void SetInterruptMode(int interruptMode)
@@ -1374,6 +1447,13 @@ namespace elbsms_core.CPU
             {
                 _pc = PopWord();
             }
+        }
+
+        private void Reset(ushort address)
+        {
+            _clock.AddCycles(1);
+            PushWord(_pc);
+            _pc = address;
         }
 
         #endregion
