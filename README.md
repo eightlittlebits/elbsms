@@ -15,6 +15,8 @@ Will it be the best emulator in the world? Probably not, I don't have the hardwa
 * codeslinger - http://www.codeslinger.co.uk/pages/projects/mastersystem.html
 * smspower documents - http://www.smspower.org/Development/Documents
 * masterfudgemk2 - https://github.com/xdanieldzd/MasterFudgeMk2
+* baltazar studios z80 timings - http://baltazarstudios.com/zilog-z80-undocumented-behavior/
+* interrupt timings - http://www.z80.info/interrup.htm
 
 ## License
 
