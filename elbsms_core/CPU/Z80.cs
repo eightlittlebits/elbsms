@@ -1026,12 +1026,12 @@ namespace elbsms_core.CPU
         private static (byte, StatusFlags) Sub8Bit(byte a, byte b, bool carry = false)
         {
             // a - b - c = a + ~b + 1 - c = a + ~b + !c
-            var (result, flags) = Add8Bit(a, (byte)(~b), !carry);
+            (byte value, StatusFlags flags) result = Add8Bit(a, (byte)(~b), !carry);
 
-            flags ^= C | H;
-            flags |= N;
+            result.flags ^= C | H;
+            result.flags |= N;
 
-            return (result, flags);
+            return result;
         }
 
         private static (byte, StatusFlags) Or8Bit(byte a, byte b)
