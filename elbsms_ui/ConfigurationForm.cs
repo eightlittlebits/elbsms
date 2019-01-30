@@ -122,11 +122,8 @@ namespace elbsms_ui
 
         private string DisplayOpenDialog(string path, bool isFolderPicker)
         {
-            using (var openFileDialog = new CommonOpenFileDialog())
+            using (var openFileDialog = new CommonOpenFileDialog() { InitialDirectory = path, IsFolderPicker = isFolderPicker })
             {
-                openFileDialog.InitialDirectory = path;
-                openFileDialog.IsFolderPicker = isFolderPicker;
-
                 if (openFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
                     path = openFileDialog.FileName;
