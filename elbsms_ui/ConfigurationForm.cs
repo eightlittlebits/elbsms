@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -62,6 +63,21 @@ namespace elbsms_ui
                     {
                         AddComboBox(i, property.PropertyType, property.Name);
                     }
+                    else if (property.PropertyType == typeof(string))
+                    {
+                        var textBox = AddTextBox(i, property.Name);
+
+                        PathAttribute pathAttribute;
+                        if ((pathAttribute = property.GetCustomAttribute<PathAttribute>()) != null)
+                        {
+                            textBox.ReadOnly = true;
+                            AddBrowseAndClearButtonsForTextBox(i, textBox, pathAttribute.PathType);
+                        }
+                        else
+                        {
+                            configTableLayoutPanel.SetColumnSpan(textBox, 3);
+                        }
+                    }
                 }
             }
         }
@@ -93,6 +109,50 @@ namespace elbsms_ui
             };
 
             configTableLayoutPanel.Controls.Add(label, 0, row);
+        }
+
+        private TextBox AddTextBox(int row, string propertyName)
+        {
+            var textBox = new TextBox()
+            {
+                Dock = DockStyle.Fill,
+                TextAlign = HorizontalAlignment.Left,
+            };
+
+            AddDataBinding(textBox, nameof(textBox.Text), _config, propertyName);
+            configTableLayoutPanel.Controls.Add(textBox, 1, row);
+
+            return textBox;
+        }
+
+        private void AddBrowseAndClearButtonsForTextBox(int row, TextBox textBox, PathType pathType)
+        {
+            var browseButton = new Button() { Text = "...", ClientSize = new Size(25, textBox.Height), Tag = textBox };
+            switch (pathType)
+            {
+                case PathType.File:
+                    browseButton.Click += (s, ev) =>
+                    {
+                        var tb = (TextBox)((Button)s).Tag;
+                        string initialPath = !string.IsNullOrEmpty(tb.Text) ? Path.GetDirectoryName(tb.Text) : string.Empty;
+                        tb.Text = DisplayOpenDialog(initialPath, false);
+                    };
+                    break;
+
+                case PathType.Folder:
+                    browseButton.Click += (s, ev) =>
+                    {
+                        var tb = (TextBox)((Button)s).Tag;
+                        tb.Text = DisplayOpenDialog(tb.Text, true);
+                    };
+                    break;
+            }
+
+            var clearButton = new Button() { Text = "Clear", ClientSize = new Size(40, textBox.Height), Tag = textBox };
+            clearButton.Click += (s, ev) => ((TextBox)((Button)s).Tag).Text = string.Empty;
+
+            configTableLayoutPanel.Controls.Add(browseButton, 2, row);
+            configTableLayoutPanel.Controls.Add(clearButton, 3, row);
         }
 
         private void AddComboBox(int row, Type enumType, string propertyName)
