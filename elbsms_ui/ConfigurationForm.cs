@@ -27,11 +27,76 @@ namespace elbsms_ui
 
         private void PrepareUserInterface(string title)
         {
+            configPanel.SuspendLayout();
+            SuspendLayout();
+
             Text = title;
 
-            var properties = _config.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).ToList();
+            var properties = _config.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-            PopulateConfigurationTable(properties);
+            foreach (var category in GroupPropertiesByCategory(properties))
+            {
+                AddSettingsGroup(category.Key ?? "Miscellaneous", category.ToList());
+            }
+
+            configPanel.ResumeLayout(false);
+            configPanel.PerformLayout();
+            ResumeLayout();
+        }
+
+        private IOrderedEnumerable<IGrouping<string, PropertyInfo>> GroupPropertiesByCategory(IEnumerable<PropertyInfo> properties)
+        {
+            // controls in the panel display in the reverse of the order added, last added at top,
+            // reverse the list to maintain the order they're declared, then put the null key at the 
+            // beginning, adding it first so displaying last
+            return properties.Select(p => new
+            {
+                p.GetCustomAttribute<CategoryAttribute>()?.Category,
+                Property = p
+            })
+            .GroupBy(x => x.Category, x => x.Property)
+            .Reverse()
+            .OrderByDescending(x => x.Key == null);
+        }
+
+        private void AddSettingsGroup(string groupName, List<PropertyInfo> properties)
+        {
+            TableLayoutPanel tableLayoutPanel = CreateTableLayoutPanel(groupName);
+
+            PopulateConfigurationTable(tableLayoutPanel, properties);
+
+            // add a groupbox
+            var groupBox = new GroupBox()
+            {
+                Text = groupName,
+                Dock = DockStyle.Top,
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            };
+            groupBox.Controls.Add(tableLayoutPanel);
+
+            configPanel.Controls.Add(groupBox);
+        }
+
+        private static TableLayoutPanel CreateTableLayoutPanel(string groupName)
+        {
+            var tableLayoutPanel = new TableLayoutPanel()
+            {
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                ColumnCount = 4,
+                Dock = DockStyle.Top,
+                RowCount = 1,
+                Name = $"{groupName}TableLayoutPanel",
+            };
+
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f));
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
+
+            tableLayoutPanel.RowStyles.Add(new RowStyle());
+            return tableLayoutPanel;
         }
 
         private void AddDataBinding(IBindableComponent component, string propertyName, object dataSource, string dataMember,
@@ -40,9 +105,9 @@ namespace elbsms_ui
             component.DataBindings.Add(propertyName, dataSource, dataMember, formattingEnabled, updateMode);
         }
 
-        private void PopulateConfigurationTable(List<PropertyInfo> properties)
+        private void PopulateConfigurationTable(TableLayoutPanel tableLayoutPanel, List<PropertyInfo> properties)
         {
-            configTableLayoutPanel.RowCount = properties.Count;
+            tableLayoutPanel.RowCount = properties.Count;
 
             for (int i = 0; i < properties.Count; i++)
             {
@@ -53,36 +118,36 @@ namespace elbsms_ui
 
                 if (property.PropertyType == typeof(bool))
                 {
-                    AddCheckBox(i, property.Name, description);
+                    AddCheckBox(tableLayoutPanel, i, property.Name, description);
                 }
                 else
                 {
-                    AddLabel(i, description);
+                    AddLabel(tableLayoutPanel, i, description);
 
                     if (property.PropertyType.BaseType == typeof(Enum))
                     {
-                        AddComboBox(i, property.PropertyType, property.Name);
+                        AddComboBox(tableLayoutPanel, i, property.PropertyType, property.Name);
                     }
                     else if (property.PropertyType == typeof(string))
                     {
-                        var textBox = AddTextBox(i, property.Name);
+                        var textBox = AddTextBox(tableLayoutPanel, i, property.Name);
 
                         PathAttribute pathAttribute;
                         if ((pathAttribute = property.GetCustomAttribute<PathAttribute>()) != null)
                         {
                             textBox.ReadOnly = true;
-                            AddBrowseAndClearButtonsForTextBox(i, textBox, pathAttribute.PathType);
+                            AddBrowseAndClearButtonsForTextBox(tableLayoutPanel, i, textBox, pathAttribute.PathType);
                         }
                         else
                         {
-                            configTableLayoutPanel.SetColumnSpan(textBox, 3);
+                            tableLayoutPanel.SetColumnSpan(textBox, 3);
                         }
                     }
                 }
             }
         }
 
-        private void AddCheckBox(int row, string propertyName, string description)
+        private void AddCheckBox(TableLayoutPanel tableLayoutPanel, int row, string propertyName, string description)
         {
             var checkBox = new CheckBox()
             {
@@ -94,11 +159,11 @@ namespace elbsms_ui
             };
 
             AddDataBinding(checkBox, nameof(checkBox.Checked), _config, propertyName);
-            configTableLayoutPanel.Controls.Add(checkBox, 0, row);
-            configTableLayoutPanel.SetColumnSpan(checkBox, 4);
+            tableLayoutPanel.Controls.Add(checkBox, 0, row);
+            tableLayoutPanel.SetColumnSpan(checkBox, 4);
         }
 
-        private void AddLabel(int row, string description)
+        private void AddLabel(TableLayoutPanel tableLayoutPanel, int row, string description)
         {
             var label = new Label()
             {
@@ -108,10 +173,10 @@ namespace elbsms_ui
                 TextAlign = ContentAlignment.MiddleLeft,
             };
 
-            configTableLayoutPanel.Controls.Add(label, 0, row);
+            tableLayoutPanel.Controls.Add(label, 0, row);
         }
 
-        private TextBox AddTextBox(int row, string propertyName)
+        private TextBox AddTextBox(TableLayoutPanel tableLayoutPanel, int row, string propertyName)
         {
             var textBox = new TextBox()
             {
@@ -120,12 +185,12 @@ namespace elbsms_ui
             };
 
             AddDataBinding(textBox, nameof(textBox.Text), _config, propertyName);
-            configTableLayoutPanel.Controls.Add(textBox, 1, row);
+            tableLayoutPanel.Controls.Add(textBox, 1, row);
 
             return textBox;
         }
 
-        private void AddBrowseAndClearButtonsForTextBox(int row, TextBox textBox, PathType pathType)
+        private void AddBrowseAndClearButtonsForTextBox(TableLayoutPanel tableLayoutPanel, int row, TextBox textBox, PathType pathType)
         {
             var browseButton = new Button() { Text = "...", ClientSize = new Size(25, textBox.Height), Tag = textBox };
             switch (pathType)
@@ -151,11 +216,11 @@ namespace elbsms_ui
             var clearButton = new Button() { Text = "Clear", ClientSize = new Size(40, textBox.Height), Tag = textBox };
             clearButton.Click += (s, ev) => ((TextBox)((Button)s).Tag).Text = string.Empty;
 
-            configTableLayoutPanel.Controls.Add(browseButton, 2, row);
-            configTableLayoutPanel.Controls.Add(clearButton, 3, row);
+            tableLayoutPanel.Controls.Add(browseButton, 2, row);
+            tableLayoutPanel.Controls.Add(clearButton, 3, row);
         }
 
-        private void AddComboBox(int row, Type enumType, string propertyName)
+        private void AddComboBox(TableLayoutPanel tableLayoutPanel, int row, Type enumType, string propertyName)
         {
             var comboBox = new ComboBox()
             {
@@ -176,8 +241,8 @@ namespace elbsms_ui
 
             AddDataBinding(comboBox, nameof(comboBox.SelectedValue), _config, propertyName);
 
-            configTableLayoutPanel.Controls.Add(comboBox, 1, row);
-            configTableLayoutPanel.SetColumnSpan(comboBox, 3);
+            tableLayoutPanel.Controls.Add(comboBox, 1, row);
+            tableLayoutPanel.SetColumnSpan(comboBox, 3);
         }
 
         private string DisplayOpenDialog(string path, bool isFolderPicker)

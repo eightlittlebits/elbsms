@@ -31,8 +31,6 @@
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.configPanel = new System.Windows.Forms.Panel();
-            this.configTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.configPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // okButton
@@ -63,28 +61,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.configPanel.AutoScroll = true;
-            this.configPanel.Controls.Add(this.configTableLayoutPanel);
             this.configPanel.Location = new System.Drawing.Point(12, 12);
             this.configPanel.Name = "configPanel";
             this.configPanel.Size = new System.Drawing.Size(426, 344);
             this.configPanel.TabIndex = 2;
-            // 
-            // configTableLayoutPanel
-            // 
-            this.configTableLayoutPanel.AutoSize = true;
-            this.configTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.configTableLayoutPanel.ColumnCount = 4;
-            this.configTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.configTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.configTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.configTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.configTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.configTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
-            this.configTableLayoutPanel.Name = "configTableLayoutPanel";
-            this.configTableLayoutPanel.RowCount = 1;
-            this.configTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.configTableLayoutPanel.Size = new System.Drawing.Size(426, 0);
-            this.configTableLayoutPanel.TabIndex = 0;
             // 
             // ConfigurationForm
             // 
@@ -99,8 +79,6 @@
             this.Name = "ConfigurationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ConfigurationForm";
-            this.configPanel.ResumeLayout(false);
-            this.configPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -110,6 +88,5 @@
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Panel configPanel;
-        private System.Windows.Forms.TableLayoutPanel configTableLayoutPanel;
     }
 }
