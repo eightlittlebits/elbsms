@@ -69,13 +69,27 @@ namespace elbsms_ui
             var groupBox = new GroupBox()
             {
                 Text = groupName,
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                Padding = new Padding(3, 3, 3, 6),
+            };
+
+            groupBox.Controls.Add(tableLayoutPanel);
+
+            // add a panel surrounding the groupbox to allow padding to be added to the bottom,
+            // docking within a panel doesn't support margin
+            var paddingPanel = new Panel()
+            {
                 Dock = DockStyle.Top,
                 AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                Padding = new Padding(0, 0, 0, 6),
             };
-            groupBox.Controls.Add(tableLayoutPanel);
 
-            configPanel.Controls.Add(groupBox);
+            paddingPanel.Controls.Add(groupBox);
+
+            configPanel.Controls.Add(paddingPanel);
         }
 
         private static TableLayoutPanel CreateTableLayoutPanel(string groupName)
