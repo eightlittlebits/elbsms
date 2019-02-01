@@ -179,6 +179,10 @@ namespace elbsms_ui
             AboutDialog.DisplayAboutDialog();
         }
 
+        private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
 #pragma warning restore IDE1006 // Naming Styles
     }
 }
