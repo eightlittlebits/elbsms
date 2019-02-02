@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace elbsms_ui
+﻿namespace elbemu_shared
 {
     public interface IConfiguration
     {

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using elbemu_shared;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace elbsms_ui
@@ -14,7 +15,7 @@ namespace elbsms_ui
     {
         private IConfiguration _config;
 
-        public IConfiguration Configuration { get { return _config; } }
+        public IConfiguration Configuration => _config;
 
         public ConfigurationForm(IConfiguration configuration, string title)
         {

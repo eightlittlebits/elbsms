@@ -71,7 +71,6 @@
     <Compile Include="ConfigurationForm.Designer.cs">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="IConfiguration.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
