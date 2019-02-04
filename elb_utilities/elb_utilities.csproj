@@ -60,6 +60,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Graphics\GdiRenderer.cs" />
+    <Compile Include="Media\WaveFileWriter.cs" />
+    <Compile Include="Media\WaveFormat.cs" />
     <Compile Include="MessagePump.cs" />
     <Compile Include="NativeMethods\Gdi32.cs" />
     <Compile Include="NativeMethods\User32.cs" />
