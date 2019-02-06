@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using elbemu_shared;
+using elbemu_shared.Configuration;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace elbsms_ui

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace elbemu_shared
+namespace elbemu_shared.Audio
 {
     public interface IAudioDevice : IDisposable
     {

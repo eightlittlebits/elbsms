@@ -1,5 +1,5 @@
 ﻿using System;
-using elbemu_shared;
+using elbemu_shared.Audio;
 
 namespace elbsms_ui.Audio
 {
@@ -7,17 +7,17 @@ namespace elbsms_ui.Audio
     {
         public void Initialise(IntPtr windowHandle, int sampleRate, int channels)
         {
-            
+
         }
 
         public void AddSample(short left, short right)
         {
-            
+
         }
-        
+
         public void RenderAudio()
         {
-            
+
         }
 
         public void Dispose()

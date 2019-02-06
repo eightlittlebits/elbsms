@@ -1,4 +1,4 @@
-﻿namespace elbemu_shared
+﻿namespace elbemu_shared.Configuration
 {
     public interface IConfiguration
     {

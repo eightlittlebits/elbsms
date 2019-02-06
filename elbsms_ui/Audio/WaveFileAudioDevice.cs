@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using elb_utilities.Media;
-using elbemu_shared;
+using elbemu_shared.Audio;
 
 namespace elbsms_ui.Audio
 {
