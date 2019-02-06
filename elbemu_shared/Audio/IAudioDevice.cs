@@ -5,7 +5,7 @@ namespace elbemu_shared.Audio
     public interface IAudioDevice : IDisposable
     {
         void Initialise(IntPtr windowHandle, int sampleRate, int channels);
-        void AddSample(short left, short right);
+        void AddSample(AudioFrame<short> frame);
         void RenderAudio();
     }
 }
