@@ -167,6 +167,21 @@ namespace elbsms_ui
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+
+                // dispose stuff here
+            }
+
+            base.Dispose(disposing);
+        }
+
 #pragma warning disable IDE1006 // Naming Styles
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
