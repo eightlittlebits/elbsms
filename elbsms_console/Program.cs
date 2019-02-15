@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using elbsms_core;
 
 namespace elbsms_console
@@ -16,9 +17,10 @@ namespace elbsms_console
 
             string romPath = args[0];
 
-            Cartridge cartridge = Cartridge.LoadFromFile(romPath);
+            byte[] romData = LoadRomFromFile(romPath);
 
-            MasterSystem masterSystem = new MasterSystem(cartridge);
+            var masterSystem = new MasterSystem();
+            masterSystem.LoadRom(romData);
 
             Console.WriteLine($"Starting: {DateTime.Now}");
             Console.WriteLine();
@@ -68,6 +70,32 @@ namespace elbsms_console
             }
 
             return $"{frequency:.##} {frequencyUnit[currentFreqUnit]}";
+        }
+
+        private static byte[] LoadRomFromFile(string filename)
+        {
+            byte[] fileData;
+
+            using (FileStream file = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                // some roms have a 512 (0x200) byte header left by the dumper/copier. A normal ROM
+                // will have a length a multiple of 0x4000. If we mod with 0x4000 and have a 512 byte 
+                // remainder then skip the first 512 bytes of the rom.
+                if ((file.Length % 0x4000) == 0x200)
+                {
+                    fileData = new byte[file.Length - 0x200];
+                    file.Seek(0x200, SeekOrigin.Begin);
+                }
+                else
+                {
+                    /* Normal ROM */
+                    fileData = new byte[file.Length];
+                }
+
+                file.Read(fileData, 0, fileData.Length);
+            }
+
+            return fileData;
         }
     }
 }

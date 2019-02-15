@@ -5,13 +5,17 @@ namespace elbsms_core
 {
     class Interconnect
     {
-        private readonly Cartridge _cartridge;
+        private Cartridge _cartridge;
         private readonly byte[] _ram;
 
-        public Interconnect(Cartridge cartridge)
+        public Interconnect()
+        {
+            _ram = new byte[0x2000];
+        }
+
+        internal void LoadCartridge(Cartridge cartridge)
         {
             _cartridge = cartridge;
-            _ram = new byte[0x2000];
         }
 
         internal byte ReadByte(ushort address)
@@ -19,7 +23,7 @@ namespace elbsms_core
             // 0x0000 -> 0xBFFF - Cartridge
             if (address < 0xC000)
             {
-                return _cartridge.ReadByte(address);
+                return _cartridge?.ReadByte(address) ?? 0xFF;
             }
             // 0xC000 -> 0xDFFF - System RAM
             else if (address < 0xE000)

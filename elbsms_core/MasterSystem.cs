@@ -9,12 +9,17 @@ namespace elbsms_core
 
         internal Z80 CPU;
 
-        public MasterSystem(Cartridge cartridge)
+        public MasterSystem()
         {
             Clock = new SystemClock();
-            Interconnect = new Interconnect(cartridge);
+            Interconnect = new Interconnect();
 
             CPU = new Z80(Clock, Interconnect);
+        }
+
+        public void LoadRom(byte[] romData)
+        {
+            Interconnect.LoadCartridge(new Cartridge(romData));
         }
 
         public void SingleStep()
