@@ -16,7 +16,7 @@ namespace elbsms_ui.Audio
                                             new WaveFormat((uint)sampleRate, (ushort)channels));
         }
 
-        public void AddSample(AudioFrame<short> frame)
+        public void AddSample(AudioFrame frame)
         {
             _waveFile.WriteSample(frame.Left);
             _waveFile.WriteSample(frame.Right);

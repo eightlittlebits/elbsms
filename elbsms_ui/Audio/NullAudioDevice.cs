@@ -10,7 +10,7 @@ namespace elbsms_ui.Audio
 
         }
 
-        public void AddSample(AudioFrame<short> frame)
+        public void AddSample(AudioFrame frame)
         {
 
         }
