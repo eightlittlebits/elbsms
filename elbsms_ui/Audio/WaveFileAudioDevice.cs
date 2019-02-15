@@ -8,12 +8,12 @@ namespace elbsms_ui.Audio
     class WaveFileAudioDevice : IAudioDevice
     {
         private bool _disposed = false;
-        private WaveFileWriter _waveFile;
+        private readonly WaveFileWriter _waveFile;
 
-        public void Initialise(IntPtr windowHandle, int sampleRate, int channels)
+        public WaveFileAudioDevice(IntPtr windowHandle, int sampleRate)
         {
             _waveFile = new WaveFileWriter(File.Open("waveout.wav", FileMode.Create),
-                                            new WaveFormat((uint)sampleRate, (ushort)channels));
+                                            new WaveFormat((uint)sampleRate, 2));
         }
 
         public void AddSample(AudioFrame frame)

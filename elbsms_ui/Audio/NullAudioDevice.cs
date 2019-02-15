@@ -5,9 +5,9 @@ namespace elbsms_ui.Audio
 {
     internal class NullAudioDevice : IAudioDevice
     {
-        public void Initialise(IntPtr windowHandle, int sampleRate, int channels)
-        {
 
+        public NullAudioDevice(IntPtr windowHandle, int sampleRate)
+        {
         }
 
         public void AddSample(AudioFrame frame)
