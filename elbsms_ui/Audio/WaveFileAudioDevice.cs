@@ -10,8 +10,12 @@ namespace elbsms_ui.Audio
         private bool _disposed = false;
         private readonly WaveFileWriter _waveFile;
 
+        public int SampleRate { get; }
+
         public WaveFileAudioDevice(IntPtr windowHandle, int sampleRate)
         {
+            SampleRate = sampleRate;
+            
             _waveFile = new WaveFileWriter(File.Open("waveout.wav", FileMode.Create),
                                             new WaveFormat((uint)sampleRate, 2));
         }
