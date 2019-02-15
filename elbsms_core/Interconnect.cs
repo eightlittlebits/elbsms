@@ -3,12 +3,12 @@ using System.Diagnostics;
 
 namespace elbsms_core
 {
-    class Bus
+    class Interconnect
     {
         private readonly Cartridge _cartridge;
         private readonly byte[] _ram;
 
-        public Bus(Cartridge cartridge)
+        public Interconnect(Cartridge cartridge)
         {
             _cartridge = cartridge;
             _ram = new byte[0x2000];

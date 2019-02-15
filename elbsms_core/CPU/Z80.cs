@@ -10,7 +10,7 @@ namespace elbsms_core.CPU
         private static byte[] FlagsSZP;
 
         private SystemClock _clock;
-        private Bus _bus;
+        private Interconnect _interconnect;
 
         private int _activeAFRegisters;
         private AFRegisters[] _afRegisters;
@@ -76,10 +76,10 @@ namespace elbsms_core.CPU
 
         #endregion
 
-        public Z80(SystemClock clock, Bus bus)
+        public Z80(SystemClock clock, Interconnect interconnect)
         {
             _clock = clock;
-            _bus = bus;
+            _interconnect = interconnect;
 
             _activeAFRegisters = 0;
             _afRegisters = new AFRegisters[2];
@@ -120,7 +120,7 @@ namespace elbsms_core.CPU
         {
             IncrementMemoryRefreshRegister();
             _clock.AddCycles(2);
-            byte opcode = _bus.ReadByte(address);
+            byte opcode = _interconnect.ReadByte(address);
             _clock.AddCycles(2);
             return opcode;
         }
@@ -129,7 +129,7 @@ namespace elbsms_core.CPU
         private byte ReadByte(ushort address)
         {
             _clock.AddCycles(2);
-            byte value = _bus.ReadByte(address);
+            byte value = _interconnect.ReadByte(address);
             _clock.AddCycles(1);
             return value;
         }
@@ -145,7 +145,7 @@ namespace elbsms_core.CPU
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteByte(ushort address, byte value)
         {
-            _bus.WriteByte(address, value);
+            _interconnect.WriteByte(address, value);
             _clock.AddCycles(3);
         }
 
@@ -594,7 +594,7 @@ namespace elbsms_core.CPU
 
                 #region input and output group
 
-                case 0xD3: _bus.Out(ReadByte(_pc++), _afr.A); _clock.AddCycles(4); break; // OUT (n),A
+                case 0xD3: _interconnect.Out(ReadByte(_pc++), _afr.A); _clock.AddCycles(4); break; // OUT (n),A
 
                 #endregion
 
@@ -768,7 +768,7 @@ namespace elbsms_core.CPU
                 case 0x75: WriteByte(Displace(reg.word, ReadByte(_pc++)), _gpr.L); break; // LD (IX/IY + d),L
                 case 0x77: WriteByte(Displace(reg.word, ReadByte(_pc++)), _afr.A); break; // LD (IX/IY + d),A
 
-                case 0x36: WriteByte(Displace(reg.word, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break; // LD (IX/IY + d),n
+                case 0x36: WriteByte(Displace(reg.word, ReadByte(_pc++)), _interconnect.ReadByte(_pc++)); break; // LD (IX/IY + d),n
 
                 #endregion
 
@@ -846,7 +846,7 @@ namespace elbsms_core.CPU
 
                 #region general-purpose arithmetic and cpu control group
 
-                case 0xCB: ExecuteDisplacedCBPrefixedOpcode(Displace(reg.word, ReadByte(_pc++)), _bus.ReadByte(_pc++)); break;
+                case 0xCB: ExecuteDisplacedCBPrefixedOpcode(Displace(reg.word, ReadByte(_pc++)), _interconnect.ReadByte(_pc++)); break;
 
                 #endregion
 

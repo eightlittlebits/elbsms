@@ -5,16 +5,16 @@ namespace elbsms_core
     public class MasterSystem
     {
         internal SystemClock Clock;
-        internal Bus Bus;
+        internal Interconnect Interconnect;
 
         internal Z80 CPU;
 
         public MasterSystem(Cartridge cartridge)
         {
             Clock = new SystemClock();
-            Bus = new Bus(cartridge);
+            Interconnect = new Interconnect(cartridge);
 
-            CPU = new Z80(Clock, Bus);
+            CPU = new Z80(Clock, Interconnect);
         }
 
         public void SingleStep()
