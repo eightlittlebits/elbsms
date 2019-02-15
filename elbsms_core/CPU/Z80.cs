@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using elbsms_core.Memory;
 
 namespace elbsms_core.CPU
 {

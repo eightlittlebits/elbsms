@@ -57,8 +57,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Z80.CBOpcodes.tt</DependentUpon>
     </Compile>
-    <Compile Include="Interconnect.cs" />
+    <Compile Include="Memory\Interconnect.cs" />
     <Compile Include="MasterSystem.cs" />
+    <Compile Include="Memory\MemoryControlRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CPU\Z80.cs" />
     <Compile Include="SystemClock.cs" />

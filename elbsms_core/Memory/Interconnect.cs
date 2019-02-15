@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace elbsms_core
+namespace elbsms_core.Memory
 {
     class Interconnect
     {
+        MemoryControlRegister _memoryControl;
+
         private Cartridge _cartridge;
         private readonly byte[] _ram;
 
         public Interconnect()
         {
+            _memoryControl = new MemoryControlRegister();
+
             _ram = new byte[0x2000];
         }
 
@@ -58,12 +62,27 @@ namespace elbsms_core
 
         internal void Out(byte address, byte value)
         {
-            // TODO(david): implement out
             Debug.WriteLine($"OUT: 0x{address:X4}, {(char)value}(0x{value:X2})");
 
-            if (address == 0xFD)
+            // the port is selected with bits 7, 6 and 0 of the address (8 total available ports)
+            var port = ((address & 0xC0) >> 5) | (address & 0x01);
+
+            switch (port)
             {
-                Console.Write((char)value);
+                // memory control register
+                case 0x00:
+                    _memoryControl.Value = value;
+                    break;
+
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                case 0x04:
+                case 0x05:
+                case 0x06:
+                case 0x07:
+                    Console.Write((char)value);
+                    break;
             }
         }
     }

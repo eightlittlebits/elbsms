@@ -1,4 +1,5 @@
 ﻿using elbsms_core.CPU;
+using elbsms_core.Memory;
 
 namespace elbsms_core
 {
