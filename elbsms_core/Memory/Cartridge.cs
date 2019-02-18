@@ -1,14 +1,16 @@
-﻿using System.IO;
-
-namespace elbsms_core
+﻿namespace elbsms_core.Memory
 {
     public class Cartridge
     {
+        public CartridgeHeader Header { get; }
+
         private readonly byte[] _romData;
 
-        internal Cartridge(byte[] romData)
+        public Cartridge(byte[] romData)
         {
             _romData = romData;
+
+            Header = new CartridgeHeader(romData);
         }
 
         internal byte ReadByte(ushort address)

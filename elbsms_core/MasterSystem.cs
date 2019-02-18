@@ -23,6 +23,11 @@ namespace elbsms_core
             Interconnect.LoadCartridge(new Cartridge(romData));
         }
 
+        public void LoadCartridge(Cartridge cartridge)
+        {
+            Interconnect.LoadCartridge(cartridge);
+        }
+
         public void SingleStep()
         {
             CPU.ExecuteInstruction();

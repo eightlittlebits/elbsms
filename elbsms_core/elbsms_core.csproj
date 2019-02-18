@@ -48,7 +48,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Cartridge.cs" />
+    <Compile Include="Memory\Cartridge.cs" />
     <Compile Include="CPU\InfiniteLoopException.cs" />
     <Compile Include="CPU\Registers.cs" />
     <Compile Include="CPU\StatusFlags.cs" />
@@ -57,6 +57,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Z80.CBOpcodes.tt</DependentUpon>
     </Compile>
+    <Compile Include="Memory\CartridgeHeader.cs" />
     <Compile Include="Memory\Interconnect.cs" />
     <Compile Include="MasterSystem.cs" />
     <Compile Include="Memory\MemoryControlRegister.cs" />
