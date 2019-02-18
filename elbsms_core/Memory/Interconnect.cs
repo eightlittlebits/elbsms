@@ -5,16 +5,17 @@ namespace elbsms_core.Memory
 {
     class Interconnect
     {
-        MemoryControlRegister _memoryControl;
+        private MemoryControlRegister _memoryControl;
 
         private Cartridge _cartridge;
-        private readonly byte[] _ram;
+
+        private const int RamSize = 0x2000;
+        private const int RamMask = RamSize - 1;
+        private readonly byte[] _ram = new byte[RamSize];
 
         public Interconnect()
         {
-            _memoryControl = new MemoryControlRegister();
-
-            _ram = new byte[0x2000];
+            _memoryControl = new MemoryControlRegister { Value = 0x00 };
         }
 
         internal void LoadCartridge(Cartridge cartridge)
@@ -24,39 +25,40 @@ namespace elbsms_core.Memory
 
         internal byte ReadByte(ushort address)
         {
-            // 0x0000 -> 0xBFFF - Cartridge
+            // 0x0000 -> 0xBFFF - Bootstrap/Cartridge/Card/Expansion
             if (address < 0xC000)
             {
-                return _cartridge?.ReadByte(address) ?? 0xFF;
+                if (_memoryControl.CartridgeSlotEnabled && _cartridge != null)
+                    return _cartridge.ReadByte(address);
             }
             // 0xC000 -> 0xDFFF - System RAM
-            else if (address < 0xE000)
-            {
-                return _ram[address - 0xC000];
-            }
             // 0xE000 -> 0xFFFF - System RAM (mirror)
             else
             {
-                return _ram[address - 0xE000];
+                if (_memoryControl.WorkRamEnabled)
+                {
+                    return _ram[address & RamMask]; 
+                }
             }
+
+            return 0xFF;
         }
 
         internal void WriteByte(ushort address, byte value)
         {
-            // 0x0000 -> 0xBFFF - Cartridge
+            // 0x0000 -> 0xBFFF - Bootstrap/Cartridge/Card/Expansion
             if (address < 0xC000)
             {
                 _cartridge.WriteByte(address);
             }
             // 0xC000 -> 0xDFFF - System RAM
-            else if (address < 0xE000)
-            {
-                _ram[address - 0xC000] = value;
-            }
             // 0xE000 -> 0xFFFF - System RAM (mirror)
             else
             {
-                _ram[address - 0xE000] = value;
+                if (_memoryControl.WorkRamEnabled)
+                {
+                    _ram[address & RamMask] = value; 
+                }
             }
         }
 
