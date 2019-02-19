@@ -6,13 +6,15 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using elbemu_shared;
+using elbemu_shared.Configuration;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace elbsms_ui
 {
     public partial class ConfigurationForm : Form
     {
+        private Dictionary<string, List<Control>> _propertyControls;
+
         private IConfiguration _config;
 
         public IConfiguration Configuration => _config;
@@ -21,9 +23,24 @@ namespace elbsms_ui
         {
             InitializeComponent();
 
+            _propertyControls = new Dictionary<string, List<Control>>();
+
             _config = configuration.Clone();
 
             PrepareUserInterface(title);
+        }
+
+        private void AddControlForProperty(string propertyName, Control control)
+        {
+            List<Control> controls;
+
+            if (!_propertyControls.TryGetValue(propertyName, out controls))
+            {
+                controls = new List<Control>();
+                _propertyControls.Add(propertyName, controls);
+            }
+
+            controls.Add(control);
         }
 
         private void PrepareUserInterface(string title)
@@ -40,9 +57,28 @@ namespace elbsms_ui
                 AddSettingsGroup(category.Key ?? "Miscellaneous", category.ToList());
             }
 
+            ApplyControlDependencies(properties);
+
             configPanel.ResumeLayout(false);
             configPanel.PerformLayout();
             ResumeLayout();
+        }
+
+        private void ApplyControlDependencies(IEnumerable<PropertyInfo> properties)
+        {
+            var dependencies = properties.Select(x => new { PropertyName = x.Name, DependsOn = x.GetCustomAttribute<DependsOnAttribute>() }).Where(x => x.DependsOn != null);
+
+            foreach (var dependency in dependencies)
+            {
+                // we can only bind to checkbox controls
+                if (_propertyControls[dependency.DependsOn.PropertyName].First() is CheckBox checkBox)
+                {
+                    foreach (var control in _propertyControls[dependency.PropertyName])
+                    {
+                        AddDataBinding(control, nameof(control.Enabled), checkBox, nameof(checkBox.Checked));
+                    }
+                }
+            }
         }
 
         private IOrderedEnumerable<IGrouping<string, PropertyInfo>> GroupPropertiesByCategory(IEnumerable<PropertyInfo> properties)
@@ -151,7 +187,7 @@ namespace elbsms_ui
                         if ((pathAttribute = property.GetCustomAttribute<PathAttribute>()) != null)
                         {
                             textBox.ReadOnly = true;
-                            AddBrowseAndClearButtonsForTextBox(tableLayoutPanel, i, textBox, pathAttribute.PathType);
+                            AddBrowseAndClearButtonsForTextBox(tableLayoutPanel, i, textBox, pathAttribute.PathType, property.Name);
                         }
                         else
                         {
@@ -166,12 +202,15 @@ namespace elbsms_ui
         {
             var checkBox = new CheckBox()
             {
+                Name = $"{propertyName}CheckBox",
                 Text = description,
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 TextAlign = ContentAlignment.MiddleLeft,
                 Margin = new Padding(6, 3, 3, 3),
             };
+
+            AddControlForProperty(propertyName, checkBox);
 
             AddDataBinding(checkBox, nameof(checkBox.Checked), _config, propertyName);
             tableLayoutPanel.Controls.Add(checkBox, 0, row);
@@ -195,9 +234,12 @@ namespace elbsms_ui
         {
             var textBox = new TextBox()
             {
+                Name = $"{propertyName}TextBox",
                 Dock = DockStyle.Fill,
                 TextAlign = HorizontalAlignment.Left,
             };
+
+            AddControlForProperty(propertyName, textBox);
 
             AddDataBinding(textBox, nameof(textBox.Text), _config, propertyName);
             tableLayoutPanel.Controls.Add(textBox, 1, row);
@@ -205,9 +247,9 @@ namespace elbsms_ui
             return textBox;
         }
 
-        private void AddBrowseAndClearButtonsForTextBox(TableLayoutPanel tableLayoutPanel, int row, TextBox textBox, PathType pathType)
+        private void AddBrowseAndClearButtonsForTextBox(TableLayoutPanel tableLayoutPanel, int row, TextBox textBox, PathType pathType, string propertyName)
         {
-            var browseButton = new Button() { Text = "...", ClientSize = new Size(25, textBox.Height), Tag = textBox };
+            var browseButton = new Button() { Name = $"{propertyName}Browse", Text = "...", ClientSize = new Size(25, textBox.Height), Tag = textBox };
             switch (pathType)
             {
                 case PathType.File:
@@ -228,8 +270,11 @@ namespace elbsms_ui
                     break;
             }
 
-            var clearButton = new Button() { Text = "Clear", ClientSize = new Size(40, textBox.Height), Tag = textBox };
+            var clearButton = new Button() {  Name = $"{propertyName}Clear", Text = "Clear", ClientSize = new Size(40, textBox.Height), Tag = textBox };
             clearButton.Click += (s, ev) => ((TextBox)((Button)s).Tag).Text = string.Empty;
+
+            AddControlForProperty(propertyName, browseButton);
+            AddControlForProperty(propertyName, clearButton);
 
             tableLayoutPanel.Controls.Add(browseButton, 2, row);
             tableLayoutPanel.Controls.Add(clearButton, 3, row);
@@ -239,6 +284,7 @@ namespace elbsms_ui
         {
             var comboBox = new ComboBox()
             {
+                Name = $"{propertyName}ComboBox",
                 Dock = DockStyle.Fill,
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 DisplayMember = "Text",
@@ -253,6 +299,8 @@ namespace elbsms_ui
                     Text = enumType.GetField(x.Name).GetCustomAttribute<DescriptionAttribute>()?.Description ?? x.Name,
                     x.Value
                 }).ToList();
+
+            AddControlForProperty(propertyName, comboBox);
 
             AddDataBinding(comboBox, nameof(comboBox.SelectedValue), _config, propertyName);
 
