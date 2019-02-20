@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
@@ -15,14 +16,29 @@ namespace elbsms_core.Memory
 
     public class CartridgeHeader
     {
+        private static readonly Dictionary<int, (string Description, uint Size)> RomSizes = new Dictionary<int, (string, uint)>
+        {
+            { 0x0A, ("8KB", 0x2000) },
+            { 0x0B, ("16KB", 0x4000) },
+            { 0x0C, ("32KB", 0x8000) },
+            { 0x0D, ("48KB", 0xC000) },
+            { 0x0E, ("64KB", 0x10000) },
+            { 0x0F, ("128KB", 0x20000) },
+            { 0x00, ("256KB", 0x40000) },
+            { 0x01, ("512KB", 0x80000) },
+            { 0x02, ("1MB", 0x100000) },
+        };
+
         public string Header;
         public int Checksum;
         public int ProductCode;
         public int Version;
         public RegionCode Region;
-        public int HeaderRomSize;
+        public int RomSize;
 
         public int ActualRomSize;
+        public bool RomSizeValid => RomSizes[RomSize].Size == ActualRomSize;
+        public string RomSizeDescription => RomSizes[RomSize].Description;
 
         public CartridgeHeader(byte[] romData)
         {
@@ -31,7 +47,7 @@ namespace elbsms_core.Memory
             ProductCode = ReadProductCode(romData, 0x7FFC);
             Version = romData[0x7FFE] & 0x0F;
             Region = (RegionCode)(romData[0x7FFF] >> 4);
-            // TODO(david): Read size from the cartridge header
+            RomSize = romData[0x7FFF] & 0x0F;
 
             ActualRomSize = romData.Length;
         }
