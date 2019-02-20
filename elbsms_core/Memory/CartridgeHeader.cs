@@ -30,7 +30,7 @@ namespace elbsms_core.Memory
         };
 
         public string Header;
-        public int Checksum;
+        public ushort Checksum;
         public int ProductCode;
         public int Version;
         public RegionCode Region;
@@ -39,6 +39,9 @@ namespace elbsms_core.Memory
         public int ActualRomSize;
         public bool RomSizeValid => RomSizes[RomSize].Size == ActualRomSize;
         public string RomSizeDescription => RomSizes[RomSize].Description;
+
+        public ushort CalculatedChecksum;
+        public bool ChecksumValid => Checksum == CalculatedChecksum;
 
         public CartridgeHeader(byte[] romData)
         {
@@ -50,6 +53,7 @@ namespace elbsms_core.Memory
             RomSize = romData[0x7FFF] & 0x0F;
 
             ActualRomSize = romData.Length;
+            CalculatedChecksum = CalculateChecksum(romData, RomSizes[RomSize].Size);
         }
 
         private int ReadProductCode(byte[] romData, int index)
@@ -70,6 +74,27 @@ namespace elbsms_core.Memory
             }
 
             return result;
+        }
+
+        private static ushort CalculateChecksum(byte[] romData, uint romSize)
+        {
+            ushort checksum = 0;
+
+            // sum all bytes excluding the header
+            for (int i = 0; i < 0x7FF0; i++)
+            {
+                checksum += romData[i];
+            }
+
+            if (romSize > 0x8000)
+            {
+                for (int i = 0x8000; i < romSize; i++)
+                {
+                    checksum += romData[i];
+                }
+            }
+
+            return checksum;
         }
     }
 }
