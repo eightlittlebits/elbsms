@@ -56,13 +56,13 @@ namespace elbsms_core.Memory
             CalculatedChecksum = CalculateChecksum(romData, RomSizes[RomSize].Size);
         }
 
-        private int ReadProductCode(byte[] romData, int index)
+        private static int ReadProductCode(byte[] romData, int index)
         {
             return DecodeBCD(new byte[] { romData[index], romData[index + 1], (byte)(romData[index + 2] >> 4) });
         }
 
         // https://stackoverflow.com/a/11701256/223708
-        private int DecodeBCD(byte[] data)
+        private static int DecodeBCD(byte[] data)
         {
             int result = 0;
 
