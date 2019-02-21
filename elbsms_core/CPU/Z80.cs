@@ -692,6 +692,11 @@ namespace elbsms_core.CPU
                 case 0x70: var temp = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[temp] & ~C); break; // IN F,(C)
                 case 0x78: _afr.A = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_afr.A] & ~C); break; // IN A,(C)
 
+                case 0xA2: InAndIncrement(); break; // INI
+                case 0xB2: InIncrementAndRepeat(); break; // INIR
+                case 0xAA: InAndDecrement(); break; // IND
+                case 0xBA: InDecrementAndRepeat(); break; // INDR
+
                 case 0x41: Out(_gpr.C, _gpr.B); break; // OUT (C),B
                 case 0x49: Out(_gpr.C, _gpr.C); break; // OUT (C),C
                 case 0x51: Out(_gpr.C, _gpr.D); break; // OUT (C),D
@@ -1482,6 +1487,72 @@ namespace elbsms_core.CPU
             _clock.AddCycles(4);
 
             return v;
+        }
+
+        private void InAndIncrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = In(_gpr.C);
+
+            WriteByte(_gpr.HL++, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + ((_gpr.C + 1) & 0xFF);
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void InIncrementAndRepeat()
+        {
+            InAndIncrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void InAndDecrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = In(_gpr.C);
+
+            WriteByte(_gpr.HL--, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + ((_gpr.C - 1) & 0xFF);
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void InDecrementAndRepeat()
+        {
+            InAndDecrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
         }
 
         private void Out(byte address, byte value)
