@@ -60,18 +60,9 @@ namespace elbsms_core.CPU
                 zf = i == 0 ? Z : 0;
                 b5 = i & B5;
                 b3 = i & B3;
-                pf = evenParity(i) ? P : 0;
+                pf = i.EvenParity() ? P : 0;
 
                 FlagsSZP[i] = (byte)(sf | zf | b5 | b3 | pf);
-            }
-
-            bool evenParity(int v)
-            {
-                v ^= v >> 4;
-                v ^= v >> 2;
-                v ^= v >> 1;
-
-                return (v & 1) != 1;
             }
         }
 
@@ -1503,7 +1494,7 @@ namespace elbsms_core.CPU
         #endregion
     }
 
-    static class BitExtensions
+    static class Extensions
     {
         internal static bool Bit(this byte v, int bit)
         {
@@ -1517,6 +1508,15 @@ namespace elbsms_core.CPU
             int mask = 1 << bit;
 
             return (v & mask) == mask;
+        }
+
+        internal static bool EvenParity(this int v)
+        {
+            v ^= v >> 4;
+            v ^= v >> 2;
+            v ^= v >> 1;
+
+            return (v & 1) != 1;
         }
     }
 }
