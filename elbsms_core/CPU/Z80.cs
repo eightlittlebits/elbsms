@@ -706,6 +706,11 @@ namespace elbsms_core.CPU
                 case 0x71: Out(_gpr.C, 0); break; // OUT (C),0
                 case 0x79: Out(_gpr.C, _afr.A); break; // OUT (C),A
 
+                case 0xA3: OutAndIncrement(); break;// OUTI
+                case 0xB3: OutIncrementAndRepeat(); break; // OTIR
+                case 0xAB: OutAndDecrement(); break;// OUTD
+                case 0xBB: OutDecrementAndRepeat(); break; // OTDR
+
                 #endregion
 
                 default:
@@ -1560,6 +1565,72 @@ namespace elbsms_core.CPU
             _interconnect.Out(address, value);
 
             _clock.AddCycles(4);
+        }
+
+        private void OutAndIncrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = ReadByte(_gpr.HL++);
+
+            Out(_gpr.C, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + _gpr.L;
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void OutIncrementAndRepeat()
+        {
+            OutAndIncrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void OutAndDecrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = ReadByte(_gpr.HL--);
+
+            Out(_gpr.C, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + _gpr.L;
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void OutDecrementAndRepeat()
+        {
+            OutAndDecrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
         }
 
         #endregion
