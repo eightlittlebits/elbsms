@@ -690,6 +690,28 @@ namespace elbsms_core.CPU
 
                 #endregion
 
+                #region input and output group
+
+                case 0x40: _gpr.B = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.B] & ~C); break; // IN B,(C)
+                case 0x48: _gpr.C = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.C] & ~C); break; // IN C,(C)
+                case 0x50: _gpr.D = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.D] & ~C); break; // IN D,(C)
+                case 0x58: _gpr.E = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.E] & ~C); break; // IN E,(C)
+                case 0x60: _gpr.H = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.H] & ~C); break; // IN H,(C)
+                case 0x68: _gpr.L = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.L] & ~C); break; // IN L,(C)
+                case 0x70: var temp = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[temp] & ~C); break; // IN F,(C)
+                case 0x78: _afr.A = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_afr.A] & ~C); break; // IN A,(C)
+
+                case 0x41: Out(_gpr.C, _gpr.B); break; // OUT (C),B
+                case 0x49: Out(_gpr.C, _gpr.C); break; // OUT (C),C
+                case 0x51: Out(_gpr.C, _gpr.D); break; // OUT (C),D
+                case 0x59: Out(_gpr.C, _gpr.E); break; // OUT (C),E
+                case 0x61: Out(_gpr.C, _gpr.H); break; // OUT (C),H
+                case 0x69: Out(_gpr.C, _gpr.L); break; // OUT (C),L
+                case 0x71: Out(_gpr.C, 0); break; // OUT (C),0
+                case 0x79: Out(_gpr.C, _afr.A); break; // OUT (C),A
+
+                #endregion
+
                 default:
                     throw new NotImplementedException($"Unimplemented opcode: 0xED {opcode:X2} at address 0x{_pc - 2:X4}");
             }
