@@ -595,7 +595,8 @@ namespace elbsms_core.CPU
 
                 #region input and output group
 
-                case 0xD3: _interconnect.Out(ReadByte(_pc++), _afr.A); _clock.AddCycles(4); break; // OUT (n),A
+                case 0xDB: _afr.A = In(ReadByte(_pc++)); break; // IN A,(n)
+                case 0xD3: Out(ReadByte(_pc++), _afr.A); break; // OUT (n),A
 
                 #endregion
 
@@ -1455,6 +1456,26 @@ namespace elbsms_core.CPU
             _clock.AddCycles(1);
             PushWord(_pc);
             _pc = address;
+        }
+
+        #endregion
+
+        #region input and output group handlers
+
+        private byte In(byte address)
+        {
+            byte v = _interconnect.In(address);
+
+            _clock.AddCycles(4);
+
+            return v;
+        }
+
+        private void Out(byte address, byte value)
+        {
+            _interconnect.Out(address, value);
+
+            _clock.AddCycles(4);
         }
 
         #endregion
