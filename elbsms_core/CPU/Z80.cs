@@ -1405,7 +1405,7 @@ namespace elbsms_core.CPU
         {
             _clock.AddCycles(1);
 
-            JumpRelative(--_gpr.BC != 0);
+            JumpRelative(--_gpr.B != 0);
         }
 
         #endregion
