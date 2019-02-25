@@ -37,9 +37,11 @@ namespace elbsms_core.CPU
         private int _interruptMode;
         private bool _enableInterrupts;
 
-        public bool NMIPending { get; set; }
-        public bool INTPending { get; set; }
+        private bool _nmiPending;
+        private bool _intPending;
 
+        public void RaiseNMI() => _nmiPending = true;
+        public void RaiseINT() => _intPending = true;
 
         #region static initialisation
 
@@ -199,9 +201,9 @@ namespace elbsms_core.CPU
                 return;
             }
 
-            if (NMIPending)
+            if (_nmiPending)
             {
-                NMIPending = false;
+                _nmiPending = false;
                 _iff2 = _iff1;
                 _iff1 = false;
 
@@ -211,7 +213,7 @@ namespace elbsms_core.CPU
                 return;
             }
 
-            if (INTPending && _iff1)
+            if (_intPending && _iff1)
             {
                 _iff1 = _iff2 = false;
                 IncrementMemoryRefreshRegister();
