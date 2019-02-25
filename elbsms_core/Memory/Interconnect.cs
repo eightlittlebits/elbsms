@@ -87,5 +87,12 @@ namespace elbsms_core.Memory
                     break;
             }
         }
+
+        internal byte In(byte address)
+        {
+            Debug.WriteLine($"IN: 0x{address:X4}");
+
+            return 0;
+        }
     }
 }

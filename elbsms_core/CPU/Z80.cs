@@ -62,18 +62,9 @@ namespace elbsms_core.CPU
                 zf = i == 0 ? Z : 0;
                 b5 = i & B5;
                 b3 = i & B3;
-                pf = evenParity(i) ? P : 0;
+                pf = i.EvenParity() ? P : 0;
 
                 FlagsSZP[i] = (byte)(sf | zf | b5 | b3 | pf);
-            }
-
-            bool evenParity(int v)
-            {
-                v ^= v >> 4;
-                v ^= v >> 2;
-                v ^= v >> 1;
-
-                return (v & 1) != 1;
             }
         }
 
@@ -597,7 +588,8 @@ namespace elbsms_core.CPU
 
                 #region input and output group
 
-                case 0xD3: _interconnect.Out(ReadByte(_pc++), _afr.A); _clock.AddCycles(4); break; // OUT (n),A
+                case 0xDB: _afr.A = In(ReadByte(_pc++)); break; // IN A,(n)
+                case 0xD3: Out(ReadByte(_pc++), _afr.A); break; // OUT (n),A
 
                 #endregion
 
@@ -688,6 +680,38 @@ namespace elbsms_core.CPU
                 case 0x7D: _iff1 = _iff2; Return(); break; // RETN
 
                 case 0x4D: Return(); break; // RETI
+
+                #endregion
+
+                #region input and output group
+
+                case 0x40: _gpr.B = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.B] & ~C); break; // IN B,(C)
+                case 0x48: _gpr.C = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.C] & ~C); break; // IN C,(C)
+                case 0x50: _gpr.D = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.D] & ~C); break; // IN D,(C)
+                case 0x58: _gpr.E = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.E] & ~C); break; // IN E,(C)
+                case 0x60: _gpr.H = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.H] & ~C); break; // IN H,(C)
+                case 0x68: _gpr.L = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.L] & ~C); break; // IN L,(C)
+                case 0x70: var temp = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[temp] & ~C); break; // IN F,(C)
+                case 0x78: _afr.A = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_afr.A] & ~C); break; // IN A,(C)
+
+                case 0xA2: InAndIncrement(); break; // INI
+                case 0xB2: InIncrementAndRepeat(); break; // INIR
+                case 0xAA: InAndDecrement(); break; // IND
+                case 0xBA: InDecrementAndRepeat(); break; // INDR
+
+                case 0x41: Out(_gpr.C, _gpr.B); break; // OUT (C),B
+                case 0x49: Out(_gpr.C, _gpr.C); break; // OUT (C),C
+                case 0x51: Out(_gpr.C, _gpr.D); break; // OUT (C),D
+                case 0x59: Out(_gpr.C, _gpr.E); break; // OUT (C),E
+                case 0x61: Out(_gpr.C, _gpr.H); break; // OUT (C),H
+                case 0x69: Out(_gpr.C, _gpr.L); break; // OUT (C),L
+                case 0x71: Out(_gpr.C, 0); break; // OUT (C),0
+                case 0x79: Out(_gpr.C, _afr.A); break; // OUT (C),A
+
+                case 0xA3: OutAndIncrement(); break;// OUTI
+                case 0xB3: OutIncrementAndRepeat(); break; // OTIR
+                case 0xAB: OutAndDecrement(); break;// OUTD
+                case 0xBB: OutDecrementAndRepeat(); break; // OTDR
 
                 #endregion
 
@@ -1460,9 +1484,161 @@ namespace elbsms_core.CPU
         }
 
         #endregion
+
+        #region input and output group handlers
+
+        private byte In(byte address)
+        {
+            byte v = _interconnect.In(address);
+
+            _clock.AddCycles(4);
+
+            return v;
+        }
+
+        private void InAndIncrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = In(_gpr.C);
+
+            WriteByte(_gpr.HL++, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + ((_gpr.C + 1) & 0xFF);
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void InIncrementAndRepeat()
+        {
+            InAndIncrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void InAndDecrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = In(_gpr.C);
+
+            WriteByte(_gpr.HL--, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + ((_gpr.C - 1) & 0xFF);
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void InDecrementAndRepeat()
+        {
+            InAndDecrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void Out(byte address, byte value)
+        {
+            _interconnect.Out(address, value);
+
+            _clock.AddCycles(4);
+        }
+
+        private void OutAndIncrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = ReadByte(_gpr.HL++);
+
+            Out(_gpr.C, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + _gpr.L;
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void OutIncrementAndRepeat()
+        {
+            OutAndIncrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        private void OutAndDecrement()
+        {
+            _clock.AddCycles(1);
+
+            byte data = ReadByte(_gpr.HL--);
+
+            Out(_gpr.C, data);
+
+            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            _gpr.B = result;
+
+            // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
+            flags[N] = data.Bit(7);
+
+            var temp = data + _gpr.L;
+            flags[H | C] = temp > 255;
+            flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
+
+            _afr.F = flags;
+        }
+
+        private void OutDecrementAndRepeat()
+        {
+            OutAndDecrement();
+
+            if (_gpr.B == 0)
+                return;
+
+            _clock.AddCycles(5);
+
+            _pc -= 2;
+        }
+
+        #endregion
     }
 
-    static class BitExtensions
+    static class Extensions
     {
         internal static bool Bit(this byte v, int bit)
         {
@@ -1476,6 +1652,15 @@ namespace elbsms_core.CPU
             int mask = 1 << bit;
 
             return (v & mask) == mask;
+        }
+
+        internal static bool EvenParity(this int v)
+        {
+            v ^= v >> 4;
+            v ^= v >> 2;
+            v ^= v >> 1;
+
+            return (v & 1) != 1;
         }
     }
 }
