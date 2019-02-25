@@ -26,12 +26,7 @@ namespace elbsms_core.CPU
         private PairedRegister _ix, _iy;
 
         private byte _r;
-
-#pragma warning disable 0169
-
         private byte _i;
-
-#pragma warning restore 0169
 
         private bool _iff1, _iff2;
         private int _interruptMode;
@@ -602,6 +597,15 @@ namespace elbsms_core.CPU
         {
             switch (opcode)
             {
+                #region 8-bit load group
+
+                case 0x47: _i = _afr.A; _clock.AddCycles(1); break; // LD I,A
+                case 0x4F: _r = _afr.A; _clock.AddCycles(1); break; // LD R,A
+                case 0x57: _afr.A = _i; _clock.AddCycles(1); break; // LD A,I
+                case 0x5F: _afr.A = _r; _clock.AddCycles(1); break; // LD A,R
+
+                #endregion
+
                 #region 16-bit load group
 
                 case 0x4B: _gpr.BC = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD BC,(nn)
