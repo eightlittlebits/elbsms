@@ -635,6 +635,8 @@ namespace elbsms_core.CPU
 
             flags[B5 | B3] = false;
 
+            flags |= _memPtr.hi & (B5 | B3);
+
             return flags | (_afr.F & C);
         }
 
