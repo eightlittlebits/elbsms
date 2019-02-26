@@ -322,9 +322,9 @@ namespace elbsms_core.CPU
                 case 0x1A: _afr.A = ReadByte(_gpr.DE); _memPtr.word = (ushort)(_gpr.DE + 1); break; // LD A,(DE)
                 case 0x3A: { ushort address = ReadWord(_pc); _afr.A = ReadByte(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD A,(nn)
 
-                case 0x02: WriteByte(_gpr.BC, _afr.A); _memPtr.word = (ushort)(((_gpr.BC + 1) & 0xFF) | _afr.A << 8); break; // LD (BC),A
-                case 0x12: WriteByte(_gpr.DE, _afr.A); _memPtr.word = (ushort)(((_gpr.DE + 1) & 0xFF) | _afr.A << 8); break; // LD (DE),A
-                case 0x32: { ushort address = ReadWord(_pc); WriteByte(address, _afr.A); _pc += 2; _memPtr.word = (ushort)(((address + 1) & 0xFF) | _afr.A << 8); } break; // LD (nn),A
+                case 0x02: WriteByte(_gpr.BC, _afr.A); _memPtr.lo = (byte)(_gpr.BC + 1); _memPtr.hi = _afr.A; break; // LD (BC),A
+                case 0x12: WriteByte(_gpr.DE, _afr.A); _memPtr.lo = (byte)(_gpr.DE + 1); _memPtr.hi = _afr.A; break; // LD (DE),A
+                case 0x32: { ushort addr = ReadWord(_pc); WriteByte(addr, _afr.A); _pc += 2; _memPtr.lo = (byte)(addr + 1); _memPtr.hi = _afr.A; } break; // LD (nn),A
 
                 #endregion
 
@@ -585,8 +585,8 @@ namespace elbsms_core.CPU
 
                 #region input and output group
 
-                case 0xDB: _afr.A = In(ReadByte(_pc++)); break; // IN A,(n)
-                case 0xD3: Out(ReadByte(_pc++), _afr.A); break; // OUT (n),A
+                case 0xDB: { var temp = _afr.A; _afr.A = In(ReadByte(_pc++)); _memPtr.word = (ushort)((temp << 8) + _afr.A + 1); } break; // IN A,(n)
+                case 0xD3: { var port = ReadByte(_pc++); Out(port, _afr.A); _memPtr.lo = (byte)(port + 1); _memPtr.hi = _afr.A; }  break; // OUT (n),A
 
                 #endregion
 
@@ -698,7 +698,7 @@ namespace elbsms_core.CPU
                 case 0x60: _gpr.H = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.H] & ~C); break; // IN H,(C)
                 case 0x68: _gpr.L = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.L] & ~C); break; // IN L,(C)
                 case 0x70: var temp = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[temp] & ~C); break; // IN F,(C)
-                case 0x78: _afr.A = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_afr.A] & ~C); break; // IN A,(C)
+                case 0x78: _afr.A = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_afr.A] & ~C); _memPtr.word = (ushort)(_gpr.BC + 1); break; // IN A,(C)
 
                 case 0xA2: InAndIncrement(); break; // INI
                 case 0xB2: InIncrementAndRepeat(); break; // INIR
@@ -712,7 +712,7 @@ namespace elbsms_core.CPU
                 case 0x61: Out(_gpr.C, _gpr.H); break; // OUT (C),H
                 case 0x69: Out(_gpr.C, _gpr.L); break; // OUT (C),L
                 case 0x71: Out(_gpr.C, 0); break; // OUT (C),0
-                case 0x79: Out(_gpr.C, _afr.A); break; // OUT (C),A
+                case 0x79: Out(_gpr.C, _afr.A); _memPtr.word = (ushort)(_gpr.BC + 1); break; // OUT (C),A
 
                 case 0xA3: OutAndIncrement(); break;// OUTI
                 case 0xB3: OutIncrementAndRepeat(); break; // OTIR
@@ -1516,6 +1516,7 @@ namespace elbsms_core.CPU
             _clock.AddCycles(1);
             PushWord(_pc);
             _pc = address;
+            _memPtr.word = _pc;
         }
 
         #endregion
@@ -1538,6 +1539,8 @@ namespace elbsms_core.CPU
             byte data = In(_gpr.C);
 
             WriteByte(_gpr.HL++, data);
+
+            _memPtr.word = (ushort)(_gpr.BC + 1);
 
             var (result, flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
@@ -1571,6 +1574,8 @@ namespace elbsms_core.CPU
             byte data = In(_gpr.C);
 
             WriteByte(_gpr.HL--, data);
+
+            _memPtr.word = (ushort)(_gpr.BC - 1);
 
             var (result, flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
@@ -1615,6 +1620,8 @@ namespace elbsms_core.CPU
             var (result, flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
 
+            _memPtr.word = (ushort)(_gpr.BC + 1);
+
             // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
             flags[N] = data.Bit(7);
 
@@ -1647,6 +1654,8 @@ namespace elbsms_core.CPU
 
             var (result, flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
+
+            _memPtr.word = (ushort)(_gpr.BC - 1);
 
             // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
             flags[N] = data.Bit(7);
