@@ -1681,30 +1681,4 @@ namespace elbsms_core.CPU
 
         #endregion
     }
-
-    static class Extensions
-    {
-        internal static bool Bit(this byte v, int bit)
-        {
-            int mask = 1 << bit;
-
-            return (v & mask) == mask;
-        }
-
-        internal static bool Bit(this int v, int bit)
-        {
-            int mask = 1 << bit;
-
-            return (v & mask) == mask;
-        }
-
-        internal static bool EvenParity(this int v)
-        {
-            v ^= v >> 4;
-            v ^= v >> 2;
-            v ^= v >> 1;
-
-            return (v & 1) != 1;
-        }
-    }
 }
