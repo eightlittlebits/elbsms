@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using elbsms_core.Video;
 
 namespace elbsms_core.Memory
 {
@@ -10,12 +11,14 @@ namespace elbsms_core.Memory
         private readonly byte[] _ram = new byte[RamSize];
 
         private readonly MemoryControlRegister _memoryControl;
+        private readonly VideoDisplayProcessor _vdp;
 
         private Cartridge _cartridge;
 
-        public Interconnect()
+        public Interconnect(VideoDisplayProcessor vdp)
         {
             _memoryControl = new MemoryControlRegister { Value = 0x00 };
+            _vdp = vdp;
         }
 
         internal void LoadCartridge(Cartridge cartridge)
@@ -79,8 +82,16 @@ namespace elbsms_core.Memory
                 case 0x01:
                 case 0x02:
                 case 0x03:
+                    break;
+
                 case 0x04:
+                    _vdp.DataPort = value;
+                    break;
+
                 case 0x05:
+                    _vdp.ControlPort = value;
+                    break;
+
                 case 0x06:
                 case 0x07:
                     Console.Write((char)value);
@@ -100,10 +111,12 @@ namespace elbsms_core.Memory
                 // memory control register
                 //case 0x00:
                 //case 0x01:
-                //case 0x02:
-                //case 0x03:
-                //case 0x04:
-                //case 0x05:
+
+                case 0x02: return _vdp.VCounter; 
+                case 0x03: return _vdp.HCounter;
+                case 0x04: return _vdp.DataPort;
+                case 0x05: return _vdp.ControlPort;
+
                 //case 0x06:
                 //case 0x07:
 
