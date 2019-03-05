@@ -42,7 +42,11 @@ namespace elbsms_core.Video
                 SynchroniseWithSystemClock();
                 _firstControlWrite = true;
 
-                return (byte)_statusFlags;
+                byte flags = (byte)_statusFlags;
+
+                _statusFlags = 0;
+
+                return flags;
             }
             set
             {
