@@ -2,21 +2,26 @@
 {
     internal abstract class ClockedComponent
     {
-        private SystemClock _clock;
+        private readonly SystemClock _clock;
+        private readonly uint _divisor;
         private ulong _lastUpdate;
 
-        public ClockedComponent(SystemClock clock)
+        public ClockedComponent(SystemClock clock, uint divisor)
         {
             _clock = clock;
+            _divisor = divisor;
         }
 
         public void SynchroniseWithSystemClock()
         {
-            ulong timestamp = _clock.Timestamp;
-            uint cyclesToUpdate = (uint)(timestamp - _lastUpdate);
-            _lastUpdate = timestamp;
+            uint masterCyclesElapsed = (uint)(_clock.Timestamp - _lastUpdate);
 
-            Update(cyclesToUpdate);
+            // round the master clock cycles to the last multiple of the clock divisor
+            uint masterCyclesToUpdate = masterCyclesElapsed - (masterCyclesElapsed % _divisor);
+
+            _lastUpdate += masterCyclesToUpdate;
+
+            Update(masterCyclesToUpdate / _divisor);
         }
 
         // Run this component for the required number of cycles

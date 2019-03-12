@@ -6,6 +6,8 @@ namespace elbsms_core.Video
     // http://www.smspower.org/uploads/Development/msvdp-20021112.txt
     internal class VideoDisplayProcessor : ClockedComponent
     {
+        private const int ClockDivisor = 2;
+
         private const int VRamSize = 0x4000;
         private const int VRamMask = VRamSize - 1;
         private readonly byte[] _vram = new byte[VRamSize];
@@ -27,7 +29,7 @@ namespace elbsms_core.Video
         public byte VCounter { get; internal set; }
         public byte HCounter { get; internal set; }
 
-        public VideoDisplayProcessor(SystemClock clock) : base(clock)
+        public VideoDisplayProcessor(SystemClock clock) : base(clock, ClockDivisor)
         {
             _firstControlWrite = true;
             _statusFlags = 0;

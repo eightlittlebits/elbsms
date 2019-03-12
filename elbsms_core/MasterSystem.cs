@@ -6,6 +6,9 @@ namespace elbsms_core
 {
     public class MasterSystem
     {
+        // the master clock in the master system runs at 3 times the cpu clock
+        private const uint ClockMultiplier = 3;
+
         internal SystemClock Clock;
         internal VideoDisplayProcessor VDP;
         internal Interconnect Interconnect;
@@ -13,7 +16,7 @@ namespace elbsms_core
 
         public MasterSystem()
         {
-            Clock = new SystemClock();
+            Clock = new SystemClock(ClockMultiplier);
             VDP = new VideoDisplayProcessor(Clock);
             Interconnect = new Interconnect(VDP);
             CPU = new Z80(Clock, Interconnect);
