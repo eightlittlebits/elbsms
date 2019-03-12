@@ -51,7 +51,7 @@ namespace elbsms_console
             sw.Stop();
 
             var cyclesExecuted = masterSystem.Clock.Timestamp;
-            var effectiveClock = cyclesExecuted / (sw.ElapsedMilliseconds / 1000.0);
+            var effectiveClock = cyclesExecuted / 3 / (sw.ElapsedMilliseconds / 1000.0);
 
             Console.WriteLine();
             Console.WriteLine();
