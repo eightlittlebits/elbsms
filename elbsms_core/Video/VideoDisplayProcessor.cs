@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace elbsms_core.Video
 {
     // SMS VDP is based on the Texas Instruments TMS9918a
     // http://www.smspower.org/uploads/Development/msvdp-20021112.txt
-    internal class VideoDisplayProcessor : ClockedComponent
+    internal sealed class VideoDisplayProcessor : ClockedComponent
     {
         private const int ClockDivisor = 2;
 
@@ -35,6 +36,7 @@ namespace elbsms_core.Video
             _statusFlags = 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void IncrementAddressRegister() => _addressRegister = (ushort)((_addressRegister + 1) & VRamMask);
 
         public byte ControlPort

@@ -1,4 +1,6 @@
-﻿namespace elbsms_core
+﻿using System.Runtime.CompilerServices;
+
+namespace elbsms_core
 {
     internal abstract class ClockedComponent
     {
@@ -12,6 +14,7 @@
             _divisor = divisor;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SynchroniseWithSystemClock()
         {
             uint masterCyclesElapsed = (uint)(_clock.Timestamp - _lastUpdate);
