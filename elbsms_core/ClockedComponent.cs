@@ -8,7 +8,7 @@ namespace elbsms_core
         private readonly uint _divisor;
         private ulong _lastUpdate;
 
-        public ClockedComponent(SystemClock clock, uint divisor)
+        public ClockedComponent(SystemClock clock, uint divisor = 1)
         {
             _clock = clock;
             _divisor = divisor;

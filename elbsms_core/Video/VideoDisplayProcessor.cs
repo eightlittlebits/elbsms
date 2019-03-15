@@ -7,8 +7,6 @@ namespace elbsms_core.Video
     // we're going with an SMS2 vdp to start with
     internal sealed class VideoDisplayProcessor : ClockedComponent
     {
-        private const int ClockDivisor = 2;
-
         private const int VRamSize = 0x4000;
         private const int VRamMask = VRamSize - 1;
         private readonly byte[] _vram = new byte[VRamSize];
@@ -52,7 +50,7 @@ namespace elbsms_core.Video
         public byte VCounter { get; internal set; }
         public byte HCounter { get; internal set; }
 
-        public VideoDisplayProcessor(SystemClock clock) : base(clock, ClockDivisor)
+        public VideoDisplayProcessor(SystemClock clock) : base(clock)
         {
             _registers = new byte[16];
 
@@ -76,6 +74,7 @@ namespace elbsms_core.Video
 
                 return flags;
             }
+
             set
             {
                 SynchroniseWithSystemClock();
