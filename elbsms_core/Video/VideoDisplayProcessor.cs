@@ -25,7 +25,7 @@ namespace elbsms_core.Video
 
         private readonly byte[] _registers;
 
-        //private int _vdpMode;
+        private int _vdpMode;
 
         private bool _verticalScrollLock;
         private bool _horizontalScrollLock;
@@ -152,8 +152,11 @@ namespace elbsms_core.Video
                     _maskColumn0 = value.Bit(5);            // D5 - 1= Mask column 0 with overscan color from register #7
                     _lineInterruptEnable = value.Bit(4);    // D4 - (IE1) 1= Line interrupt enable
                     _shiftSpritesLeft = value.Bit(3);       // D3 - (EC) 1= Shift sprites left by 8 pixels
-                    // todo(david): extract mode bits into _vdpMode // D2 - (M4) 1= Use Mode 4, 0= Use TMS9918 modes (selected with M1, M2, M3)
-                                                                    // D1 - (M2) Must be 1 for M1/M3 to change screen height in Mode 4.
+
+                    _vdpMode &= 0b0101; // clear bits 1 and 3
+                    _vdpMode |= value.Bit(2) ? 0b1000 : 0;  // D2 - (M4) 1= Use Mode 4, 0= Use TMS9918 modes (selected with M1, M2, M3)
+                    _vdpMode |= value.Bit(1) ? 0b0010 : 0;  // D1 - (M2) Must be 1 for M1/M3 to change screen height in Mode 4.
+
                     _syncEnabled = !value.Bit(0);           // D0 - 1= No sync, display is monochrome, 0= Normal display
                     break;
 
@@ -162,8 +165,10 @@ namespace elbsms_core.Video
                     // D7 - No effect
                     _displayEnabled = value.Bit(6);         // D6 - (BLK) 1= Display visible, 0= display blanked.
                     _frameInterruptEnabled = value.Bit(5);  // D5 - (IE0) 1= Frame interrupt enable.
-                    // todo(david): extract mode bits into _vdpMode // D4 - (M1) Selects 224-line screen for Mode 4 if M2=1, else has no effect.
-                                                                    // D3 - (M3) Selects 240-line screen for Mode 4 if M2=1, else has no effect.
+
+                    _vdpMode &= 0b1010; // clear bits 0 and 2
+                    _vdpMode |= value.Bit(4) ? 0b0001 : 0;  // D4 - (M1) Selects 224-line screen for Mode 4 if M2=1, else has no effect.
+                    _vdpMode |= value.Bit(3) ? 0b0100 : 0;  // D3 - (M3) Selects 240-line screen for Mode 4 if M2=1, else has no effect.
                                                             // D2 - No effect
                     _largeSprites = value.Bit(1);           // D1 - Sprites are 1=16x16,0=8x8 (TMS9918), Sprites are 1=8x16,0=8x8 (Mode 4)
                     _zoomedSprites = value.Bit(0);          // D0 - Sprite pixels are doubled in size.
