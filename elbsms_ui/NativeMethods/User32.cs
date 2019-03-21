@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace elb_utilities.NativeMethods
+namespace elbsms_ui.NativeMethods
 {
     [SuppressUnmanagedCodeSecurity]
     internal static class User32
@@ -23,5 +23,4 @@ namespace elb_utilities.NativeMethods
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool PeekMessage(out Message msg, IntPtr hWnd, uint messageFilterMin, uint messageFilterMax, uint flags);
     }
-
 }

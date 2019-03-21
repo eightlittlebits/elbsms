@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using elb_utilities.NativeMethods;
+using elbsms_ui.NativeMethods;
 
 namespace elbsms_ui
 {

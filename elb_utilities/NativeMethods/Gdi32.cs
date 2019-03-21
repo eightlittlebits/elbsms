@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace elb_utilities.NativeMethods
 {
-    public static class Gdi32
+    [SuppressUnmanagedCodeSecurity]
+    internal static class Gdi32
     {
-        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("gdi32.dll", EntryPoint = "SelectObject")]
-        public static extern System.IntPtr SelectObject(
-            [In] System.IntPtr hdc,
-            [In] System.IntPtr hgdiobj);
+        internal static extern IntPtr SelectObject(
+            [In] IntPtr hdc,
+            [In] IntPtr hgdiobj);
 
-        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DeleteObject(
-            [In] System.IntPtr hObject);
+        internal static extern bool DeleteObject(
+            [In] IntPtr hObject);
 
-        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("gdi32.dll", EntryPoint = "BitBlt")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool BitBlt(
-            [In] System.IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight,
-            [In] System.IntPtr hdcSrc, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
+        internal static extern bool BitBlt(
+            [In] IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight,
+            [In] IntPtr hdcSrc, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
 
-        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("gdi32.dll", EntryPoint = "StretchBlt")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool StretchBlt(
-            [In] System.IntPtr hdcDest, int nXOriginDest, int nYOriginDest, int nWidthDest, int nHeightDest,
-            [In] System.IntPtr hdcSrc, int nXOriginSrc, int nYOriginSrc, int nWidthSrc, int nHeightSrc,
+        internal static extern bool StretchBlt(
+            [In] IntPtr hdcDest, int nXOriginDest, int nYOriginDest, int nWidthDest, int nHeightDest,
+            [In] IntPtr hdcSrc, int nXOriginSrc, int nYOriginSrc, int nWidthSrc, int nHeightSrc,
             TernaryRasterOperations dwRop);
 
-        public enum TernaryRasterOperations : uint
+        internal enum TernaryRasterOperations : uint
         {
             /// <summary>dest = source</summary>
             SRCCOPY = 0x00CC0020,
@@ -71,18 +69,17 @@ namespace elb_utilities.NativeMethods
             CAPTUREBLT = 0x40000000
         }
 
-        [System.Security.SuppressUnmanagedCodeSecurity]
         [DllImport("gdi32.dll", EntryPoint = "GdiAlphaBlend")]
-        public static extern bool AlphaBlend(
+        internal static extern bool AlphaBlend(
             IntPtr hdcDest, int nXOriginDest, int nYOriginDest, int nWidthDest, int nHeightDest,
             IntPtr hdcSrc, int nXOriginSrc, int nYOriginSrc, int nWidthSrc, int nHeightSrc,
             BlendFunction blendFunction);
 
-        public const int AC_SRC_OVER = 0x00;
-        public const int AC_SRC_ALPHA = 0x01;
+        internal const int AC_SRC_OVER = 0x00;
+        internal const int AC_SRC_ALPHA = 0x01;
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct BlendFunction
+        internal struct BlendFunction
         {
             public byte BlendOp;
             public byte BlendFlags;

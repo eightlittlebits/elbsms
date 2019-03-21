@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using elb_utilities.NativeMethods;
 
 namespace elb_utilities
 {
@@ -9,7 +10,7 @@ namespace elb_utilities
         private bool _initialised;
         private bool _running;
 
-        public static bool ApplicationStillIdle => !NativeMethods.User32.PeekMessage(out _, IntPtr.Zero, 0, 0, 0);
+        public static bool ApplicationStillIdle => !User32.PeekMessage(out _, IntPtr.Zero, 0, 0, 0);
 
         public void RunWhileIdle(Action idleLoop)
         {
