@@ -15,6 +15,8 @@ namespace elbsms_core.Video
         private const int CRamMask = CRamSize - 1;
         private readonly byte[] _cram = new byte[CRamSize];
 
+        private const int CyclesPerScanline = 684;
+
         private bool _firstControlWrite;
         private byte _addressBuffer;
         private ushort _addressRegister;
@@ -47,8 +49,10 @@ namespace elbsms_core.Video
         private byte _backgroundYScroll;
         private byte _lineCounter;
 
-        public byte VCounter { get; internal set; }
-        public byte HCounter { get; internal set; }
+        private uint _currentScanlineCycles;
+
+        public byte VCounter { get; }
+        public byte HCounter { get; private set; }
 
         public VideoDisplayProcessor(SystemClock clock) : base(clock)
         {
@@ -203,9 +207,27 @@ namespace elbsms_core.Video
             }
         }
 
+        public void LatchHCounter()
+        {
+            SynchroniseWithSystemClock();
+
+            // the dot clock is half the speed of the master clock
+            // the hcounter is the top 8 bits of a 9 bit counter
+            // seems to be offset 16 pixels (32 cycles), HC = 0 is 3 pixels before left border
+            // http://www.smspower.org/forums/8161-SMSDisplayTiming
+            uint shiftedPixelCount = ((_currentScanlineCycles + 32 ) % CyclesPerScanline) >> 2;
+
+            HCounter = (byte)(shiftedPixelCount <= 0x93 ? shiftedPixelCount : shiftedPixelCount + 0x55);
+        }
+
         public override void Update(uint cycleCount)
         {
+            _currentScanlineCycles += cycleCount;
 
+            if (_currentScanlineCycles >= CyclesPerScanline)
+            {
+                _currentScanlineCycles -= CyclesPerScanline;
+            }
         }
     }
 }
