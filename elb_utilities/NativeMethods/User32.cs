@@ -27,5 +27,4 @@ namespace elb_utilities.NativeMethods
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetKeyboardState(byte[] lpKeyState);
     }
-
 }

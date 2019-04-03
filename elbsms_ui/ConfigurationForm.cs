@@ -15,9 +15,7 @@ namespace elbsms_ui
     {
         private Dictionary<string, List<Control>> _propertyControls;
 
-        private IConfiguration _config;
-
-        public IConfiguration Configuration => _config;
+        public IConfiguration Configuration { get; }
 
         public ConfigurationForm(IConfiguration configuration, string title)
         {
@@ -25,7 +23,7 @@ namespace elbsms_ui
 
             _propertyControls = new Dictionary<string, List<Control>>();
 
-            _config = configuration.Clone();
+            Configuration = configuration.Clone();
 
             PrepareUserInterface(title);
         }
@@ -50,7 +48,7 @@ namespace elbsms_ui
 
             Text = title;
 
-            var properties = _config.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            var properties = Configuration.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
             foreach (var category in GroupPropertiesByCategory(properties))
             {
@@ -212,7 +210,7 @@ namespace elbsms_ui
 
             AddControlForProperty(propertyName, checkBox);
 
-            AddDataBinding(checkBox, nameof(checkBox.Checked), _config, propertyName);
+            AddDataBinding(checkBox, nameof(checkBox.Checked), Configuration, propertyName);
             tableLayoutPanel.Controls.Add(checkBox, 0, row);
             tableLayoutPanel.SetColumnSpan(checkBox, 4);
         }
@@ -241,7 +239,7 @@ namespace elbsms_ui
 
             AddControlForProperty(propertyName, textBox);
 
-            AddDataBinding(textBox, nameof(textBox.Text), _config, propertyName);
+            AddDataBinding(textBox, nameof(textBox.Text), Configuration, propertyName);
             tableLayoutPanel.Controls.Add(textBox, 1, row);
 
             return textBox;
@@ -302,7 +300,7 @@ namespace elbsms_ui
 
             AddControlForProperty(propertyName, comboBox);
 
-            AddDataBinding(comboBox, nameof(comboBox.SelectedValue), _config, propertyName);
+            AddDataBinding(comboBox, nameof(comboBox.SelectedValue), Configuration, propertyName);
 
             tableLayoutPanel.Controls.Add(comboBox, 1, row);
             tableLayoutPanel.SetColumnSpan(comboBox, 3);
