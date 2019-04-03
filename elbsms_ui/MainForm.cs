@@ -36,7 +36,7 @@ namespace elbsms_ui
 
             _config = Configuration.Load();
 
-            _emulationInitialised = new NotifyValue<bool>(false);
+            _emulationInitialised = new NotifyValue<bool>();
 
             PrepareUserInterface();
 

@@ -17,15 +17,11 @@ namespace elb_utilities.WinForms
             set { _value = value; NotifyPropertyChanged(); }
         }
 
-        public NotifyValue(T value)
-        {
-            _value = value;
-        }
+        public NotifyValue() => _value = default;
 
-        public static implicit operator T(NotifyValue<T> notifyValue)
-        {
-            return notifyValue.Value;
-        }
+        public NotifyValue(T value) => _value = value;
+
+        public static implicit operator T(NotifyValue<T> notifyValue) => notifyValue.Value;
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
