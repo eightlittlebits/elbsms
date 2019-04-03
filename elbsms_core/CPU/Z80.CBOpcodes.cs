@@ -317,77 +317,77 @@ namespace elbsms_core.CPU
             {
                 #region rotate and shift group
 
-                case 0x00: WriteByte(address, (_gpr.B = RotateLeft(ReadByte(address)))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
-                case 0x01: WriteByte(address, (_gpr.C = RotateLeft(ReadByte(address)))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
-                case 0x02: WriteByte(address, (_gpr.D = RotateLeft(ReadByte(address)))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
-                case 0x03: WriteByte(address, (_gpr.E = RotateLeft(ReadByte(address)))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
-                case 0x04: WriteByte(address, (_gpr.H = RotateLeft(ReadByte(address)))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
-                case 0x05: WriteByte(address, (_gpr.L = RotateLeft(ReadByte(address)))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                case 0x00: WriteByte(address, _gpr.B = RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                case 0x01: WriteByte(address, _gpr.C = RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                case 0x02: WriteByte(address, _gpr.D = RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                case 0x03: WriteByte(address, _gpr.E = RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                case 0x04: WriteByte(address, _gpr.H = RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                case 0x05: WriteByte(address, _gpr.L = RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
                 case 0x06: WriteByte(address, RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
-                case 0x07: WriteByte(address, (_afr.A = RotateLeft(ReadByte(address)))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
+                case 0x07: WriteByte(address, _afr.A = RotateLeft(ReadByte(address))); _clock.AddCycles(1); break; // RLC (IX/IY + d)
 
-                case 0x08: WriteByte(address, (_gpr.B = RotateRight(ReadByte(address)))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
-                case 0x09: WriteByte(address, (_gpr.C = RotateRight(ReadByte(address)))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
-                case 0x0A: WriteByte(address, (_gpr.D = RotateRight(ReadByte(address)))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
-                case 0x0B: WriteByte(address, (_gpr.E = RotateRight(ReadByte(address)))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
-                case 0x0C: WriteByte(address, (_gpr.H = RotateRight(ReadByte(address)))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
-                case 0x0D: WriteByte(address, (_gpr.L = RotateRight(ReadByte(address)))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                case 0x08: WriteByte(address, _gpr.B = RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                case 0x09: WriteByte(address, _gpr.C = RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                case 0x0A: WriteByte(address, _gpr.D = RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                case 0x0B: WriteByte(address, _gpr.E = RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                case 0x0C: WriteByte(address, _gpr.H = RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                case 0x0D: WriteByte(address, _gpr.L = RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
                 case 0x0E: WriteByte(address, RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
-                case 0x0F: WriteByte(address, (_afr.A = RotateRight(ReadByte(address)))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
+                case 0x0F: WriteByte(address, _afr.A = RotateRight(ReadByte(address))); _clock.AddCycles(1); break; // RRC (IX/IY + d)
 
-                case 0x10: WriteByte(address, (_gpr.B = RotateLeftThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RL (IX/IY + d)
-                case 0x11: WriteByte(address, (_gpr.C = RotateLeftThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RL (IX/IY + d)
-                case 0x12: WriteByte(address, (_gpr.D = RotateLeftThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RL (IX/IY + d)
-                case 0x13: WriteByte(address, (_gpr.E = RotateLeftThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RL (IX/IY + d)
-                case 0x14: WriteByte(address, (_gpr.H = RotateLeftThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RL (IX/IY + d)
-                case 0x15: WriteByte(address, (_gpr.L = RotateLeftThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                case 0x10: WriteByte(address, _gpr.B = RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                case 0x11: WriteByte(address, _gpr.C = RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                case 0x12: WriteByte(address, _gpr.D = RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                case 0x13: WriteByte(address, _gpr.E = RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                case 0x14: WriteByte(address, _gpr.H = RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                case 0x15: WriteByte(address, _gpr.L = RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
                 case 0x16: WriteByte(address, RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
-                case 0x17: WriteByte(address, (_afr.A = RotateLeftThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RL (IX/IY + d)
+                case 0x17: WriteByte(address, _afr.A = RotateLeftThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RL (IX/IY + d)
 
-                case 0x18: WriteByte(address, (_gpr.B = RotateRightThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RR (IX/IY + d)
-                case 0x19: WriteByte(address, (_gpr.C = RotateRightThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RR (IX/IY + d)
-                case 0x1A: WriteByte(address, (_gpr.D = RotateRightThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RR (IX/IY + d)
-                case 0x1B: WriteByte(address, (_gpr.E = RotateRightThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RR (IX/IY + d)
-                case 0x1C: WriteByte(address, (_gpr.H = RotateRightThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RR (IX/IY + d)
-                case 0x1D: WriteByte(address, (_gpr.L = RotateRightThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                case 0x18: WriteByte(address, _gpr.B = RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                case 0x19: WriteByte(address, _gpr.C = RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                case 0x1A: WriteByte(address, _gpr.D = RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                case 0x1B: WriteByte(address, _gpr.E = RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                case 0x1C: WriteByte(address, _gpr.H = RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                case 0x1D: WriteByte(address, _gpr.L = RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
                 case 0x1E: WriteByte(address, RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
-                case 0x1F: WriteByte(address, (_afr.A = RotateRightThroughCarry(ReadByte(address)))); _clock.AddCycles(1); break; // RR (IX/IY + d)
+                case 0x1F: WriteByte(address, _afr.A = RotateRightThroughCarry(ReadByte(address))); _clock.AddCycles(1); break; // RR (IX/IY + d)
 
-                case 0x20: WriteByte(address, (_gpr.B = ShiftLeftArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
-                case 0x21: WriteByte(address, (_gpr.C = ShiftLeftArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
-                case 0x22: WriteByte(address, (_gpr.D = ShiftLeftArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
-                case 0x23: WriteByte(address, (_gpr.E = ShiftLeftArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
-                case 0x24: WriteByte(address, (_gpr.H = ShiftLeftArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
-                case 0x25: WriteByte(address, (_gpr.L = ShiftLeftArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                case 0x20: WriteByte(address, _gpr.B = ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                case 0x21: WriteByte(address, _gpr.C = ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                case 0x22: WriteByte(address, _gpr.D = ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                case 0x23: WriteByte(address, _gpr.E = ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                case 0x24: WriteByte(address, _gpr.H = ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                case 0x25: WriteByte(address, _gpr.L = ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
                 case 0x26: WriteByte(address, ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
-                case 0x27: WriteByte(address, (_afr.A = ShiftLeftArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
+                case 0x27: WriteByte(address, _afr.A = ShiftLeftArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SLA (IX/IY + d)
 
-                case 0x28: WriteByte(address, (_gpr.B = ShiftRightArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
-                case 0x29: WriteByte(address, (_gpr.C = ShiftRightArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
-                case 0x2A: WriteByte(address, (_gpr.D = ShiftRightArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
-                case 0x2B: WriteByte(address, (_gpr.E = ShiftRightArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
-                case 0x2C: WriteByte(address, (_gpr.H = ShiftRightArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
-                case 0x2D: WriteByte(address, (_gpr.L = ShiftRightArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                case 0x28: WriteByte(address, _gpr.B = ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                case 0x29: WriteByte(address, _gpr.C = ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                case 0x2A: WriteByte(address, _gpr.D = ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                case 0x2B: WriteByte(address, _gpr.E = ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                case 0x2C: WriteByte(address, _gpr.H = ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                case 0x2D: WriteByte(address, _gpr.L = ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
                 case 0x2E: WriteByte(address, ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
-                case 0x2F: WriteByte(address, (_afr.A = ShiftRightArithmetic(ReadByte(address)))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
+                case 0x2F: WriteByte(address, _afr.A = ShiftRightArithmetic(ReadByte(address))); _clock.AddCycles(1); break; // SRA (IX/IY + d)
 
-                case 0x30: WriteByte(address, (_gpr.B = ShiftLeftInsertingOne(ReadByte(address)))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
-                case 0x31: WriteByte(address, (_gpr.C = ShiftLeftInsertingOne(ReadByte(address)))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
-                case 0x32: WriteByte(address, (_gpr.D = ShiftLeftInsertingOne(ReadByte(address)))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
-                case 0x33: WriteByte(address, (_gpr.E = ShiftLeftInsertingOne(ReadByte(address)))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
-                case 0x34: WriteByte(address, (_gpr.H = ShiftLeftInsertingOne(ReadByte(address)))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
-                case 0x35: WriteByte(address, (_gpr.L = ShiftLeftInsertingOne(ReadByte(address)))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                case 0x30: WriteByte(address, _gpr.B = ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                case 0x31: WriteByte(address, _gpr.C = ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                case 0x32: WriteByte(address, _gpr.D = ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                case 0x33: WriteByte(address, _gpr.E = ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                case 0x34: WriteByte(address, _gpr.H = ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                case 0x35: WriteByte(address, _gpr.L = ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
                 case 0x36: WriteByte(address, ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
-                case 0x37: WriteByte(address, (_afr.A = ShiftLeftInsertingOne(ReadByte(address)))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
+                case 0x37: WriteByte(address, _afr.A = ShiftLeftInsertingOne(ReadByte(address))); _clock.AddCycles(1); break; // SLL (IX/IY + d)
 
-                case 0x38: WriteByte(address, (_gpr.B = ShiftRightLogical(ReadByte(address)))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
-                case 0x39: WriteByte(address, (_gpr.C = ShiftRightLogical(ReadByte(address)))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
-                case 0x3A: WriteByte(address, (_gpr.D = ShiftRightLogical(ReadByte(address)))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
-                case 0x3B: WriteByte(address, (_gpr.E = ShiftRightLogical(ReadByte(address)))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
-                case 0x3C: WriteByte(address, (_gpr.H = ShiftRightLogical(ReadByte(address)))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
-                case 0x3D: WriteByte(address, (_gpr.L = ShiftRightLogical(ReadByte(address)))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                case 0x38: WriteByte(address, _gpr.B = ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                case 0x39: WriteByte(address, _gpr.C = ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                case 0x3A: WriteByte(address, _gpr.D = ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                case 0x3B: WriteByte(address, _gpr.E = ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                case 0x3C: WriteByte(address, _gpr.H = ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                case 0x3D: WriteByte(address, _gpr.L = ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
                 case 0x3E: WriteByte(address, ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
-                case 0x3F: WriteByte(address, (_afr.A = ShiftRightLogical(ReadByte(address)))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
+                case 0x3F: WriteByte(address, _afr.A = ShiftRightLogical(ReadByte(address))); _clock.AddCycles(1); break; // SRL (IX/IY + d)
 
                 #endregion
 
@@ -465,149 +465,149 @@ namespace elbsms_core.CPU
                 case 0x7E: _afr.F = TestBitMemory(address, 7); break; // BIT 7,(IX/IY + d)
                 case 0x7F: _afr.F = TestBitMemory(address, 7); break; // BIT 7,(IX/IY + d)
 
-                case 0x80: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),B
-                case 0x81: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),C
-                case 0x82: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),D
-                case 0x83: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),E
-                case 0x84: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),H
-                case 0x85: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),L
+                case 0x80: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),B
+                case 0x81: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),C
+                case 0x82: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),D
+                case 0x83: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),E
+                case 0x84: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),H
+                case 0x85: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),L
                 case 0x86: WriteByte(address, ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d)
-                case 0x87: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),A
+                case 0x87: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // RES 0,(IX/IY + d),A
 
-                case 0x88: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),B
-                case 0x89: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),C
-                case 0x8A: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),D
-                case 0x8B: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),E
-                case 0x8C: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),H
-                case 0x8D: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),L
+                case 0x88: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),B
+                case 0x89: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),C
+                case 0x8A: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),D
+                case 0x8B: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),E
+                case 0x8C: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),H
+                case 0x8D: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),L
                 case 0x8E: WriteByte(address, ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d)
-                case 0x8F: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),A
+                case 0x8F: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // RES 1,(IX/IY + d),A
 
-                case 0x90: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),B
-                case 0x91: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),C
-                case 0x92: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),D
-                case 0x93: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),E
-                case 0x94: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),H
-                case 0x95: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),L
+                case 0x90: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),B
+                case 0x91: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),C
+                case 0x92: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),D
+                case 0x93: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),E
+                case 0x94: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),H
+                case 0x95: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),L
                 case 0x96: WriteByte(address, ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d)
-                case 0x97: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),A
+                case 0x97: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // RES 2,(IX/IY + d),A
 
-                case 0x98: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),B
-                case 0x99: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),C
-                case 0x9A: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),D
-                case 0x9B: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),E
-                case 0x9C: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),H
-                case 0x9D: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),L
+                case 0x98: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),B
+                case 0x99: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),C
+                case 0x9A: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),D
+                case 0x9B: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),E
+                case 0x9C: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),H
+                case 0x9D: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),L
                 case 0x9E: WriteByte(address, ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d)
-                case 0x9F: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),A
+                case 0x9F: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // RES 3,(IX/IY + d),A
 
-                case 0xA0: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),B
-                case 0xA1: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),C
-                case 0xA2: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),D
-                case 0xA3: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),E
-                case 0xA4: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),H
-                case 0xA5: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),L
+                case 0xA0: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),B
+                case 0xA1: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),C
+                case 0xA2: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),D
+                case 0xA3: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),E
+                case 0xA4: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),H
+                case 0xA5: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),L
                 case 0xA6: WriteByte(address, ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d)
-                case 0xA7: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),A
+                case 0xA7: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // RES 4,(IX/IY + d),A
 
-                case 0xA8: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),B
-                case 0xA9: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),C
-                case 0xAA: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),D
-                case 0xAB: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),E
-                case 0xAC: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),H
-                case 0xAD: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),L
+                case 0xA8: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),B
+                case 0xA9: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),C
+                case 0xAA: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),D
+                case 0xAB: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),E
+                case 0xAC: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),H
+                case 0xAD: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),L
                 case 0xAE: WriteByte(address, ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d)
-                case 0xAF: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),A
+                case 0xAF: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // RES 5,(IX/IY + d),A
 
-                case 0xB0: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),B
-                case 0xB1: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),C
-                case 0xB2: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),D
-                case 0xB3: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),E
-                case 0xB4: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),H
-                case 0xB5: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),L
+                case 0xB0: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),B
+                case 0xB1: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),C
+                case 0xB2: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),D
+                case 0xB3: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),E
+                case 0xB4: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),H
+                case 0xB5: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),L
                 case 0xB6: WriteByte(address, ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d)
-                case 0xB7: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),A
+                case 0xB7: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // RES 6,(IX/IY + d),A
 
-                case 0xB8: WriteByte(address, (_gpr.B = ResetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),B
-                case 0xB9: WriteByte(address, (_gpr.C = ResetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),C
-                case 0xBA: WriteByte(address, (_gpr.D = ResetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),D
-                case 0xBB: WriteByte(address, (_gpr.E = ResetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),E
-                case 0xBC: WriteByte(address, (_gpr.H = ResetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),H
-                case 0xBD: WriteByte(address, (_gpr.L = ResetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),L
+                case 0xB8: WriteByte(address, _gpr.B = ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),B
+                case 0xB9: WriteByte(address, _gpr.C = ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),C
+                case 0xBA: WriteByte(address, _gpr.D = ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),D
+                case 0xBB: WriteByte(address, _gpr.E = ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),E
+                case 0xBC: WriteByte(address, _gpr.H = ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),H
+                case 0xBD: WriteByte(address, _gpr.L = ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),L
                 case 0xBE: WriteByte(address, ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d)
-                case 0xBF: WriteByte(address, (_afr.A = ResetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),A
+                case 0xBF: WriteByte(address, _afr.A = ResetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // RES 7,(IX/IY + d),A
 
-                case 0xC0: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),B
-                case 0xC1: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),C
-                case 0xC2: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),D
-                case 0xC3: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),E
-                case 0xC4: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),H
-                case 0xC5: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),L
+                case 0xC0: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),B
+                case 0xC1: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),C
+                case 0xC2: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),D
+                case 0xC3: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),E
+                case 0xC4: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),H
+                case 0xC5: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),L
                 case 0xC6: WriteByte(address, SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d)
-                case 0xC7: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 0))); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),A
+                case 0xC7: WriteByte(address, _afr.A = SetBit(ReadByte(address), 0)); _clock.AddCycles(1); break; // SET 0,(IX/IY + d),A
 
-                case 0xC8: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),B
-                case 0xC9: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),C
-                case 0xCA: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),D
-                case 0xCB: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),E
-                case 0xCC: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),H
-                case 0xCD: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),L
+                case 0xC8: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),B
+                case 0xC9: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),C
+                case 0xCA: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),D
+                case 0xCB: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),E
+                case 0xCC: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),H
+                case 0xCD: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),L
                 case 0xCE: WriteByte(address, SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d)
-                case 0xCF: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 1))); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),A
+                case 0xCF: WriteByte(address, _afr.A = SetBit(ReadByte(address), 1)); _clock.AddCycles(1); break; // SET 1,(IX/IY + d),A
 
-                case 0xD0: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),B
-                case 0xD1: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),C
-                case 0xD2: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),D
-                case 0xD3: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),E
-                case 0xD4: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),H
-                case 0xD5: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),L
+                case 0xD0: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),B
+                case 0xD1: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),C
+                case 0xD2: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),D
+                case 0xD3: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),E
+                case 0xD4: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),H
+                case 0xD5: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),L
                 case 0xD6: WriteByte(address, SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d)
-                case 0xD7: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 2))); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),A
+                case 0xD7: WriteByte(address, _afr.A = SetBit(ReadByte(address), 2)); _clock.AddCycles(1); break; // SET 2,(IX/IY + d),A
 
-                case 0xD8: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),B
-                case 0xD9: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),C
-                case 0xDA: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),D
-                case 0xDB: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),E
-                case 0xDC: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),H
-                case 0xDD: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),L
+                case 0xD8: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),B
+                case 0xD9: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),C
+                case 0xDA: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),D
+                case 0xDB: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),E
+                case 0xDC: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),H
+                case 0xDD: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),L
                 case 0xDE: WriteByte(address, SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d)
-                case 0xDF: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 3))); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),A
+                case 0xDF: WriteByte(address, _afr.A = SetBit(ReadByte(address), 3)); _clock.AddCycles(1); break; // SET 3,(IX/IY + d),A
 
-                case 0xE0: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),B
-                case 0xE1: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),C
-                case 0xE2: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),D
-                case 0xE3: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),E
-                case 0xE4: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),H
-                case 0xE5: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),L
+                case 0xE0: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),B
+                case 0xE1: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),C
+                case 0xE2: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),D
+                case 0xE3: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),E
+                case 0xE4: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),H
+                case 0xE5: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),L
                 case 0xE6: WriteByte(address, SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d)
-                case 0xE7: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 4))); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),A
+                case 0xE7: WriteByte(address, _afr.A = SetBit(ReadByte(address), 4)); _clock.AddCycles(1); break; // SET 4,(IX/IY + d),A
 
-                case 0xE8: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),B
-                case 0xE9: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),C
-                case 0xEA: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),D
-                case 0xEB: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),E
-                case 0xEC: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),H
-                case 0xED: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),L
+                case 0xE8: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),B
+                case 0xE9: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),C
+                case 0xEA: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),D
+                case 0xEB: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),E
+                case 0xEC: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),H
+                case 0xED: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),L
                 case 0xEE: WriteByte(address, SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d)
-                case 0xEF: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 5))); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),A
+                case 0xEF: WriteByte(address, _afr.A = SetBit(ReadByte(address), 5)); _clock.AddCycles(1); break; // SET 5,(IX/IY + d),A
 
-                case 0xF0: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),B
-                case 0xF1: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),C
-                case 0xF2: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),D
-                case 0xF3: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),E
-                case 0xF4: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),H
-                case 0xF5: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),L
+                case 0xF0: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),B
+                case 0xF1: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),C
+                case 0xF2: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),D
+                case 0xF3: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),E
+                case 0xF4: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),H
+                case 0xF5: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),L
                 case 0xF6: WriteByte(address, SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d)
-                case 0xF7: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 6))); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),A
+                case 0xF7: WriteByte(address, _afr.A = SetBit(ReadByte(address), 6)); _clock.AddCycles(1); break; // SET 6,(IX/IY + d),A
 
-                case 0xF8: WriteByte(address, (_gpr.B = SetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),B
-                case 0xF9: WriteByte(address, (_gpr.C = SetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),C
-                case 0xFA: WriteByte(address, (_gpr.D = SetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),D
-                case 0xFB: WriteByte(address, (_gpr.E = SetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),E
-                case 0xFC: WriteByte(address, (_gpr.H = SetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),H
-                case 0xFD: WriteByte(address, (_gpr.L = SetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),L
+                case 0xF8: WriteByte(address, _gpr.B = SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),B
+                case 0xF9: WriteByte(address, _gpr.C = SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),C
+                case 0xFA: WriteByte(address, _gpr.D = SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),D
+                case 0xFB: WriteByte(address, _gpr.E = SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),E
+                case 0xFC: WriteByte(address, _gpr.H = SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),H
+                case 0xFD: WriteByte(address, _gpr.L = SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),L
                 case 0xFE: WriteByte(address, SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d)
-                case 0xFF: WriteByte(address, (_afr.A = SetBit(ReadByte(address), 7))); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),A
+                case 0xFF: WriteByte(address, _afr.A = SetBit(ReadByte(address), 7)); _clock.AddCycles(1); break; // SET 7,(IX/IY + d),A
 
                 #endregion
 

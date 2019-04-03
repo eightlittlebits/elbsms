@@ -173,7 +173,7 @@ private string RotateShiftOpDisplaced(uint opcode)
     
     if (z != 6)
     {
-        return $"WriteByte(address, ({_register[z]} = {rotateShiftOperation[y]}(ReadByte(address)))); _clock.AddCycles(1); break; // {rotateShiftMnemonic[y]} (IX/IY + d)";
+        return $"WriteByte(address, {_register[z]} = {rotateShiftOperation[y]}(ReadByte(address))); _clock.AddCycles(1); break; // {rotateShiftMnemonic[y]} (IX/IY + d)";
     }
     else
     {
@@ -223,7 +223,7 @@ private string BitOpDisplaced(uint opcode)
     }
     else if (z != 6)
     {
-        return $"WriteByte(address, ({_register[z]} = {bitOperation[x-1]}(ReadByte(address), {y}))); _clock.AddCycles(1); break; // {bitMnemonic[x]} {y},(IX/IY + d),{_regName[z]}";
+        return $"WriteByte(address, {_register[z]} = {bitOperation[x-1]}(ReadByte(address), {y})); _clock.AddCycles(1); break; // {bitMnemonic[x]} {y},(IX/IY + d),{_regName[z]}";
     }
     else
     {

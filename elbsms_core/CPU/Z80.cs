@@ -476,10 +476,10 @@ namespace elbsms_core.CPU
                 #region general-purpose arithmetic and cpu control group
 
                 case 0x27: DecimalAdjustAccumulator(); break; // DAA
-                case 0x2F: _afr.A = (byte)(~_afr.A); _afr.F = ((_afr.F & (S | Z | P | C)) | H | N | (_afr.A & (B5 | B3))); break; // CPL
+                case 0x2F: _afr.A = (byte)~_afr.A; _afr.F = (_afr.F & (S | Z | P | C)) | H | N | (_afr.A & (B5 | B3)); break; // CPL
 
-                case 0x3F: _afr.F[H] = _afr.F[C]; _afr.F = (((_afr.F & (S | Z | H | P | C)) ^ C) | (_afr.A & (B5 | B3))); break; // CCF
-                case 0x37: _afr.F = ((_afr.F & (S | Z | P)) | C | (_afr.A & (B5 | B3))); break; // SCF
+                case 0x3F: _afr.F[H] = _afr.F[C]; _afr.F = ((_afr.F & (S | Z | H | P | C)) ^ C) | (_afr.A & (B5 | B3)); break; // CCF
+                case 0x37: _afr.F = (_afr.F & (S | Z | P)) | C | (_afr.A & (B5 | B3)); break; // SCF
 
                 case 0xCB: ExecuteCBPrefixedOpcode(ReadOpcode(_pc++)); break;
                 case 0xDD: ExecuteDDFDPrefixedOpcode(opcode, ReadOpcode(_pc++)); break;
@@ -1072,7 +1072,7 @@ namespace elbsms_core.CPU
         private static (byte, StatusFlags) Sub8Bit(byte a, byte b, bool carry = false)
         {
             // a - b - c = a + ~b + 1 - c = a + ~b + !c
-            (byte value, StatusFlags flags) result = Add8Bit(a, (byte)(~b), !carry);
+            (byte value, StatusFlags flags) result = Add8Bit(a, (byte)~b, !carry);
 
             result.flags ^= C | H;
             result.flags |= N;
@@ -1102,6 +1102,8 @@ namespace elbsms_core.CPU
         {
             var (_, flags) = Sub8Bit(a, b);
 
+            // flag bits 3 and 5 populated from the operand and not result 
+            // http://www.z80.info/z80sflag.htm
             flags[B5] = b.Bit(5);
             flags[B3] = b.Bit(3);
 
@@ -1113,7 +1115,7 @@ namespace elbsms_core.CPU
             var (result, flags) = Add8Bit(a, 1);
 
             _afr.F &= C;
-            _afr.F |= (flags & ~C);
+            _afr.F |= flags & ~C;
 
             return result;
         }
@@ -1123,7 +1125,7 @@ namespace elbsms_core.CPU
             var (result, flags) = Sub8Bit(a, 1);
 
             _afr.F &= C;
-            _afr.F |= (flags & ~C);
+            _afr.F |= flags & ~C;
 
             return result;
         }
