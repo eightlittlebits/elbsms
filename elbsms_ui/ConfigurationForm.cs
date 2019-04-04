@@ -15,9 +15,9 @@ namespace elbsms_ui
     {
         private Dictionary<string, List<Control>> _propertyControls;
 
-        public IConfiguration Configuration { get; }
+        public ISystemConfiguration Configuration { get; }
 
-        public ConfigurationForm(IConfiguration configuration, string title)
+        public ConfigurationForm(ISystemConfiguration configuration, string title)
         {
             InitializeComponent();
 
