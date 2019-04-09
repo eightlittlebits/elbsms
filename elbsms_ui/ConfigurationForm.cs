@@ -181,8 +181,8 @@ namespace elbsms_ui
                     {
                         var textBox = AddTextBox(tableLayoutPanel, i, property.Name);
 
-                        PathAttribute pathAttribute;
-                        if ((pathAttribute = property.GetCustomAttribute<PathAttribute>()) != null)
+                        BrowseAttribute pathAttribute;
+                        if ((pathAttribute = property.GetCustomAttribute<BrowseAttribute>()) != null)
                         {
                             textBox.ReadOnly = true;
                             AddBrowseAndClearButtonsForTextBox(tableLayoutPanel, i, textBox, pathAttribute.PathType, property.Name);

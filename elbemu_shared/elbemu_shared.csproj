@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\BrowseAttribute.cs" />
     <Compile Include="Configuration\DependsOnAttribute.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />
     <Compile Include="Configuration\SystemConfiguration.cs" />

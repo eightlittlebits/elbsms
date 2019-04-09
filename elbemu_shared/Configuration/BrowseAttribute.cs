@@ -1,19 +1,19 @@
 ﻿using System;
 
-namespace elbsms_ui
+namespace elbemu_shared.Configuration
 {
-    enum PathType
+    public enum PathType
     {
         File,
         Folder,
     }
 
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    sealed class PathAttribute : Attribute
+    public sealed class BrowseAttribute : Attribute
     {
         public PathType PathType { get; }
 
-        public PathAttribute(PathType pathType)
+        public BrowseAttribute(PathType pathType)
         {
             PathType = pathType;
         }
