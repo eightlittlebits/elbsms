@@ -43,7 +43,14 @@
   <ItemGroup>
     <Compile Include="Configuration\DependsOnAttribute.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />
+    <Compile Include="Configuration\SystemConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\elb_utilities\elb_utilities.csproj">
+      <Project>{4cb0317a-dd73-4c34-a9cb-30056a86f4a3}</Project>
+      <Name>elb_utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
