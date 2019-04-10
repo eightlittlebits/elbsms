@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addins\AddinLoader.cs" />
+    <Compile Include="Addins\AppDomainWithType.cs" />
     <Compile Include="Components\BindableMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
