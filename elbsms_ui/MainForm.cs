@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using elb_utilities.WinForms;
+using elbemu_shared;
+using elbsms_core;
 using elbsms_ui.NativeMethods;
 
 namespace elbsms_ui
@@ -13,6 +15,8 @@ namespace elbsms_ui
         private static string _programNameVersion = $"{Application.ProductName} v{Application.ProductVersion}";
 
         private Configuration _config;
+
+        private IEmulatedSystem _emulatedSystem;
 
         private NotifyValue<bool> _emulationInitialised;
 
@@ -35,6 +39,8 @@ namespace elbsms_ui
             InitializeComponent();
 
             _config = Configuration.Load();
+
+            _emulatedSystem = new MasterSystem(null);
 
             _emulationInitialised = new NotifyValue<bool>();
 
@@ -137,6 +143,11 @@ namespace elbsms_ui
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            if (_emulationInitialised)
+            {
+                _emulatedSystem.Shutdown();
+            }
+
             _config.Save();
 
             base.OnFormClosing(e);
@@ -181,6 +192,13 @@ namespace elbsms_ui
 
         private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            using (var configForm = new ConfigurationForm(_emulatedSystem.Configuration, _emulatedSystem.SystemName + " Configuration"))
+            {
+                if (configForm.ShowDialog() == DialogResult.OK)
+                {
+                    _emulatedSystem.Configuration = configForm.Configuration;
+                }
+            }
         }
 
 #pragma warning restore IDE1006 // Naming Styles

@@ -45,6 +45,7 @@
     <Compile Include="Configuration\DependsOnAttribute.cs" />
     <Compile Include="Configuration\ISystemConfiguration.cs" />
     <Compile Include="Configuration\SystemConfiguration.cs" />
+    <Compile Include="IEmulatedSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
