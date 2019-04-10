@@ -7,6 +7,6 @@ namespace elbemu_shared.Audio
         int SampleRate { get; }
 
         void AddSample(AudioFrame frame);
-        void RenderAudio();
+        void QueueAudio();
     }
 }

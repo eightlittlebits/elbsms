@@ -68,7 +68,7 @@ namespace elbsms_ui.Audio
             _sampleBuffer[_sampleCount++] = frame;
         }
 
-        public unsafe void RenderAudio()
+        public unsafe void QueueAudio()
         {
             // the first time through begin writing from the write cursor
             if (_soundBufferCursor == -1)

@@ -26,7 +26,7 @@ namespace elbsms_ui.Audio
             _waveFile.WriteSample(frame.Right);
         }
 
-        public void RenderAudio()
+        public void QueueAudio()
         {
             // we're adding directly to the stream in AddSample so nothing to do here
         }

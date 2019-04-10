@@ -17,7 +17,7 @@ namespace elbsms_ui.Audio
 
         }
 
-        public void RenderAudio()
+        public void QueueAudio()
         {
 
         }
