@@ -1,4 +1,7 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Xml.Serialization;
 using elb_utilities.Configuration;
 
 namespace elbsms_ui
@@ -11,5 +14,8 @@ namespace elbsms_ui
 
         public bool LimitFrameRate { get; set; } = true;
         public bool PauseWhenFocusLost { get; set; } = true;
+
+        [XmlArrayItem(ElementName = "RecentFile")]
+        public List<string> RecentFiles { get; set; }
     }
 }

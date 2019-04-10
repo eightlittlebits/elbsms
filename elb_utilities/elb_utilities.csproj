@@ -69,6 +69,7 @@
     <Compile Include="WinForms\NotifyValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Media\WaveFile.cs" />
+    <Compile Include="WinForms\RecentFileList.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

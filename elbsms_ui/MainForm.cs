@@ -13,6 +13,7 @@ namespace elbsms_ui
         private static string _programNameVersion = $"{Application.ProductName} v{Application.ProductVersion}";
 
         private Configuration _config;
+        private RecentFileList _recentFiles;
 
         private NotifyValue<bool> _emulationInitialised;
 
@@ -35,6 +36,9 @@ namespace elbsms_ui
             InitializeComponent();
 
             _config = Configuration.Load();
+
+            _recentFiles = new RecentFileList(recentFilesToolStripMenuItem, _config.RecentFiles);
+            _recentFiles.RecentFileSelected += recentFiles_RecentFileSelected;
 
             _emulationInitialised = new NotifyValue<bool>();
 
@@ -168,6 +172,11 @@ namespace elbsms_ui
         }
 
 #pragma warning disable IDE1006 // Naming Styles
+                
+        private void recentFiles_RecentFileSelected(object sender, RecentFileSelectedEventArgs e)
+        {
+            
+        }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
