@@ -12,19 +12,14 @@ namespace elbsms_ui.Audio
             SampleRate = sampleRate;
         }
 
-        public void AddSample(AudioFrame frame)
-        {
+        public void Play() { }
 
-        }
+        public void AddSample(AudioFrame frame) { }
 
-        public void QueueAudio()
-        {
+        public void Stop() { }
 
-        }
+        public void QueueAudio() { }
 
-        public void Dispose()
-        {
-
-        }
+        public void Dispose() { }
     }
 }

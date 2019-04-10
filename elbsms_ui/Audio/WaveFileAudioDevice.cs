@@ -20,11 +20,15 @@ namespace elbsms_ui.Audio
                                             new WaveFormat((uint)sampleRate, 2));
         }
 
+        public void Play() { }
+
         public void AddSample(AudioFrame frame)
         {
             _waveFile.WriteSample(frame.Left);
             _waveFile.WriteSample(frame.Right);
         }
+
+        public void Stop() { }
 
         public void QueueAudio()
         {

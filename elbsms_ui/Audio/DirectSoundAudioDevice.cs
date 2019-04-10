@@ -58,8 +58,9 @@ namespace elbsms_ui.Audio
             };
 
             _soundBuffer = new SecondarySoundBuffer(_directSound, secondaryBufferDescription);
-            _soundBuffer.Play(0, PlayFlags.Looping);
         }
+
+        public void Play() => _soundBuffer.Play(0, PlayFlags.Looping);
 
         public void AddSample(AudioFrame frame)
         {
@@ -68,6 +69,8 @@ namespace elbsms_ui.Audio
             _sampleBuffer[_sampleCount++] = frame;
         }
 
+        public void Stop() => _soundBuffer.Stop();
+        
         public unsafe void QueueAudio()
         {
             // the first time through begin writing from the write cursor
