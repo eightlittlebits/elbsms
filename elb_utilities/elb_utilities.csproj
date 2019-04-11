@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addins\AddinLoader.cs" />
+    <Compile Include="Addins\AppDomainWithType.cs" />
     <Compile Include="Components\BindableMenuItem.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -62,6 +64,8 @@
     <Compile Include="Graphics\GdiRenderer.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Input\KeyboardState.cs" />
+    <Compile Include="Media\WaveFileWriter.cs" />
+    <Compile Include="Media\WaveFormat.cs" />
     <Compile Include="MessagePump.cs" />
     <Compile Include="NativeMethods\Gdi32.cs" />
     <Compile Include="NativeMethods\User32.cs" />

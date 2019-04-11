@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using elb_utilities.Addins;
 using elb_utilities.WinForms;
+using elbemu_shared.Audio;
 using elbsms_ui.NativeMethods;
 
 namespace elbsms_ui
@@ -16,6 +20,9 @@ namespace elbsms_ui
         private RecentFileList _recentFiles;
 
         private NotifyValue<bool> _emulationInitialised;
+
+        private List<Type> _audioDeviceTypes;
+        private IAudioDevice _audioDevice;
 
         private bool _emulationPaused;
         private bool _focusLostPauseState;
@@ -42,15 +49,41 @@ namespace elbsms_ui
 
             _emulationInitialised = new NotifyValue<bool>();
 
+            _audioDeviceTypes = LoadDevicesOfType<IAudioDevice>();
+
             PrepareUserInterface();
 
+            InitialiseAudioDevice(_config.AudioDeviceType);
+
             Application.Idle += (s, ev) => { while (_emulationInitialised && !_emulationPaused && ApplicationStillIdle) { RunFrame(); } };
+        }
+
+        private List<Type> LoadDevicesOfType<T>()
+        {
+            var devices = new List<Type>();
+
+            // get currently loaded assemblies excluding any in the GAC and any dynamically generated assemblies (xmlserlializer etc)
+            var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.GlobalAssemblyCache && !a.IsDynamic).ToList();
+
+#if DEBUG
+            // this might be loaded if we've used the debugger before we reach this point
+            loadedAssemblies.RemoveAll(x => x.FullName.StartsWith("Microsoft.VisualStudio.Debugger.Runtime"));
+#endif
+
+            // load any matching types in the currently loaded assemblies
+            devices.AddRange(AddinLoader.GetImplementationsFromAssemblies<T>(loadedAssemblies));
+
+            // load components from the plugins directory
+            devices.AddRange(AddinLoader.Load<T>(Program.PluginsDirectory));
+
+            return devices;
         }
 
         private void PrepareUserInterface()
         {
             SetUIText();
             PrepareDataBindings();
+            PopulateDeviceMenu(audioDeviceToolStripMenuItem, _audioDeviceTypes, InitialiseAudioDevice);
         }
 
         private void SetUIText()
@@ -90,11 +123,45 @@ namespace elbsms_ui
             AddBinding(pauseWhenFocusLostToolStripMenuItem, nameof(pauseWhenFocusLostToolStripMenuItem.Checked), _config, nameof(_config.PauseWhenFocusLost));
         }
 
+        private void PopulateDeviceMenu(ToolStripMenuItem menuItem, List<Type> deviceTypes, Action<Type> initialiseAction)
+        {
+            foreach (var deviceType in deviceTypes)
+            {
+                var deviceMenuItem = new ToolStripMenuItem(deviceType.Name) { Tag = deviceType, CheckOnClick = true };
+                deviceMenuItem.Click += (s, e) =>
+                {
+                    initialiseAction((Type)((ToolStripMenuItem)s).Tag);
+                };
+
+                menuItem.DropDownItems.Add(deviceMenuItem);
+            }
+        }
+
+        private void InitialiseAudioDevice(Type audioDeviceType)
+        {
+            _config.AudioDeviceType = audioDeviceType;
+
+            if (_audioDevice != null)
+            {
+                _audioDevice.Stop();
+                _audioDevice.Dispose();
+            }
+
+            _audioDevice = (IAudioDevice)Activator.CreateInstance(audioDeviceType, this.Handle, 48000);
+            _audioDevice.Play();
+
+            foreach (ToolStripMenuItem menuItem in audioDeviceToolStripMenuItem.DropDownItems)
+            {
+                menuItem.Checked = (Type)menuItem.Tag == audioDeviceType;
+            }
+        }
+
         private void RunFrame()
         {
             // run frame
 
             // render
+            _audioDevice.QueueAudio();
 
             //sleep
             long elapsedTicks = Stopwatch.GetTimestamp() - _lastFrameTimestamp;
@@ -171,6 +238,22 @@ namespace elbsms_ui
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null) components.Dispose();
+
+                if (_audioDevice != null)
+                {
+                    _audioDevice.Stop();
+                    _audioDevice.Dispose();
+                }
+            }
+
+            base.Dispose(disposing);
+        }
+
 #pragma warning disable IDE1006 // Naming Styles
                 
         private void recentFiles_RecentFileSelected(object sender, RecentFileSelectedEventArgs e)
@@ -190,6 +273,7 @@ namespace elbsms_ui
 
         private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
         }
 
 #pragma warning restore IDE1006 // Naming Styles
