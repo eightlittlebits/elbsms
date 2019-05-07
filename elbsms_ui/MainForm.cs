@@ -43,9 +43,6 @@ namespace elbsms_ui
 
             _config = Configuration.Load();
 
-            _recentFiles = new RecentFileList(recentFilesToolStripMenuItem, _config.RecentFiles);
-            _recentFiles.RecentFileSelected += recentFiles_RecentFileSelected;
-
             _audioDeviceTypes = LoadDevicesOfType<IAudioDevice>();
 
             PrepareUserInterface();
@@ -80,6 +77,8 @@ namespace elbsms_ui
         {
             SetUIText();
             PrepareDataBindings();
+            PrepareRecentFiles();
+
             PopulateDeviceMenu(audioDeviceToolStripMenuItem, _audioDeviceTypes, InitialiseAudioDevice);
         }
 
@@ -118,6 +117,12 @@ namespace elbsms_ui
 
             AddBinding(limitFrameRateToolStripMenuItem, nameof(limitFrameRateToolStripMenuItem.Checked), _config, nameof(_config.LimitFrameRate));
             AddBinding(pauseWhenFocusLostToolStripMenuItem, nameof(pauseWhenFocusLostToolStripMenuItem.Checked), _config, nameof(_config.PauseWhenFocusLost));
+        }
+
+        private void PrepareRecentFiles()
+        {
+            _recentFiles = new RecentFileList(recentFilesToolStripMenuItem, _config.RecentFiles);
+            _recentFiles.RecentFileSelected += recentFiles_RecentFileSelected;
         }
 
         private void PopulateDeviceMenu(ToolStripMenuItem menuItem, List<Type> deviceTypes, Action<Type> initialiseAction)
