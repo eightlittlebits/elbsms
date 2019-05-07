@@ -13,22 +13,21 @@ namespace elbsms_ui
 {
     public partial class MainForm : Form
     {
-        private static double _stopwatchFrequency = Stopwatch.Frequency;
-        private static string _programNameVersion = $"{Application.ProductName} v{Application.ProductVersion}";
+        private static readonly double _stopwatchFrequency = Stopwatch.Frequency;
+        private static readonly string _programNameVersion = $"{Application.ProductName} v{Application.ProductVersion}";
 
         private Configuration _config;
         private RecentFileList _recentFiles;
 
-        private NotifyValue<bool> _emulationInitialised;
-
-        private List<Type> _audioDeviceTypes;
+        private readonly List<Type> _audioDeviceTypes;
         private IAudioDevice _audioDevice;
 
+        private long _lastFrameTimestamp;
+        private double _targetFrameTicks = 0;
+
+        private NotifyValue<bool> _emulationInitialised = new NotifyValue<bool>();
         private bool _emulationPaused;
         private bool _focusLostPauseState;
-
-        private double _targetFrameTicks = 0;
-        private long _lastFrameTimestamp;
 
         public bool Paused
         {
@@ -46,8 +45,6 @@ namespace elbsms_ui
 
             _recentFiles = new RecentFileList(recentFilesToolStripMenuItem, _config.RecentFiles);
             _recentFiles.RecentFileSelected += recentFiles_RecentFileSelected;
-
-            _emulationInitialised = new NotifyValue<bool>();
 
             _audioDeviceTypes = LoadDevicesOfType<IAudioDevice>();
 
@@ -255,10 +252,10 @@ namespace elbsms_ui
         }
 
 #pragma warning disable IDE1006 // Naming Styles
-                
+
         private void recentFiles_RecentFileSelected(object sender, RecentFileSelectedEventArgs e)
         {
-            
+
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
