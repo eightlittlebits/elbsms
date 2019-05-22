@@ -118,7 +118,7 @@ namespace elb_utilities.Media
 
     static class BinaryReaderExtensions
     {
-        public static T ReadStruct<T>(this BinaryReader reader) where T : struct
+        public static T ReadStruct<T>(this BinaryReader reader) where T : unmanaged
         {
             byte[] data = reader.ReadBytes(Marshal.SizeOf<T>());
 
