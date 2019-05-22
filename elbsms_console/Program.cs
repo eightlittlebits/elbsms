@@ -16,9 +16,10 @@ namespace elbsms_console
 
             string romPath = args[0];
 
-            Cartridge cartridge = Cartridge.LoadFromFile(romPath);
+            var masterSystem = new MasterSystem();
 
-            MasterSystem masterSystem = new MasterSystem(cartridge);
+            var cartridge = GameMedia.LoadFromFile(romPath, GameMediaType.Cartridge);
+            masterSystem.LoadGameMedia(cartridge);
 
             Console.WriteLine($"Starting: {DateTime.Now}");
             Console.WriteLine();

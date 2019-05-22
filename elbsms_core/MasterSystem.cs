@@ -9,12 +9,17 @@ namespace elbsms_core
 
         internal Z80 CPU;
 
-        public MasterSystem(Cartridge cartridge)
+        public MasterSystem()
         {
             Clock = new SystemClock();
-            Bus = new Bus(cartridge);
+            Bus = new Bus();
 
             CPU = new Z80(Clock, Bus);
+        }
+
+        internal void LoadGameMedia(GameMedia media)
+        {
+            Bus.LoadGameMedia(media);
         }
 
         public void SingleStep()

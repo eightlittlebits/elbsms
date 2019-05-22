@@ -5,13 +5,27 @@ namespace elbsms_core
 {
     class Bus
     {
-        private readonly Cartridge _cartridge;
-        private readonly byte[] _ram;
+        private const int RamSize = 0x2000; // 8KB
+        private readonly byte[] _ram = new byte[RamSize];
 
-        public Bus(Cartridge cartridge)
+        private GameMedia _cartridge;
+        private GameMedia _segaCard;
+
+        internal void LoadGameMedia(GameMedia media)
         {
-            _cartridge = cartridge;
-            _ram = new byte[0x2000];
+            switch (media.MediaType)
+            {
+                case GameMediaType.Cartridge:
+                    _cartridge = media;
+                    break;
+
+                case GameMediaType.SegaCard:
+                    _segaCard = media;
+                    break;
+
+                default:
+                    throw new Exception($"Unsupported GameMediaType value: {media.MediaType}");
+            }
         }
 
         internal byte ReadByte(ushort address)
