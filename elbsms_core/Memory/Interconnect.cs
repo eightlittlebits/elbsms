@@ -5,22 +5,35 @@ namespace elbsms_core.Memory
 {
     internal class Interconnect
     {
-        private const int RamSize = 0x2000;
+        private const int RamSize = 0x2000; // 8KB
         private const int RamMask = RamSize - 1;
         private readonly byte[] _ram = new byte[RamSize];
 
         private readonly MemoryControlRegister _memoryControl;
 
-        private Cartridge _cartridge;
+        private GameMedia _cartridge;
+        private GameMedia _segaCard;
 
         public Interconnect()
         {
             _memoryControl = new MemoryControlRegister { Value = 0x00 };
         }
 
-        internal void LoadCartridge(Cartridge cartridge)
+        internal void LoadGameMedia(GameMedia media)
         {
-            _cartridge = cartridge;
+            switch (media.MediaType)
+            {
+                case GameMediaType.Cartridge:
+                    _cartridge = media;
+                    break;
+
+                case GameMediaType.SegaCard:
+                    _segaCard = media;
+                    break;
+
+                default:
+                    throw new Exception($"Unsupported GameMediaType value: {media.MediaType}");
+            }
         }
 
         internal byte ReadByte(ushort address)

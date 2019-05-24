@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{59EF0F57-7A82-4CD8-80A6-0D0536CE1ED3}</ProjectGuid>
+    <ProjectGuid>{CE0BA1C0-74D7-44BC-B388-3E2DD26ECBC8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>elbsms_core</RootNamespace>
-    <AssemblyName>elbsms_core</AssemblyName>
+    <RootNamespace>elbemu_shared</RootNamespace>
+    <AssemblyName>elbemu_shared</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,7 +30,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -45,36 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ClockedComponent.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="CPU\InfiniteLoopException.cs" />
-    <Compile Include="CPU\Registers.cs" />
-    <Compile Include="CPU\StatusFlags.cs" />
-    <Compile Include="CPU\Z80.CBOpcodes.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Z80.CBOpcodes.tt</DependentUpon>
-    </Compile>
-    <Compile Include="GameMedia.cs" />
-    <Compile Include="GameMediaHeader.cs" />
-    <Compile Include="Memory\Interconnect.cs" />
-    <Compile Include="MasterSystem.cs" />
-    <Compile Include="Memory\MemoryControlRegister.cs" />
+    <Compile Include="Audio\AudioFrame.cs" />
+    <Compile Include="Audio\IAudioDevice.cs" />
+    <Compile Include="Configuration\BrowseAttribute.cs" />
+    <Compile Include="Configuration\DependsOnAttribute.cs" />
+    <Compile Include="Configuration\ISystemConfiguration.cs" />
+    <Compile Include="Configuration\SystemConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CPU\Z80.cs" />
-    <Compile Include="SystemClock.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CPU\Z80.CBOpcodes.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Z80.CBOpcodes.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <ProjectReference Include="..\elb_utilities\elb_utilities.csproj">
+      <Project>{4cb0317a-dd73-4c34-a9cb-30056a86f4a3}</Project>
+      <Name>elb_utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

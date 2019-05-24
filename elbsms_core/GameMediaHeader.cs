@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace elbsms_core.Memory
+namespace elbsms_core
 {
-    public enum RegionCode
+    public enum GameRegionCode
     {
         [Description("SMS Japan")] SMSJapan = 0x03,
         [Description("SMS Export")] SMSExport = 0x04,
@@ -14,7 +14,7 @@ namespace elbsms_core.Memory
         [Description("GG International")] GGInternational = 0x07,
     }
 
-    public class CartridgeHeader
+    public class GameMediaHeader
     {
         private static readonly Dictionary<int, (string Description, uint Size)> RomSizes = new Dictionary<int, (string, uint)>
         {
@@ -33,7 +33,7 @@ namespace elbsms_core.Memory
         public ushort Checksum;
         public int ProductCode;
         public int Version;
-        public RegionCode Region;
+        public GameRegionCode Region;
         public int RomSize;
 
         public int ActualRomSize;
@@ -43,13 +43,13 @@ namespace elbsms_core.Memory
         public ushort CalculatedChecksum;
         public bool ChecksumValid => Checksum == CalculatedChecksum;
 
-        public CartridgeHeader(byte[] romData)
+        public GameMediaHeader(byte[] romData)
         {
             Header = Encoding.ASCII.GetString(romData, 0x7FF0, 8);
             Checksum = BitConverter.ToUInt16(romData, 0x7FFA);
             ProductCode = ReadProductCode(romData, 0x7FFC);
             Version = romData[0x7FFE] & 0x0F;
-            Region = (RegionCode)(romData[0x7FFF] >> 4);
+            Region = (GameRegionCode)(romData[0x7FFF] >> 4);
             RomSize = romData[0x7FFF] & 0x0F;
 
             ActualRomSize = romData.Length;

@@ -18,14 +18,9 @@ namespace elbsms_core
             CPU = new Z80(Clock, Interconnect);
         }
 
-        public void LoadRom(byte[] romData)
+        internal void LoadGameMedia(GameMedia media)
         {
-            Interconnect.LoadCartridge(new Cartridge(romData));
-        }
-
-        public void LoadCartridge(Cartridge cartridge)
-        {
-            Interconnect.LoadCartridge(cartridge);
+            Interconnect.LoadGameMedia(media);
         }
 
         public void SingleStep()

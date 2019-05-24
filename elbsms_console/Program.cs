@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using elbsms_core;
-using elbsms_core.Memory;
 
 namespace elbsms_console
 {
@@ -18,11 +17,10 @@ namespace elbsms_console
 
             string romPath = args[0];
 
-            byte[] romData = LoadRomFromFile(romPath);
-            var cartridge = new Cartridge(romData);
-
             var masterSystem = new MasterSystem();
-            masterSystem.LoadCartridge(cartridge);
+
+            var cartridge = GameMedia.LoadFromFile(romPath, GameMediaType.Cartridge);
+            masterSystem.LoadGameMedia(cartridge);
 
             Console.WriteLine($"Starting: {DateTime.Now}");
             Console.WriteLine();
