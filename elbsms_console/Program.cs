@@ -20,6 +20,8 @@ namespace elbsms_console
             var masterSystem = new MasterSystem();
 
             var cartridge = GameMedia.LoadFromFile(romPath, GameMediaType.Cartridge);
+            
+            masterSystem.Initialise();
             masterSystem.LoadGameMedia(cartridge);
 
             Console.WriteLine($"Starting: {DateTime.Now}");
@@ -47,6 +49,8 @@ namespace elbsms_console
             }
 
             sw.Stop();
+
+            masterSystem.Shutdown();
 
             var cyclesExecuted = masterSystem.Clock.Timestamp;
             var effectiveClock = cyclesExecuted / (sw.ElapsedMilliseconds / 1000.0);

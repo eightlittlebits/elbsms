@@ -1,10 +1,15 @@
-﻿using elbsms_core.CPU;
+﻿using System;
+using elbemu_shared;
+using elbemu_shared.Configuration;
+using elbsms_core.CPU;
 using elbsms_core.Memory;
 
 namespace elbsms_core
 {
     public class MasterSystem
     {
+        internal static MasterSystemConfiguration Configuration;
+
         internal SystemClock Clock;
         internal Interconnect Interconnect;
 
@@ -23,9 +28,19 @@ namespace elbsms_core
             Interconnect.LoadGameMedia(media);
         }
 
+        public void Initialise()
+        {
+            Configuration = MasterSystemConfiguration.Load();
+        }
+
         public void SingleStep()
         {
             CPU.ExecuteInstruction();
+        }
+
+        public void Shutdown()
+        {
+            Configuration.Save();
         }
     }
 }

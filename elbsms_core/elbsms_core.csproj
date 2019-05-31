@@ -62,6 +62,7 @@
     <Compile Include="GameMediaHeader.cs" />
     <Compile Include="Memory\Interconnect.cs" />
     <Compile Include="MasterSystem.cs" />
+    <Compile Include="MasterSystemConfiguration.cs" />
     <Compile Include="Memory\MemoryControlRegister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CPU\Z80.cs" />
@@ -75,6 +76,16 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\elbemu_shared\elbemu_shared.csproj">
+      <Project>{ce0ba1c0-74d7-44bc-b388-3e2dd26ecbc8}</Project>
+      <Name>elbemu_shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\elb_utilities\elb_utilities.csproj">
+      <Project>{4CB0317A-DD73-4C34-A9CB-30056A86F4A3}</Project>
+      <Name>elb_utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
