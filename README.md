@@ -18,7 +18,9 @@ Will it be the best emulator in the world? Probably not, I don't have the hardwa
 * baltazar studios z80 timings - http://baltazarstudios.com/zilog-z80-undocumented-behavior/
 * interrupt timings - http://www.z80.info/interrup.htm
 
-## License
+## license
+
+MIT License
 
 Copyright (c) 2017-2019 David Parrott
 
