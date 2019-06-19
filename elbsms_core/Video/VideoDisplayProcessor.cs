@@ -29,6 +29,7 @@ namespace elbsms_core.Video
 
         private int _vdpMode;
 
+        // control register 1
         private bool _verticalScrollLock;
         private bool _horizontalScrollLock;
         private bool _maskColumn0;
@@ -36,6 +37,7 @@ namespace elbsms_core.Video
         private bool _shiftSpritesLeft;
         private bool _syncEnabled;
 
+        // control register 2
         private bool _displayEnabled;
         private bool _frameInterruptEnabled;
         private bool _largeSprites;
@@ -83,6 +85,10 @@ namespace elbsms_core.Video
             {
                 SynchroniseWithSystemClock();
 
+                // writes to the control port consist of a 2 byte "command word"
+                // the first byte written sets the low 8 bits of the address buffer
+                // the second byte written sets the high 6 bits of the address buffer and the code register
+                // the vdp may then carry out additional processing based on the code register
                 if (_firstControlWrite)
                 {
                     _firstControlWrite = false;
@@ -134,6 +140,7 @@ namespace elbsms_core.Video
                         break;
 
                     case 3:
+                        // https://lospec.com/palette-list/6-bit-rgb
                         _cram[_addressRegister & CRamMask] = value;
                         break;
                 }
