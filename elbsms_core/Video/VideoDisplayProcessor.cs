@@ -17,6 +17,9 @@ namespace elbsms_core.Video
 
         private const int CyclesPerScanline = 684;
 
+        private const int VDPMode224Lines = 0b1011;
+        private const int VDPMode240Lines = 0b1110;
+
         private bool _firstControlWrite;
         private byte _addressBuffer;
         private ushort _addressRegister;
@@ -222,9 +225,20 @@ namespace elbsms_core.Video
             // the hcounter is the top 8 bits of a 9 bit counter
             // seems to be offset 16 pixels (32 cycles), HC = 0 is 3 pixels before left border
             // http://www.smspower.org/forums/8161-SMSDisplayTiming
-            uint shiftedPixelCount = ((_currentScanlineCycles + 32 ) % CyclesPerScanline) >> 2;
+            uint shiftedPixelCount = ((_currentScanlineCycles + 32) % CyclesPerScanline) >> 2;
 
             HCounter = (byte)(shiftedPixelCount <= 0x93 ? shiftedPixelCount : shiftedPixelCount + 0x55);
+        }
+
+        // todo(david): convert to switch expression with c# 8
+        private int ActiveDisplayLineCount()
+        {
+            switch (_vdpMode)
+            {
+                default: return 192;
+                case VDPMode224Lines: return 224;
+                case VDPMode240Lines: return 240;
+            }
         }
 
         public override void Update(uint cycleCount)
