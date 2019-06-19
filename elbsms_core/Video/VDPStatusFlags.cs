@@ -11,6 +11,6 @@ namespace elbsms_core.Video
         [Description("Sprite Overflow")]
         OVR = 0x40,
         [Description("Pending Frame Interrupt")]
-        INT = 0x20
+        INT = 0x80
     }
 }
