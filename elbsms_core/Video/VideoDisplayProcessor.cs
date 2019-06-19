@@ -67,9 +67,10 @@ namespace elbsms_core.Video
         private int _overscanColourIndex;
         private byte _backgroundXScroll;
         private byte _backgroundYScroll;
-        private byte _lineCounter;
+        private byte _lineInterruptValue;
 
         private uint _currentScanlineCycles;
+        private int _lineInterruptCounter;
 
         public byte VCounter { get; }
         public byte HCounter { get; private set; }
@@ -242,7 +243,7 @@ namespace elbsms_core.Video
                 case 0x9: _backgroundYScroll = value; break;
 
                 // Register $0A - Line counter
-                case 0xA: _lineCounter = value; break;
+                case 0xA: _lineInterruptValue = value; break;
             }
         }
 
