@@ -17,7 +17,7 @@ namespace elbsms_core
         public MasterSystem()
         {
             Clock = new SystemClock(ClockMultiplier);
-            VDP = new VideoDisplayProcessor(Clock);
+            VDP = new VideoDisplayProcessor(Clock, VideoStandard.NTSC);
             Interconnect = new Interconnect(VDP);
             CPU = new Z80(Clock, Interconnect);
         }

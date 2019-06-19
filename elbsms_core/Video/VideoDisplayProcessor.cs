@@ -1,5 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
 
+// todo(david): remove this when merging vdp
+namespace elbsms_core
+{
+    public enum VideoStandard
+    {
+        NTSC,
+        PAL
+    }
+}
+
 namespace elbsms_core.Video
 {
     // SMS VDP is based on the Texas Instruments TMS9918a
@@ -15,10 +25,15 @@ namespace elbsms_core.Video
         private const int CRamMask = CRamSize - 1;
         private readonly byte[] _cram = new byte[CRamSize];
 
+        private const int NTSCScanlinesPerFrame = 262;
+        private const int PALScanlinesPerFrame = 313;
         private const int CyclesPerScanline = 684;
 
         private const int VDPMode224Lines = 0b1011;
         private const int VDPMode240Lines = 0b1110;
+
+        private readonly VideoStandard _videoStandard;
+        private readonly int _scanlinesPerFrame;
 
         private bool _firstControlWrite;
         private byte _addressBuffer;
@@ -59,12 +74,26 @@ namespace elbsms_core.Video
         public byte VCounter { get; }
         public byte HCounter { get; private set; }
 
-        public VideoDisplayProcessor(SystemClock clock) : base(clock)
+        public VideoDisplayProcessor(SystemClock clock, VideoStandard videoStandard) : base(clock)
         {
             _registers = new byte[16];
 
             _firstControlWrite = true;
             _statusFlags = 0;
+
+            _videoStandard = videoStandard;
+
+            // todo(david): convert to switch expression with c# 8
+            switch (videoStandard)
+            {
+                case VideoStandard.NTSC:
+                    _scanlinesPerFrame = NTSCScanlinesPerFrame;
+                    break;
+
+                case VideoStandard.PAL:
+                    _scanlinesPerFrame = PALScanlinesPerFrame;
+                    break;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
