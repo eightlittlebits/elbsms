@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 // todo(david): remove this when merging vdp
 namespace elbsms_core
@@ -26,14 +27,18 @@ namespace elbsms_core.Video
         private readonly byte[] _cram = new byte[CRamSize];
 
         private const int NTSCScanlinesPerFrame = 262;
+        private const int NTSCVCounterOffset = 6;
+
         private const int PALScanlinesPerFrame = 313;
+        private const int PALVCounterOffset = 57;
+
         private const int CyclesPerScanline = 684;
 
         private const int VDPMode224Lines = 0b1011;
         private const int VDPMode240Lines = 0b1110;
 
         private readonly VideoStandard _videoStandard;
-        private readonly int _scanlinesPerFrame;
+        private readonly uint _scanlinesPerFrame;
 
         private bool _firstControlWrite;
         private byte _addressBuffer;
@@ -70,10 +75,9 @@ namespace elbsms_core.Video
         private byte _lineInterruptValue;
 
         private uint _currentScanlineCycles;
-        private int _lineInterruptCounter;
 
-        public byte VCounter { get; }
-        public byte HCounter { get; private set; }
+        private uint _vCounter;
+        private int _lineInterruptCounter;
 
         public VideoDisplayProcessor(SystemClock clock, VideoStandard videoStandard) : base(clock)
         {
@@ -96,6 +100,39 @@ namespace elbsms_core.Video
                     break;
             }
         }
+
+        public byte HCounter { get; private set; }
+
+        public byte VCounter
+        {
+            get
+            {
+                // the vcounter has an offset applied on the first line of vertical blanking
+                // to make the 262/313 scanlines fit into the range 00-FF.
+                switch (_videoStandard)
+                {
+                    case VideoStandard.NTSC:
+                        switch (_vdpMode)
+                        {
+                            default: return (byte)(_vCounter < 219 ? _vCounter : _vCounter - NTSCVCounterOffset);
+                            case VDPMode224Lines: return (byte)(_vCounter < 235 ? _vCounter : _vCounter - NTSCVCounterOffset);
+                            case VDPMode240Lines: return (byte)_vCounter; // unsupported
+                        }
+
+                    case VideoStandard.PAL:
+                        switch (_vdpMode)
+                        {
+                            default: return (byte)(_vCounter < 243 ? _vCounter : _vCounter - PALVCounterOffset);
+                            case VDPMode224Lines: return (byte)(_vCounter < 259 ? _vCounter : _vCounter - PALVCounterOffset);
+                            case VDPMode240Lines: return (byte)(_vCounter < 267 ? _vCounter : _vCounter - PALVCounterOffset);
+                        }
+
+                    default:
+                        throw new InvalidOperationException("Invalid Video Standard");
+                }
+            }
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void IncrementAddressRegister() => _addressRegister = (ushort)((_addressRegister + 1) & VRamMask);
@@ -273,10 +310,16 @@ namespace elbsms_core.Video
 
         public override void Update(uint cycleCount)
         {
+            // http://www.smspower.org/forums/13530-VDPClockSpeed
+            // http://www.smspower.org/forums/8161-SMSDisplayTiming
+
             _currentScanlineCycles += cycleCount;
 
+            // have we completed a scanline?
             if (_currentScanlineCycles >= CyclesPerScanline)
             {
+                _vCounter = (_vCounter + 1) % _scanlinesPerFrame;
+
                 _currentScanlineCycles -= CyclesPerScanline;
             }
         }
