@@ -220,6 +220,7 @@ namespace elbsms_core.Video
             }
         }
 
+        // http://www.smspower.org/Development/VDPRegisters
         private void RegisterWrite(int register, byte value)
         {
             _registers[register] = value;
@@ -291,7 +292,7 @@ namespace elbsms_core.Video
             // the dot clock is half the speed of the master clock
             // the hcounter is the top 8 bits of a 9 bit counter
             // seems to be offset 16 pixels (32 cycles), HC = 0 is 3 pixels before left border
-            // http://www.smspower.org/forums/8161-SMSDisplayTiming
+            // http://www.smspower.org/forums/8161-SMSDisplayTiming#51750
             uint shiftedPixelCount = ((_currentScanlineCycles + 32) % CyclesPerScanline) >> 2;
 
             HCounter = (byte)(shiftedPixelCount <= 0x93 ? shiftedPixelCount : shiftedPixelCount + 0x55);
@@ -308,11 +309,10 @@ namespace elbsms_core.Video
             }
         }
 
+        // http://www.smspower.org/forums/13530-VDPClockSpeed
+        // http://www.smspower.org/forums/8161-SMSDisplayTiming
         public override void Update(uint cycleCount)
         {
-            // http://www.smspower.org/forums/13530-VDPClockSpeed
-            // http://www.smspower.org/forums/8161-SMSDisplayTiming
-
             _currentScanlineCycles += cycleCount;
 
             // have we completed a scanline?
