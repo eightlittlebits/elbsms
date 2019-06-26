@@ -49,6 +49,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ClockedComponent.cs" />
+    <Compile Include="InterruptController.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Memory\Cartridge.cs" />
     <Compile Include="CPU\InfiniteLoopException.cs" />

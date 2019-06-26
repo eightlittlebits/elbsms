@@ -45,6 +45,7 @@ namespace elbsms_core.Video
             public const int WriteCram = 3;
         }
 
+        private readonly InterruptController _interruptController;
         private readonly VideoStandard _videoStandard;
         private readonly uint _scanlinesPerFrame;
 
@@ -64,7 +65,7 @@ namespace elbsms_core.Video
         private bool _verticalScrollLock;
         private bool _horizontalScrollLock;
         private bool _maskColumn0;
-        private bool _lineInterruptEnable;
+        private bool _lineInterruptEnabled;
         private bool _shiftSpritesLeft;
         private bool _syncEnabled;
 
@@ -86,9 +87,12 @@ namespace elbsms_core.Video
 
         private uint _vCounter;
         private int _lineInterruptCounter;
+        private bool _lineInterruptPending;
 
-        public VideoDisplayProcessor(SystemClock clock, VideoStandard videoStandard) : base(clock)
+        public VideoDisplayProcessor(SystemClock clock, InterruptController interruptController, VideoStandard videoStandard) : base(clock)
         {
+            _interruptController = interruptController;
+
             _registers = new byte[16];
 
             _firstControlWrite = true;
@@ -154,6 +158,7 @@ namespace elbsms_core.Video
                 byte flags = (byte)_statusFlags;
 
                 _statusFlags = 0;
+                _lineInterruptPending = false;
 
                 return flags;
             }
@@ -237,7 +242,7 @@ namespace elbsms_core.Video
                     _verticalScrollLock = value.Bit(7);     // D7 - 1= Disable vertical scrolling for columns 24-31
                     _horizontalScrollLock = value.Bit(6);   // D6 - 1= Disable horizontal scrolling for rows 0-1
                     _maskColumn0 = value.Bit(5);            // D5 - 1= Mask column 0 with overscan color from register #7
-                    _lineInterruptEnable = value.Bit(4);    // D4 - (IE1) 1= Line interrupt enable
+                    _lineInterruptEnabled = value.Bit(4);    // D4 - (IE1) 1= Line interrupt enable
                     _shiftSpritesLeft = value.Bit(3);       // D3 - (EC) 1= Shift sprites left by 8 pixels
 
                     _vdpMode &= 0b0101; // clear bits 1 and 3
@@ -323,10 +328,38 @@ namespace elbsms_core.Video
             // have we completed a scanline?
             if (_currentScanlineCycles >= CyclesPerScanline)
             {
+                // line interrupt
+                if (_vCounter <= ActiveDisplayLineCount())
+                {
+                    // if we're in the active display lines or the line immediately following 
+                    // then update the counter
+
+                    if (_lineInterruptCounter == 0)
+                    {
+                        // decrementing the line counter from 0 would cause overflow so reload
+                        // the value and signal a pending interrupt
+                        _lineInterruptCounter = _lineInterruptValue;
+                        _lineInterruptPending = true;
+                    }
+                    else
+                    {
+                        _lineInterruptCounter--;
+                    }
+                }
+                else
+                {
+                    // if we're outside the active display + 1 then reload the counter from the 
+                    // line interrupt value
+                    _lineInterruptCounter = _lineInterruptValue;
+                }
+
                 _vCounter = (_vCounter + 1) % _scanlinesPerFrame;
 
                 _currentScanlineCycles -= CyclesPerScanline;
             }
+
+            // flag any pending interrupts
+            _interruptController.InterruptPending = _lineInterruptPending && _lineInterruptEnabled;
         }
     }
 }

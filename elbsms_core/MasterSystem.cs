@@ -10,6 +10,7 @@ namespace elbsms_core
         private const uint ClockMultiplier = 3;
 
         internal SystemClock Clock;
+        internal InterruptController InterruptController;
         internal VideoDisplayProcessor VDP;
         internal Interconnect Interconnect;
         internal Z80 CPU;
@@ -17,9 +18,10 @@ namespace elbsms_core
         public MasterSystem()
         {
             Clock = new SystemClock(ClockMultiplier);
-            VDP = new VideoDisplayProcessor(Clock, VideoStandard.NTSC);
+            InterruptController = new InterruptController();
+            VDP = new VideoDisplayProcessor(Clock, InterruptController, VideoStandard.NTSC);
             Interconnect = new Interconnect(VDP);
-            CPU = new Z80(Clock, Interconnect);
+            CPU = new Z80(Clock, Interconnect, InterruptController);
         }
 
         public void LoadRom(byte[] romData)

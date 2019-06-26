@@ -10,8 +10,9 @@ namespace elbsms_core.CPU
     {
         private static byte[] FlagsSZP;
 
-        private SystemClock _clock;
-        private Interconnect _interconnect;
+        private readonly SystemClock _clock;
+        private readonly Interconnect _interconnect;
+        private readonly InterruptController _interruptController;
 
         private int _activeAFRegisters;
         private AFRegisters[] _afRegisters;
@@ -33,12 +34,6 @@ namespace elbsms_core.CPU
         private bool _iff1, _iff2;
         private int _interruptMode;
         private bool _enableInterrupts;
-
-        private bool _nmiPending;
-        private bool _intPending;
-
-        public void RaiseNMI() => _nmiPending = true;
-        public void RaiseINT() => _intPending = true;
 
         #region static initialisation
 
@@ -67,10 +62,11 @@ namespace elbsms_core.CPU
 
         #endregion
 
-        public Z80(SystemClock clock, Interconnect interconnect)
+        public Z80(SystemClock clock, Interconnect interconnect, InterruptController interruptController)
         {
             _clock = clock;
             _interconnect = interconnect;
+            _interruptController = interruptController;
 
             _activeAFRegisters = 0;
             _afRegisters = new AFRegisters[2];
@@ -189,9 +185,9 @@ namespace elbsms_core.CPU
                 return;
             }
 
-            if (_nmiPending)
+            if (_interruptController.NMIPending)
             {
-                _nmiPending = false;
+                _interruptController.NMIPending = false;
                 _iff2 = _iff1;
                 _iff1 = false;
 
@@ -201,7 +197,7 @@ namespace elbsms_core.CPU
                 return;
             }
 
-            if (_intPending && _iff1)
+            if (_interruptController.InterruptPending && _iff1)
             {
                 _iff1 = _iff2 = false;
                 IncrementMemoryRefreshRegister();
@@ -586,7 +582,7 @@ namespace elbsms_core.CPU
                 #region input and output group
 
                 case 0xDB: { var temp = _afr.A; _afr.A = In(ReadByte(_pc++)); _memPtr.word = (ushort)((temp << 8) + _afr.A + 1); } break; // IN A,(n)
-                case 0xD3: { var port = ReadByte(_pc++); Out(port, _afr.A); _memPtr.lo = (byte)(port + 1); _memPtr.hi = _afr.A; }  break; // OUT (n),A
+                case 0xD3: { var port = ReadByte(_pc++); Out(port, _afr.A); _memPtr.lo = (byte)(port + 1); _memPtr.hi = _afr.A; } break; // OUT (n),A
 
                 #endregion
 
