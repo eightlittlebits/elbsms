@@ -37,7 +37,7 @@ namespace elbsms_core.Video
         private const int VDPMode224Lines = 0b1011;
         private const int VDPMode240Lines = 0b1110;
 
-        private static class VdpOp
+        private static class VdpOperation
         {
             public const int ReadVram = 0;
             public const int WriteVram = 1;
@@ -141,7 +141,6 @@ namespace elbsms_core.Video
             }
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void IncrementAddressRegister() => _addressRegister = (ushort)((_addressRegister + 1) & VRamMask);
 
@@ -181,8 +180,8 @@ namespace elbsms_core.Video
 
                     switch (_codeRegister)
                     {
-                        case VdpOp.ReadVram: _readBuffer = _vram[_addressRegister]; IncrementAddressRegister(); break;
-                        case VdpOp.WriteRegister: RegisterWrite(value & 0x0F, _addressBuffer); break;
+                        case VdpOperation.ReadVram: _readBuffer = _vram[_addressRegister]; IncrementAddressRegister(); break;
+                        case VdpOperation.WriteRegister: RegisterWrite(value & 0x0F, _addressBuffer); break;
                     }
                 }
             }
@@ -209,13 +208,13 @@ namespace elbsms_core.Video
 
                 switch (_codeRegister)
                 {
-                    case VdpOp.ReadVram:
-                    case VdpOp.WriteVram:
-                    case VdpOp.WriteRegister:
+                    case VdpOperation.ReadVram:
+                    case VdpOperation.WriteVram:
+                    case VdpOperation.WriteRegister:
                         _vram[_addressRegister] = value;
                         break;
 
-                    case VdpOp.WriteCram:
+                    case VdpOperation.WriteCram:
                         // https://lospec.com/palette-list/6-bit-rgb
                         _cram[_addressRegister & CRamMask] = value;
                         break;
