@@ -61,7 +61,7 @@ namespace elbsms_core.Video
 
         private int _vdpMode;
 
-        // control register 1
+        // register $00 - mode control register 1
         private bool _verticalScrollLock;
         private bool _horizontalScrollLock;
         private bool _maskColumn0;
@@ -69,19 +69,19 @@ namespace elbsms_core.Video
         private bool _shiftSpritesLeft;
         private bool _syncEnabled;
 
-        // control register 2
+        // register $01 - mode control register 2
         private bool _displayEnabled;
         private bool _frameInterruptEnabled;
         private bool _largeSprites;
         private bool _zoomedSprites;
 
-        private ushort _nameTableBaseAddress;
-        private ushort _spriteAttributeTableBaseAddress;
-        private ushort _spritePatternTableBaseAddress;
-        private int _overscanColourIndex;
-        private byte _backgroundXScroll;
-        private byte _backgroundYScroll;
-        private byte _lineInterruptValue;
+        private ushort _nameTableBaseAddress;               // register $02
+        private ushort _spriteAttributeTableBaseAddress;    // register $05
+        private ushort _spritePatternTableBaseAddress;      // register $06
+        private int _overscanColourIndex;                   // register $07
+        private byte _backgroundXScroll;                    // register $08
+        private byte _backgroundYScroll;                    // register $09
+        private byte _lineInterruptValue;                   // register $0A - line counter
 
         private uint _currentScanlineCycles;
 
@@ -323,17 +323,17 @@ namespace elbsms_core.Video
         // http://www.smspower.org/forums/8161-SMSDisplayTiming
         public override void Update(uint cycleCount)
         {
+            int activeDisplayLineCount = ActiveDisplayLineCount();
+
             _currentScanlineCycles += cycleCount;
 
             // have we completed a scanline?
             if (_currentScanlineCycles >= CyclesPerScanline)
             {
-                // line interrupt
-                if (_vCounter <= ActiveDisplayLineCount())
+                // line interrupt - the interrupt counter is updated on active lines and the line 
+                // immediately following, otherwise the counter is reloaded from register $0A
+                if (_vCounter <= activeDisplayLineCount)
                 {
-                    // if we're in the active display lines or the line immediately following 
-                    // then update the counter
-
                     if (_lineInterruptCounter == 0)
                     {
                         // decrementing the line counter from 0 would cause overflow so reload
@@ -348,9 +348,13 @@ namespace elbsms_core.Video
                 }
                 else
                 {
-                    // if we're outside the active display + 1 then reload the counter from the 
-                    // line interrupt value
                     _lineInterruptCounter = _lineInterruptValue;
+                }
+
+                // render the current scanline if we're in the active display
+                if (_vCounter < activeDisplayLineCount)
+                {
+                    RenderScanline();
                 }
 
                 _vCounter = (_vCounter + 1) % _scanlinesPerFrame;
@@ -360,6 +364,10 @@ namespace elbsms_core.Video
 
             // flag any pending interrupts
             _interruptController.InterruptPending = _lineInterruptPending && _lineInterruptEnabled;
+        }
+
+        private void RenderScanline()
+        {
         }
     }
 }
