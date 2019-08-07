@@ -321,6 +321,7 @@ namespace elbsms_core.Video
 
         // http://www.smspower.org/forums/13530-VDPClockSpeed
         // http://www.smspower.org/forums/8161-SMSDisplayTiming
+        // http://www.smspower.org/forums/16485-GenesisMode4VRAMTiming
         public override void Update(uint cycleCount)
         {
             int activeDisplayLineCount = ActiveDisplayLineCount();
