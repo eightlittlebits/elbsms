@@ -89,7 +89,13 @@ namespace elbsms_core.Memory
                     _memoryControl.Value = value;
                     break;
 
+                // i/o port control
+                // http://www.smspower.org/Development/PeripheralPorts
+                // http://www.smspower.org/uploads/Development/port3f.txt
+                // http://www.smspower.org/Development/RegionDetection
                 case 0x01:
+                    break;
+
                 case 0x02:
                 case 0x03:
                 case 0x04:
