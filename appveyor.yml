@@ -1,0 +1,28 @@
+version: 0.1.{build}
+branches:
+  only:
+  - master
+image: Visual Studio 2019
+configuration: Release
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+before_build:
+- cmd: nuget restore -verbosity quiet
+build:
+  verbosity: minimal
+after_build:
+- cmd: |-
+    7z a -bso0 -bsp0 elbsms.zip .\elbsms_ui\bin\Release\*.dll
+    7z a -bso0 -bsp0 elbsms.zip .\elbsms_ui\bin\Release\*.exe
+    7z a -bso0 -bsp0 elbsms_console.zip .\elbsms_console\bin\Release\*.dll
+    7z a -bso0 -bsp0 elbsms_console.zip .\elbsms_console\bin\Release\*.exe
+test: off
+artifacts:
+- path: elbsms.zip
+  name: elbsms
+- path: elbsms_console.zip
+  name: elbsms_console
