@@ -11,13 +11,13 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace elbsms_ui
 {
-    public partial class ConfigurationForm : Form
+    public partial class ConfigurationForm<T> : Form where T : SystemConfiguration<T>, new()
     {
-        private Dictionary<string, List<Control>> _propertyControls;
+        private readonly Dictionary<string, List<Control>> _propertyControls;
 
-        public ISystemConfiguration Configuration { get; }
+        public T Configuration { get; }
 
-        public ConfigurationForm(ISystemConfiguration configuration, string title)
+        public ConfigurationForm(T configuration, string title)
         {
             InitializeComponent();
 
@@ -48,9 +48,9 @@ namespace elbsms_ui
 
             Text = title;
 
-            var properties = Configuration.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            PropertyInfo[] properties = Configuration.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-            foreach (var category in GroupPropertiesByCategory(properties))
+            foreach (IGrouping<string, PropertyInfo> category in GroupPropertiesByCategory(properties))
             {
                 AddSettingsGroup(category.Key ?? "Miscellaneous", category.ToList());
             }
@@ -71,7 +71,7 @@ namespace elbsms_ui
                 // we can only bind to checkbox controls
                 if (_propertyControls[dependency.DependsOn.PropertyName].First() is CheckBox checkBox)
                 {
-                    foreach (var control in _propertyControls[dependency.PropertyName])
+                    foreach (Control control in _propertyControls[dependency.PropertyName])
                     {
                         AddDataBinding(control, nameof(control.Enabled), checkBox, nameof(checkBox.Checked));
                     }
@@ -82,7 +82,7 @@ namespace elbsms_ui
         private IOrderedEnumerable<IGrouping<string, PropertyInfo>> GroupPropertiesByCategory(IEnumerable<PropertyInfo> properties)
         {
             // controls in the panel display in the reverse of the order added, last added at top,
-            // reverse the list to maintain the order they're declared, then put the null key at the 
+            // reverse the list to maintain the order they're declared, then put the null key at the
             // beginning, adding it first so displaying last
             return properties.Select(p => new
             {
@@ -179,7 +179,7 @@ namespace elbsms_ui
                     }
                     else if (property.PropertyType == typeof(string))
                     {
-                        var textBox = AddTextBox(tableLayoutPanel, i, property.Name);
+                        TextBox textBox = AddTextBox(tableLayoutPanel, i, property.Name);
 
                         BrowseAttribute pathAttribute;
                         if ((pathAttribute = property.GetCustomAttribute<BrowseAttribute>()) != null)
@@ -268,7 +268,7 @@ namespace elbsms_ui
                     break;
             }
 
-            var clearButton = new Button() {  Name = $"{propertyName}Clear", Text = "Clear", ClientSize = new Size(40, textBox.Height), Tag = textBox };
+            var clearButton = new Button() { Name = $"{propertyName}Clear", Text = "Clear", ClientSize = new Size(40, textBox.Height), Tag = textBox };
             clearButton.Click += (s, ev) => ((TextBox)((Button)s).Tag).Text = string.Empty;
 
             AddControlForProperty(propertyName, browseButton);

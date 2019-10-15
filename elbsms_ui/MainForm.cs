@@ -158,6 +158,18 @@ namespace elbsms_ui
             }
         }
 
+        private T ShowConfigurationForm<T>(T configuration, string systemName) where T : SystemConfiguration<T>, new()
+        {
+            using var configForm = new ConfigurationForm<T>(configuration, $"{systemName} Configuration");
+
+            if (configForm.ShowDialog() == DialogResult.OK)
+            {
+                return configForm.Configuration;
+            }
+
+            return configuration;
+        }
+
         private void RunFrame()
         {
             // run frame

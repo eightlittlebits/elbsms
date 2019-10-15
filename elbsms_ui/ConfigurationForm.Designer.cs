@@ -1,6 +1,6 @@
 ﻿namespace elbsms_ui
 {
-    partial class ConfigurationForm
+    partial class ConfigurationForm<T>
     {
         /// <summary>
         /// Required designer variable.

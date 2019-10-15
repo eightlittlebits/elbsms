@@ -48,7 +48,6 @@
     <Compile Include="Audio\IAudioDevice.cs" />
     <Compile Include="Configuration\BrowseAttribute.cs" />
     <Compile Include="Configuration\DependsOnAttribute.cs" />
-    <Compile Include="Configuration\ISystemConfiguration.cs" />
     <Compile Include="Configuration\SystemConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
