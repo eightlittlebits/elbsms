@@ -5,7 +5,7 @@ using elbemu_shared.Audio;
 
 namespace elbsms_ui.Audio
 {
-    class WaveFileAudioDevice : IAudioDevice
+    internal class WaveFileAudioDevice : IAudioDevice
     {
         private bool _disposed = false;
         private readonly WaveFileWriter _waveFile;
@@ -15,14 +15,14 @@ namespace elbsms_ui.Audio
         public WaveFileAudioDevice(IntPtr windowHandle, int sampleRate)
         {
             SampleRate = sampleRate;
-            
+
             _waveFile = new WaveFileWriter(File.Open("waveout.wav", FileMode.Create),
                                             new WaveFormat((uint)sampleRate, 2));
         }
 
         public void Play() { }
 
-        public void AddSample(AudioFrame frame)
+        public void AddSample(AudioFrame<short> frame)
         {
             _waveFile.WriteSample(frame.Left);
             _waveFile.WriteSample(frame.Right);

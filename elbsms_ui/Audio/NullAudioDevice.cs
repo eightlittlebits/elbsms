@@ -14,7 +14,7 @@ namespace elbsms_ui.Audio
 
         public void Play() { }
 
-        public void AddSample(AudioFrame frame) { }
+        public void AddSample(AudioFrame<short> frame) { }
 
         public void Stop() { }
 
