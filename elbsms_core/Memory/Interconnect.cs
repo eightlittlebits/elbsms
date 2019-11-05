@@ -80,7 +80,7 @@ namespace elbsms_core.Memory
             Debug.WriteLine($"OUT: 0x{address:X4}, {(char)value}(0x{value:X2})");
 
             // the port is selected with bits 7, 6 and 0 of the address (8 total available ports)
-            var port = ((address & 0xC0) >> 5) | (address & 0x01);
+            int port = ((address & 0xC0) >> 5) | (address & 0x01);
 
             switch (port)
             {
@@ -112,9 +112,9 @@ namespace elbsms_core.Memory
             Debug.WriteLine($"IN: 0x{address:X4}");
 
             // the port is selected with bits 7, 6 and 0 of the address (8 total available ports)
-            var port = ((address & 0xC0) >> 5) | (address & 0x01);
+            int port = ((address & 0xC0) >> 5) | (address & 0x01);
 
-            switch (port)
+            return port switch
             {
                 // memory control register
                 //case 0x00:
@@ -126,9 +126,8 @@ namespace elbsms_core.Memory
                 //case 0x06:
                 //case 0x07:
 
-                default:
-                    return 0xFF;
-            }
+                _ => 0xFF,
+            };
         }
     }
 }

@@ -17,13 +17,13 @@ namespace elb_utilities.Media
         private const DWORD ChunkID_Fmt = 0x20746d66; //  FourCC('f', 'm', 't', ' ');
         private const DWORD ChunkID_Data = 0x61746164; // FourCC('d', 'a', 't', 'a');
 
-        static DWORD FourCC(char a, char b, char c, char d)
-        {
-            return (uint)(a << 0 | b << 8 | c << 16 | d << 24);
-        }
+        //static DWORD FourCC(char a, char b, char c, char d)
+        //{
+        //    return (uint)(a << 0 | b << 8 | c << 16 | d << 24);
+        //}
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RiffChunk
+        private struct RiffChunk
         {
             public uint ChunkID;
             public uint ChunkSize;
@@ -59,7 +59,7 @@ namespace elb_utilities.Media
             PCMWaveFormat format = default;
             byte[] sampleData = null;
 
-            ref var foo = ref format;
+            ref PCMWaveFormat foo = ref format;
 
             using (var reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read)))
             {
@@ -71,7 +71,7 @@ namespace elb_utilities.Media
                     {
                         case ChunkID_Riff:
                             // read the RIFF form type to check we're loading a wave file
-                            var formType = reader.ReadUInt32();
+                            uint formType = reader.ReadUInt32();
                             if (formType != RiffForm_Wave)
                             {
                                 throw new InvalidDataException("RIFF form does not match 'WAVE'");
@@ -85,7 +85,7 @@ namespace elb_utilities.Media
                                 throw new InvalidDataException("Format tag does not match WAVE_FORMAT_PCM (1)");
                             }
 
-                            // if the size of the header is larger than the struct then read the extended size and 
+                            // if the size of the header is larger than the struct then read the extended size and
                             // skip that
                             WORD extendedSize = 0;
                             if (riffChunk.ChunkSize > Marshal.SizeOf<PCMWaveFormat>() && (extendedSize = reader.ReadUInt16()) > 0)
@@ -116,7 +116,7 @@ namespace elb_utilities.Media
         }
     }
 
-    static class BinaryReaderExtensions
+    internal static class BinaryReaderExtensions
     {
         public static T ReadStruct<T>(this BinaryReader reader) where T : unmanaged
         {

@@ -2,7 +2,7 @@
 {
     internal abstract class ClockedComponent
     {
-        private SystemClock _clock;
+        private readonly SystemClock _clock;
         private ulong _lastUpdate;
 
         public ClockedComponent(SystemClock clock)

@@ -8,7 +8,7 @@ using elbsms_ui.NativeMethods;
 
 namespace elbsms_ui
 {
-    static class Program
+    internal static class Program
     {
         public const string PluginsDirectory = @".\plugins";
 
@@ -16,7 +16,7 @@ namespace elbsms_ui
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
@@ -31,7 +31,7 @@ namespace elbsms_ui
         // https://weblog.west-wind.com/posts/2016/Dec/12/Loading-NET-Assemblies-out-of-Seperate-Folders
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            string FindFileInPath(string path, string filename)
+            static string FindFileInPath(string path, string filename)
             {
                 return Directory.EnumerateFiles(path, filename, SearchOption.AllDirectories).FirstOrDefault();
             }

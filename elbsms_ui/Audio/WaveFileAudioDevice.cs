@@ -12,7 +12,7 @@ namespace elbsms_ui.Audio
 
         public int SampleRate { get; }
 
-        public WaveFileAudioDevice(IntPtr windowHandle, int sampleRate)
+        public WaveFileAudioDevice(IntPtr _, int sampleRate)
         {
             SampleRate = sampleRate;
 

@@ -6,10 +6,10 @@ namespace elb_utilities.Media
 {
     public class WaveFileWriter : Stream
     {
-        private Stream _outputStream;
-        private BinaryWriter _writer;
+        private readonly Stream _outputStream;
+        private readonly BinaryWriter _writer;
 
-        private WaveFormat _format;
+        private readonly WaveFormat _format;
         private long _dataSizePosition;
         private long _dataSize;
 
@@ -35,7 +35,7 @@ namespace elb_utilities.Media
         private void WriteRiffChunk()
         {
             _writer.Write(Encoding.ASCII.GetBytes("RIFF"));
-            _writer.Write(0); // to be filled in on close   
+            _writer.Write(0); // to be filled in on close
             _writer.Write(Encoding.ASCII.GetBytes("WAVE"));
         }
 
@@ -44,7 +44,7 @@ namespace elb_utilities.Media
             _writer.Write(Encoding.ASCII.GetBytes("fmt "));
 
             int formatChunkSize = 16;
-            
+
             _writer.Write(formatChunkSize);
             _writer.Write((ushort)_format.FormatTag);
             _writer.Write(_format.ChannelCount);
@@ -154,7 +154,7 @@ namespace elb_utilities.Media
         public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException("This stream does not support seek operations.");
 
         public override void SetLength(long value) => throw new NotSupportedException("This stream does not support seek operations.");
-        
+
         #endregion
     }
 }

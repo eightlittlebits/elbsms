@@ -13,19 +13,19 @@ namespace elbsms_ui
 {
     public partial class MainForm : Form
     {
-        private static readonly double _stopwatchFrequency = Stopwatch.Frequency;
-        private static readonly string _programNameVersion = $"{Application.ProductName} v{Application.ProductVersion}";
+        private static readonly double StopwatchFrequency = Stopwatch.Frequency;
+        private static readonly string ProgramNameVersion = $"{Application.ProductName} v{Application.ProductVersion}";
 
-        private Configuration _config;
+        private readonly Configuration _config;
         private RecentFileList _recentFiles;
 
         private readonly List<Type> _audioDeviceTypes;
         private IAudioDevice _audioDevice;
 
         private long _lastFrameTimestamp;
-        private double _targetFrameTicks = 0;
+        private readonly double _targetFrameTicks = 0;
 
-        private NotifyValue<bool> _emulationInitialised = new NotifyValue<bool>();
+        private readonly NotifyValue<bool> _emulationInitialised = new NotifyValue<bool>();
         private bool _emulationPaused;
         private bool _focusLostPauseState;
 
@@ -35,7 +35,7 @@ namespace elbsms_ui
             set { _emulationPaused = value; SetUIText(); }
         }
 
-        static bool ApplicationStillIdle => !User32.PeekMessage(out _, IntPtr.Zero, 0, 0, 0);
+        private static bool ApplicationStillIdle => !User32.PeekMessage(out _, IntPtr.Zero, 0, 0, 0);
 
         public MainForm()
         {
@@ -84,7 +84,7 @@ namespace elbsms_ui
 
         private void SetUIText()
         {
-            Text = _programNameVersion + (_emulationPaused ? " [PAUSED]" : string.Empty);
+            Text = ProgramNameVersion + (_emulationPaused ? " [PAUSED]" : string.Empty);
 
             aboutToolStripMenuItem.Text = $"About {Application.ProductName}";
 
@@ -100,7 +100,7 @@ namespace elbsms_ui
 
         private void PrepareDataBindings()
         {
-            void AddBinding(IBindableComponent component, string propertyName, object dataSource, string dataMember,
+            static void AddBinding(IBindableComponent component, string propertyName, object dataSource, string dataMember,
                 bool formattingEnabled = false, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
             {
                 component.DataBindings.Add(propertyName, dataSource, dataMember, formattingEnabled, updateMode);
@@ -113,7 +113,7 @@ namespace elbsms_ui
             AddBinding(resetToolStripMenuItem, nameof(resetToolStripMenuItem.Enabled), _emulationInitialised, nameof(_emulationInitialised.Value));
 
             // configuration bindings
-            AddBinding(this, nameof(this.Size), _config, nameof(_config.WindowSize));
+            AddBinding(this, nameof(Size), _config, nameof(_config.WindowSize));
 
             AddBinding(limitFrameRateToolStripMenuItem, nameof(limitFrameRateToolStripMenuItem.Checked), _config, nameof(_config.LimitFrameRate));
             AddBinding(pauseWhenFocusLostToolStripMenuItem, nameof(pauseWhenFocusLostToolStripMenuItem.Checked), _config, nameof(_config.PauseWhenFocusLost));
@@ -127,7 +127,7 @@ namespace elbsms_ui
 
         private void PopulateDeviceMenu(ToolStripMenuItem menuItem, List<Type> deviceTypes, Action<Type> initialiseAction)
         {
-            foreach (var deviceType in deviceTypes)
+            foreach (Type deviceType in deviceTypes)
             {
                 var deviceMenuItem = new ToolStripMenuItem(deviceType.Name) { Tag = deviceType, CheckOnClick = true };
                 deviceMenuItem.Click += (s, e) =>
@@ -149,7 +149,7 @@ namespace elbsms_ui
                 _audioDevice.Dispose();
             }
 
-            _audioDevice = (IAudioDevice)Activator.CreateInstance(audioDeviceType, this.Handle, 48000);
+            _audioDevice = (IAudioDevice)Activator.CreateInstance(audioDeviceType, Handle, 48000);
             _audioDevice.Play();
 
             foreach (ToolStripMenuItem menuItem in audioDeviceToolStripMenuItem.DropDownItems)
@@ -173,7 +173,7 @@ namespace elbsms_ui
                 // get ms to sleep for, cast to int to truncate to nearest millisecond
                 // take 1 ms off the sleep time as we don't always hit the sleep exactly, trade
                 // burning extra cpu in the spin loop for accuracy
-                int sleepMilliseconds = (int)((_targetFrameTicks - elapsedTicks) * 1000 / _stopwatchFrequency) - 1;
+                int sleepMilliseconds = (int)((_targetFrameTicks - elapsedTicks) * 1000 / StopwatchFrequency) - 1;
 
                 if (sleepMilliseconds > 0)
                 {

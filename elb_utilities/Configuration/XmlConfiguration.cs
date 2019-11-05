@@ -18,10 +18,8 @@ namespace elb_utilities.Configuration
 
         public void Save(string filename)
         {
-            using (var stream = new FileStream(filename, FileMode.Create))
-            {
-                new XmlSerializer(typeof(T)).Serialize(stream, this);
-            }
+            using var stream = new FileStream(filename, FileMode.Create);
+            new XmlSerializer(typeof(T)).Serialize(stream, this);
         }
 
         public static T Load()
@@ -35,10 +33,8 @@ namespace elb_utilities.Configuration
 
             if (File.Exists(filename))
             {
-                using (var stream = new FileStream(filename, FileMode.Open))
-                {
-                    configuration = (T)new XmlSerializer(typeof(T)).Deserialize(stream);
-                }
+                using var stream = new FileStream(filename, FileMode.Open);
+                configuration = (T)new XmlSerializer(typeof(T)).Deserialize(stream);
             }
             else
             {

@@ -53,7 +53,7 @@ namespace elbsms_core
             return _romData[address];
         }
 
-        internal void WriteByte(ushort address)
+        internal void WriteByte(ushort _)
         {
             return;//throw new NotImplementedException();
         }

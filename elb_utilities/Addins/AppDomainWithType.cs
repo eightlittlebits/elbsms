@@ -2,10 +2,10 @@
 
 namespace elb_utilities.Addins
 {
-    internal class AppDomainWithType <T> : IDisposable where T : MarshalByRefObject, new()
+    internal class AppDomainWithType<T> : IDisposable where T : MarshalByRefObject, new()
     {
         private bool _disposed = false;
-        private AppDomain _appDomain;
+        private readonly AppDomain _appDomain;
 
         public T TypeObject { get; }
 

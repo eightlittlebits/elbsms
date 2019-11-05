@@ -7,7 +7,7 @@ namespace elbsms_ui.Audio
     {
         public int SampleRate { get; }
 
-        public NullAudioDevice(IntPtr windowHandle, int sampleRate)
+        public NullAudioDevice(IntPtr _, int sampleRate)
         {
             SampleRate = sampleRate;
         }

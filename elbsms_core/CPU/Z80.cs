@@ -6,19 +6,19 @@ namespace elbsms_core.CPU
 {
     using static StatusFlags;
 
-    partial class Z80
+    internal partial class Z80
     {
         private static byte[] FlagsSZP;
 
-        private SystemClock _clock;
-        private Interconnect _interconnect;
+        private readonly SystemClock _clock;
+        private readonly Interconnect _interconnect;
 
         private int _activeAFRegisters;
-        private AFRegisters[] _afRegisters;
+        private readonly AFRegisters[] _afRegisters;
         private AFRegisters _afr;
 
         private int _activeGPRegisters;
-        private GPRegisters[] _gpRegisters;
+        private readonly GPRegisters[] _gpRegisters;
         private GPRegisters _gpr;
 
         private ushort _pc, _sp;
@@ -210,8 +210,8 @@ namespace elbsms_core.CPU
                 switch (_interruptMode)
                 {
                     case 0:
-                        // mode 0 should read from the data bus but this is not used in the master system
-                        // open bus reads FF which is RST 38H so fall through to mode 1 calling RST 38H
+                    // mode 0 should read from the data bus but this is not used in the master system
+                    // open bus reads FF which is RST 38H so fall through to mode 1 calling RST 38H
                     case 1:
                         _clock.AddCycles(6); // a normal opcode fetch plus two wait cycles
                         Reset(0x38);
@@ -553,24 +553,24 @@ namespace elbsms_core.CPU
                 case 0xCD: CallImmediate(); break; // CALL nn
 
                 case 0xC4: CallImmediate(!_afr.F[Z]); break; // CALL NZ,nn
-                case 0xCC: CallImmediate(_afr.F[Z]); break; // CALL Z,nn   
+                case 0xCC: CallImmediate(_afr.F[Z]); break; // CALL Z,nn
                 case 0xD4: CallImmediate(!_afr.F[C]); break; // CALL NC,nn
-                case 0xDC: CallImmediate(_afr.F[C]); break; // CALL C,nn   
+                case 0xDC: CallImmediate(_afr.F[C]); break; // CALL C,nn
                 case 0xE4: CallImmediate(!_afr.F[P]); break; // CALL PO,nn
-                case 0xEC: CallImmediate(_afr.F[P]); break; // CALL PE,nn   
+                case 0xEC: CallImmediate(_afr.F[P]); break; // CALL PE,nn
                 case 0xF4: CallImmediate(!_afr.F[S]); break; // CALL P,nn
-                case 0xFC: CallImmediate(_afr.F[S]); break; // CALL M,nn   
+                case 0xFC: CallImmediate(_afr.F[S]); break; // CALL M,nn
 
                 case 0xC9: Return(); break; // RET
 
                 case 0xC0: Return(!_afr.F[Z]); break; // RET NZ
-                case 0xC8: Return(_afr.F[Z]); break; // RET Z   
+                case 0xC8: Return(_afr.F[Z]); break; // RET Z
                 case 0xD0: Return(!_afr.F[C]); break; // RET NC
-                case 0xD8: Return(_afr.F[C]); break; // RET C   
+                case 0xD8: Return(_afr.F[C]); break; // RET C
                 case 0xE0: Return(!_afr.F[P]); break; // RET PO
-                case 0xE8: Return(_afr.F[P]); break; // RET PE   
+                case 0xE8: Return(_afr.F[P]); break; // RET PE
                 case 0xF0: Return(!_afr.F[S]); break; // RET P
-                case 0xF8: Return(_afr.F[S]); break; // RET M   
+                case 0xF8: Return(_afr.F[S]); break; // RET M
 
                 case 0xC7: Reset(0x00); break; // RST 00H`
                 case 0xCF: Reset(0x08); break; // RST 08H
@@ -585,8 +585,8 @@ namespace elbsms_core.CPU
 
                 #region input and output group
 
-                case 0xDB: { var temp = _afr.A; _afr.A = In(ReadByte(_pc++)); _memPtr.word = (ushort)((temp << 8) + _afr.A + 1); } break; // IN A,(n)
-                case 0xD3: { var port = ReadByte(_pc++); Out(port, _afr.A); _memPtr.lo = (byte)(port + 1); _memPtr.hi = _afr.A; }  break; // OUT (n),A
+                case 0xDB: { byte temp = _afr.A; _afr.A = In(ReadByte(_pc++)); _memPtr.word = (ushort)((temp << 8) + _afr.A + 1); } break; // IN A,(n)
+                case 0xD3: { byte port = ReadByte(_pc++); Out(port, _afr.A); _memPtr.lo = (byte)(port + 1); _memPtr.hi = _afr.A; } break; // OUT (n),A
 
                 #endregion
 
@@ -697,7 +697,7 @@ namespace elbsms_core.CPU
                 case 0x58: _gpr.E = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.E] & ~C); break; // IN E,(C)
                 case 0x60: _gpr.H = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.H] & ~C); break; // IN H,(C)
                 case 0x68: _gpr.L = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_gpr.L] & ~C); break; // IN L,(C)
-                case 0x70: var temp = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[temp] & ~C); break; // IN F,(C)
+                case 0x70: byte temp = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[temp] & ~C); break; // IN F,(C)
                 case 0x78: _afr.A = In(_gpr.C); _afr.F = (_afr.F & C) | (FlagsSZP[_afr.A] & ~C); _memPtr.word = (ushort)(_gpr.BC + 1); break; // IN A,(C)
 
                 case 0xA2: InAndIncrement(); break; // INI
@@ -726,6 +726,7 @@ namespace elbsms_core.CPU
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "GetRegisterForPrefix uses ref returns which cannot be used in a switch expression")]
         private void ExecuteDDFDPrefixedOpcode(byte prefix, byte opcode)
         {
             ref PairedRegister GetRegisterForPrefix()
@@ -811,7 +812,7 @@ namespace elbsms_core.CPU
 
                 case 0x21: reg.word = ReadWord(_pc); _pc += 2; break; // LD IX/IY,nn
 
-                case 0x2A: reg.word = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD IX/IY,(nn)    
+                case 0x2A: reg.word = ReadWord(ReadWord(_pc)); _pc += 2; break; // LD IX/IY,(nn)
 
                 case 0x22: WriteWord(ReadWord(_pc), reg.word); _pc += 2; break; // LD (nn),IX/IY
 
@@ -832,7 +833,7 @@ namespace elbsms_core.CPU
                     reg.word = temp;
                     _memPtr.word = temp;
                 }
-                break; // EX (SP),IX/IY 
+                break; // EX (SP),IX/IY
 
                 #endregion
 
@@ -915,7 +916,7 @@ namespace elbsms_core.CPU
 
             _clock.AddCycles(2);
 
-            var temp = data + _afr.A;
+            int temp = data + _afr.A;
 
             _afr.F[B3] = temp.Bit(3);
             _afr.F[B5] = temp.Bit(1);
@@ -945,7 +946,7 @@ namespace elbsms_core.CPU
 
             _clock.AddCycles(2);
 
-            var temp = data + _afr.A;
+            int temp = data + _afr.A;
 
             _afr.F[B3] = temp.Bit(3);
             _afr.F[B5] = temp.Bit(1);
@@ -969,11 +970,11 @@ namespace elbsms_core.CPU
 
         private void CompareAndIncrement()
         {
-            var (result, flags) = Sub8Bit(_afr.A, ReadByte(_gpr.HL++));
+            (byte result, StatusFlags flags) = Sub8Bit(_afr.A, ReadByte(_gpr.HL++));
 
             _clock.AddCycles(5);
 
-            var temp = result - (flags[H] ? 1 : 0);
+            int temp = result - (flags[H] ? 1 : 0);
 
             flags[B3] = temp.Bit(3);
             flags[B5] = temp.Bit(1);
@@ -1004,11 +1005,11 @@ namespace elbsms_core.CPU
 
         private void CompareAndDecrement()
         {
-            var (result, flags) = Sub8Bit(_afr.A, ReadByte(_gpr.HL--));
+            (byte result, StatusFlags flags) = Sub8Bit(_afr.A, ReadByte(_gpr.HL--));
 
             _clock.AddCycles(5);
 
-            var temp = result - (flags[H] ? 1 : 0);
+            int temp = result - (flags[H] ? 1 : 0);
 
             flags[B3] = temp.Bit(3);
             flags[B5] = temp.Bit(1);
@@ -1082,7 +1083,7 @@ namespace elbsms_core.CPU
 
         private static (byte, StatusFlags) Or8Bit(byte a, byte b)
         {
-            var result = a | b;
+            int result = a | b;
 
             StatusFlags flags = FlagsSZP[result];
 
@@ -1091,7 +1092,7 @@ namespace elbsms_core.CPU
 
         private static (byte, StatusFlags) Xor8Bit(byte a, byte b)
         {
-            var result = a ^ b;
+            int result = a ^ b;
 
             StatusFlags flags = FlagsSZP[result];
 
@@ -1100,9 +1101,9 @@ namespace elbsms_core.CPU
 
         private static StatusFlags Compare8Bit(byte a, byte b)
         {
-            var (_, flags) = Sub8Bit(a, b);
+            (byte _, StatusFlags flags) = Sub8Bit(a, b);
 
-            // flag bits 3 and 5 populated from the operand and not result 
+            // flag bits 3 and 5 populated from the operand and not result
             // http://www.z80.info/z80sflag.htm
             flags[B5] = b.Bit(5);
             flags[B3] = b.Bit(3);
@@ -1112,7 +1113,7 @@ namespace elbsms_core.CPU
 
         private byte Inc8Bit(byte a)
         {
-            var (result, flags) = Add8Bit(a, 1);
+            (byte result, StatusFlags flags) = Add8Bit(a, 1);
 
             _afr.F &= C;
             _afr.F |= flags & ~C;
@@ -1122,7 +1123,7 @@ namespace elbsms_core.CPU
 
         private byte Dec8Bit(byte a)
         {
-            var (result, flags) = Sub8Bit(a, 1);
+            (byte result, StatusFlags flags) = Sub8Bit(a, 1);
 
             _afr.F &= C;
             _afr.F |= flags & ~C;
@@ -1195,7 +1196,7 @@ namespace elbsms_core.CPU
             // reset affected flags
             _afr.F[B5 | H | B3 | N | C] = false;
 
-            var (result, flags) = AddWithCarry16Bit(a, b);
+            (ushort result, StatusFlags flags) = AddWithCarry16Bit(a, b);
 
             _afr.F |= flags & (B5 | H | B3 | N | C);
 
@@ -1544,13 +1545,13 @@ namespace elbsms_core.CPU
 
             _memPtr.word = (ushort)(_gpr.BC + 1);
 
-            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            (byte result, StatusFlags flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
 
             // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
             flags[N] = data.Bit(7);
 
-            var temp = data + ((_gpr.C + 1) & 0xFF);
+            int temp = data + ((_gpr.C + 1) & 0xFF);
             flags[H | C] = temp > 255;
             flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
 
@@ -1579,13 +1580,13 @@ namespace elbsms_core.CPU
 
             _memPtr.word = (ushort)(_gpr.BC - 1);
 
-            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            (byte result, StatusFlags flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
 
             // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
             flags[N] = data.Bit(7);
 
-            var temp = data + ((_gpr.C - 1) & 0xFF);
+            int temp = data + ((_gpr.C - 1) & 0xFF);
             flags[H | C] = temp > 255;
             flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
 
@@ -1619,7 +1620,7 @@ namespace elbsms_core.CPU
 
             Out(_gpr.C, data);
 
-            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            (byte result, StatusFlags flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
 
             _memPtr.word = (ushort)(_gpr.BC + 1);
@@ -1627,7 +1628,7 @@ namespace elbsms_core.CPU
             // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
             flags[N] = data.Bit(7);
 
-            var temp = data + _gpr.L;
+            int temp = data + _gpr.L;
             flags[H | C] = temp > 255;
             flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
 
@@ -1654,7 +1655,7 @@ namespace elbsms_core.CPU
 
             Out(_gpr.C, data);
 
-            var (result, flags) = Sub8Bit(_gpr.B, 1);
+            (byte result, StatusFlags flags) = Sub8Bit(_gpr.B, 1);
             _gpr.B = result;
 
             _memPtr.word = (ushort)(_gpr.BC - 1);
@@ -1662,7 +1663,7 @@ namespace elbsms_core.CPU
             // wtf? i don't even... http://www.z80.info/zip/z80-documented.pdf section 4.3
             flags[N] = data.Bit(7);
 
-            var temp = data + _gpr.L;
+            int temp = data + _gpr.L;
             flags[H | C] = temp > 255;
             flags[P] = ((temp & 7) ^ _gpr.B).EvenParity();
 
