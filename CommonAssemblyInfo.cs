@@ -3,7 +3,7 @@
 [assembly: AssemblyProduct("elbsms")]
 
 [assembly: AssemblyCompany("eightlittlebits")]
-[assembly: AssemblyCopyright("Copyright © 2017-2019 David Parrott")]
+[assembly: AssemblyCopyright("Copyright © 2017-2020 David Parrott")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
