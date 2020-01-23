@@ -335,6 +335,8 @@ namespace elbsms_core.CPU
                 case 0x21: _gpr.HL = ReadWord(_pc); _pc += 2; break; // LD HL,nn
                 case 0x31: _sp = ReadWord(_pc); _pc += 2; break;     // LD SP,nn
 
+                case 0xF9: _clock.AddCycles(2); _sp = _gpr.HL; break; // LD SP,HL
+
                 case 0x2A: { ushort address = ReadWord(_pc); _gpr.HL = ReadWord(address); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD HL,(nn)
 
                 case 0x22: { ushort address = ReadWord(_pc); WriteWord(address, _gpr.HL); _pc += 2; _memPtr.word = (ushort)(address + 1); } break; // LD (nn),HL
