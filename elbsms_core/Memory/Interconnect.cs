@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace elbsms_core.Memory
 {
@@ -77,10 +76,12 @@ namespace elbsms_core.Memory
 
         internal void Out(byte address, byte value)
         {
-            Debug.WriteLine($"OUT: 0x{address:X4}, {(char)value}(0x{value:X2})");
+            string[] portNames = new[] { "MEMCTRL", "IOCTRL", "PSG", "PSG", "VDPDATA", "VDPCTRL", "YM2413", "YM2413" };
 
             // the port is selected with bits 7, 6 and 0 of the address (8 total available ports)
             int port = ((address & 0xC0) >> 5) | (address & 0x01);
+
+            Console.WriteLine($"OUT: 0x{address:X2}({portNames[port]}), 0x{value:X2}");
 
             switch (port)
             {
@@ -102,17 +103,19 @@ namespace elbsms_core.Memory
                 case 0x05:
                 case 0x06:
                 case 0x07:
-                    Console.Write((char)value);
+                    //Console.Write((char)value);
                     break;
             }
         }
 
         internal byte In(byte address)
         {
-            Debug.WriteLine($"IN: 0x{address:X4}");
+            string[] portNames = new[] { "FF", "FF", "VCOUNT", "HCOUNT", "VDPDATA", "VDPSTAT", "IOAB", "IOBMISC" };
 
             // the port is selected with bits 7, 6 and 0 of the address (8 total available ports)
             int port = ((address & 0xC0) >> 5) | (address & 0x01);
+
+            Console.WriteLine($"IN : 0x{address:X2}({portNames[port]})");
 
             return port switch
             {
