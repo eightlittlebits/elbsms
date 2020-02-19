@@ -42,6 +42,9 @@ namespace elbsms_core.Memory
             {
                 if (_memoryControl.CartridgeSlotEnabled && _cartridge != null)
                     return _cartridge.ReadByte(address);
+
+                if (_memoryControl.CardSlotEnabled && _segaCard != null)
+                    return _segaCard.ReadByte(address);
             }
             // 0xC000 -> 0xDFFF - System RAM
             // 0xE000 -> 0xFFFF - System RAM (mirror)
